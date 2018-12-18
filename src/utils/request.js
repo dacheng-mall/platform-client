@@ -1,5 +1,5 @@
 import fetch from 'dva/fetch';
-import _ from 'lodash';
+import _ from '@types/lodash';
 import uri from 'url';
 // import cfg from '../../app/cfg';
 
