@@ -1,11 +1,13 @@
 import fetch from 'dva/fetch';
-import _ from '@types/lodash';
+import _ from 'lodash';
 import uri from 'url';
 // import cfg from '../../app/cfg';
 
 const credentials = 'include'; //include same-origin
 const CONTENT_TYPE = 'Content-Type';
 const JSON_TYPE = 'application/json';
+const KY = 'Access-Control-Allow-Origin';
+const ky = '*';
 
 // 后台API URI前端
 // let apiPrefix = cfg.api || 'api/';
@@ -45,7 +47,7 @@ export function setToken(tokenGetter) {
  */
 const DefaultOptions = {
   headers: {
-    [CONTENT_TYPE]: JSON_TYPE,
+    [CONTENT_TYPE]: JSON_TYPE
   },
   credentials,
 };
@@ -90,6 +92,7 @@ export function isText(res, type) {
  * @returns {JSON|string} 根据媒体类型返回JSON对象或文本内容
  */
 export function parseResponse(res) {
+  console.log('res',res)
   if (res.status === 401) {
     localStorage.setItem('tokenExpired', true);
   }
@@ -181,7 +184,7 @@ export default function request(url, { body, method, ...options }) {
     if (!options.headers) {
       options.headers = {};
     }
-    options.headers.Authorization = token;
+    // options.headers.Authorization = token;
   }
 
   let uriObj;
@@ -209,6 +212,7 @@ export default function request(url, { body, method, ...options }) {
     }
   }
   options.method = method;
+  console.log('options', apiPrefix + url, options)
   return fetch(apiPrefix + url, options)
     .then(parseResponse)
     .then(checkStatus)

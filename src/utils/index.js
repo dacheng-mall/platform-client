@@ -33,3 +33,12 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-
 export function isUrl(path) {
   return reg.test(path);
 }
+
+export const icon = (name, size) => {
+  if (!name) return;
+  if (name.indexOf('fa-') >= 0) {
+    return <i className={`fa ${name}`} style={{ fontSize: size || '14px' }} />;
+  }
+  return <i className={name} style={{ fontSize: size || '22px' }} />;
+};
+

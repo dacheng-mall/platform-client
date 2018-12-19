@@ -1,6 +1,8 @@
 // ref: https://umijs.org/config/
 export default {
-  ...require('./src/pages/routes'),
+  ...require('./src/pages'),
+  history: 'hash',
+  publicPath: './',
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     [

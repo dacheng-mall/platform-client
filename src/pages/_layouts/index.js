@@ -1,12 +1,29 @@
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Layout, Menu, Breadcrumb } from 'antd';
 import styles from './index.less';
 
-function BasicLayout(props) {
-  return (
-    <div className={styles.normal}>
-      <h1 className={styles.title}>platform client</h1>
-      { props.children }
-    </div>
-  );
-}
+const { Sider, Header, Content, Footer } = Layout;
 
-export default BasicLayout;
+class BasicLayout extends PureComponent {
+  render(){
+    return (
+      <Layout className={styles.layout}>
+        <Header className={styles.header}>header</Header>
+        <Layout>
+          <Sider className={styles.sider}>
+            <Menu />
+          </Sider>
+          <Content>
+            <Breadcrumb />
+            <div className={styles.content}>{this.props.children}</div>
+          </Content>
+        </Layout>
+      </Layout>
+    );
+  }
+}
+function mapStateToProps({ app }) {
+  return app;
+}
+export default connect(mapStateToProps)(BasicLayout);
