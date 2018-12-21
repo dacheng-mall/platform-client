@@ -1,4 +1,4 @@
 module.exports = {
   component: './_layouts',
-  routes: [require('./overview')],
+  routes: [require('./overview'), ...require('./users')],
 };

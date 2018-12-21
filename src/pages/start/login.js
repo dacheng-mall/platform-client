@@ -1,19 +1,12 @@
 import { Input, Button, Checkbox, Form, Icon } from 'antd';
 import { connect } from 'dva';
-import { jump } from '../../utils/index';
 import styles from './index.less';
 
 function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
-  const go = () => {
-    // e.preventDefault();
-    jump('overview');
-  };
   const submit = e => {
     e.preventDefault();
     validateFields((err, val) => {
       if (!err) {
-        console.log(val);
-        go();
         dispatch({
           type: 'app/login',
         });

@@ -1,49 +1,71 @@
 import React, { PureComponent } from 'react';
+import { Menu as MenuAntd } from 'antd';
 import _ from 'lodash';
 import { jump } from '../../../../utils';
-// import { icon } from '../../../../utils/ui';
 import styles from './index.less';
 
-const Item = ({ data, activity }) => {
-  return (
-    <div className={styles[activity ? 'activity' : 'item']} data-path={data.path}>
-      {/* {icon(data.icon)} */}
-      {data.name}
-    </div>
-  );
+const { Item, SubMenu } = MenuAntd;
+
+const parsePathname = (pathname, state) => {
+  const keyPath = pathname.replace(/^\//, '').split('/');
+  const page = keyPath[keyPath.length - 1];
+  if (keyPath.length > 1) {
+    const openKeys = keyPath.slice(0, keyPath.length - 1);
+    return { ...state, openKeys, page };
+  }
+  return { ...state, page };
 };
 
 export default class Menu extends PureComponent {
+  state = {
+    currentPath: this.props.currentPath,
+    openKeys: [],
+    page: '',
+  };
+  static getDerivedStateFromProps = (props, state) => {
+    return parsePathname(props.currentPath, state);
+  };
   renderItems = data => {
     return _.map(data, (d, index) => {
       if (d.authority) {
+        if (d.children && d.children.length > 0) {
+          return (
+            <SubMenu title={d.name} key={d.path} onTitleClick={this.clickSub}>
+              {this.renderItems(d.children, d.path)}
+            </SubMenu>
+          );
+        }
         return (
-          <Item
-            key={index}
-            data={d}
-            activity={_.includes(this.props.pathname, d.path)}
-            authority={d.authority}
-          />
+          <Item key={d.path} title={d.name}>
+            {d.name}
+          </Item>
         );
       }
       return null;
     });
   };
-  clickHandle = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    let path = e.target.dataset.path;
-    if (!path) {
-      path = e.target.parentNode.dataset.path;
-    }
-    if (this.props.pathname !== path) {
+  clickHandler = e => {
+    const path = `/${e.keyPath.reverse().join('/')}`;
+    // 限制不跳转到自身
+    if (this.props.currentPath !== path) {
       jump(path);
     }
   };
   render() {
+    if (!this.props.data) {
+      return null;
+    }
     return (
-      <div onClick={this.clickHandle} className={styles.menuWrap}>
-        {this.renderItems(this.props.data)}
+      <div className={styles.menuWrap}>
+        <MenuAntd
+          defaultOpenKeys={this.state.openKeys}
+          defaultSelectedKeys={[this.state.page]}
+          mode="inline"
+          onClick={this.clickHandler}
+          theme="light"
+        >
+          {this.renderItems(this.props.data)}
+        </MenuAntd>
       </div>
     );
   }

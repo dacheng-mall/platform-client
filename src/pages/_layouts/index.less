@@ -1,6 +1,5 @@
 .layout {
   font-family: Georgia, sans-serif;
-  text-align: center;
   height: 100%;
 }
 
@@ -9,7 +8,23 @@
   font-weight: normal;
   letter-spacing: -1px;
   background: darkslateblue;
-  padding: .6em 0;
+  padding: 0.6em 0;
   color: white;
   margin: 0;
+}
+.contentWrap {
+  display: flex;
+  .content {
+    font-size: 0.12rem;
+    flex: 1;
+    padding: .1rem
+  }
+}
+.sider {
+  overflow-y: auto;
+  font-size: 0.16rem;
+}
+.header {
+  background-color: #ddd;
+  font-size: 0.16rem;
 }

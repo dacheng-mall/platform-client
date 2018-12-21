@@ -6,8 +6,6 @@ import uri from 'url';
 const credentials = 'include'; //include same-origin
 const CONTENT_TYPE = 'Content-Type';
 const JSON_TYPE = 'application/json';
-const KY = 'Access-Control-Allow-Origin';
-const ky = '*';
 
 // 后台API URI前端
 // let apiPrefix = cfg.api || 'api/';
