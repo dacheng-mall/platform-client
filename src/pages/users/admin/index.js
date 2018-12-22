@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Icon, Switch, Modal, Form, Input, Radio } from 'antd';
-import { FormItem } from '../../../utils/ui';
-
+import { Row, Col, Table, Button, Icon, Switch, Modal, Form, Input, Radio, Checkbox } from 'antd';
+import { FormItem, mapPropsToFields, onFieldsChange } from '../../../utils/ui';
 class Admin extends PureComponent {
   state = {
     show: false,
@@ -47,11 +46,12 @@ class Admin extends PureComponent {
       {
         key: 'operator',
         title: '操作',
-        render() {
+        dataIndex: 'id',
+        render: (t, r) => {
           return (
             <div>
-              <Button size="small" shape="circle" type="ghost" icon="edit" />
-              <Button size="small" shape="circle" type="danger" icon="delete" />
+              <Button onClick={this.edit.bind(null, r)} size="small" shape="circle" type="ghost" icon="edit" />
+              <Button onClick={this.remove.bind(null, t)} size="small" shape="circle" type="danger" icon="delete" />
             </div>
           );
         },
@@ -59,11 +59,19 @@ class Admin extends PureComponent {
       },
     ];
   };
-  showModal = () => {
+  edit = (record, e) => {
+    e.preventDefault();
+    this.showModal(record)
+  }
+  remove = (id, e) => {
+    e.preventDefault();
+    console.log(id)
+  }
+  showModal = data => {
     this.props.dispatch({
       type: 'admin/upState',
       payload: {
-        editor: {},
+        editor: data,
       },
     });
   };
@@ -80,7 +88,7 @@ class Admin extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     return (
       <div>
-        <Button onClick={this.showModal} type="primary">
+        <Button onClick={this.showModal.bind(null, {})} type="primary">
           <Icon type="plus" />
           添加管理员
         </Button>
@@ -96,17 +104,19 @@ class Admin extends PureComponent {
           title={this.props.editor && this.props.editor.id ? '编辑' : '新建'}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          cancelText="取消"
+          okText="确定"
         >
           <Form layout="horizontal">
             <FormItem label="姓名">
               {getFieldDecorator('name', {
                 rules: [{ required: true }],
-              })(<Input />)}
+              })(<Input placeholder="请输入姓名" />)}
             </FormItem>
             <FormItem label="用户名">
               {getFieldDecorator('username', {
                 rules: [{ required: true }],
-              })(<Input />)}
+              })(<Input placeholder="请输入用户名" />)}
             </FormItem>
             <FormItem label="性别">
               {getFieldDecorator('gender', {
@@ -119,20 +129,26 @@ class Admin extends PureComponent {
                 </Radio.Group>
               )}
             </FormItem>
+            <FormItem label="角色">
+              {getFieldDecorator('roles', {
+                rules: [{ required: true }],
+              })(<Checkbox.Group style={{width: '100%', marginTop: '0.1rem'}}>
+                <Row>
+                  <Col span={8}><Checkbox value="admin">管理员</Checkbox></Col>
+                  <Col span={8}><Checkbox disabled value="cfo">财务</Checkbox></Col>
+                  <Col span={8}><Checkbox disabled value="servicer">客服</Checkbox></Col>
+                </Row>
+              </Checkbox.Group>)}
+            </FormItem>
             <FormItem label="手机号">
               {getFieldDecorator('mobile', {
                 rules: [{ required: true }],
-              })(<Input />)}
+              })(<Input placeholder="请输入是手机号" />)}
             </FormItem>
             <FormItem label="身份证号">
               {getFieldDecorator('idcard', {
                 rules: [{ required: true }],
-              })(<Input />)}
-            </FormItem>
-            <FormItem label="身份证号">
-              {getFieldDecorator('idcard', {
-                rules: [{ required: true }],
-              })(<Input />)}
+              })(<Input placeholder="请输入是身份证号" />)}
             </FormItem>
             <FormItem label="状态">
               {getFieldDecorator('status', {
@@ -148,4 +164,4 @@ class Admin extends PureComponent {
 function mapStateToProps({ admin }) {
   return admin;
 }
-export default connect(mapStateToProps)(Form.create()(Admin));
+export default connect(mapStateToProps)(Form.create({mapPropsToFields, onFieldsChange: onFieldsChange('admin')})(Admin));

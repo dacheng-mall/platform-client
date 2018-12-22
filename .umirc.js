@@ -1,5 +1,4 @@
 // ref: https://umijs.org/config/
-console.log(JSON.stringify(require('./src/pages')))
 export default {
   ...require('./src/pages'),
   history: 'hash',

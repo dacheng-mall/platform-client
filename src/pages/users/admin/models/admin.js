@@ -1,4 +1,6 @@
 import { getAdmins } from '../services';
+import { fieldsChange } from "../../../../utils/ui";
+
 export default {
   namespace: 'admin',
   state: {
@@ -20,7 +22,6 @@ export default {
   effects: {
     *init({ paylaod }, { put, call, select }) {
       const { data } = yield call(getAdmins);
-      yield console.log('init', data.data);
       yield put({
         type: 'upState',
         payload: data,
@@ -31,5 +32,6 @@ export default {
     upState(state, { payload }) {
       return { ...state, ...payload };
     },
+    fieldsChange
   },
 };

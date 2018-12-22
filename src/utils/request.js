@@ -90,7 +90,6 @@ export function isText(res, type) {
  * @returns {JSON|string} 根据媒体类型返回JSON对象或文本内容
  */
 export function parseResponse(res) {
-  console.log('res',res)
   if (res.status === 401) {
     localStorage.setItem('tokenExpired', true);
   }
@@ -210,7 +209,6 @@ export default function request(url, { body, method, ...options }) {
     }
   }
   options.method = method;
-  console.log('options', apiPrefix + url, options)
   return fetch(apiPrefix + url, options)
     .then(parseResponse)
     .then(checkStatus)
