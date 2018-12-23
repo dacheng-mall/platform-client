@@ -1,0 +1,25 @@
+.wrap {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  .header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: .1rem;
+    display: flex;
+    justify-content: space-between
+  }
+  .content {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    .preview {
+      flex: 1
+    }
+    .form {
+      width: 4rem;
+      border-left: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

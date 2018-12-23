@@ -19,7 +19,7 @@ class BasicLayout extends PureComponent {
       <Layout className={styles.layout}>
         <Header className={styles.header}>答橙 · 平台管理</Header>
         <Layout>
-          <Sider className={styles.sider} collapsible theme="light">
+          <Sider className={styles.sider} collapsible theme="dark">
             <Menu data={this.state.menu} currentPath={this.props.location.pathname} />
           </Sider>
           <Content className={styles.contentWrap}>

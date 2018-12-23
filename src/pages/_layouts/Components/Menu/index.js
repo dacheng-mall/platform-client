@@ -62,7 +62,7 @@ export default class Menu extends PureComponent {
           defaultSelectedKeys={[this.state.page]}
           mode="inline"
           onClick={this.clickHandler}
-          theme="light"
+          theme="dark"
         >
           {this.renderItems(this.props.data)}
         </MenuAntd>
