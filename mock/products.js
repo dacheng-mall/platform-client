@@ -9,7 +9,7 @@ export default {
         'price|5-999': 100,
         mainImage: "@image('64x64', '#00405d', '#000', 'img')",
         'status|1-2': 1,
-        'category|1': ['c0', 'c1', 'c2', 'c4', 'c5']
+        'category|1': ['c0', 'c1', 'c2', 'c4', 'c5'],
       },
     ],
     page: 0,
@@ -23,50 +23,54 @@ export default {
     'status|1-2': 1,
     'category|1': ['c0', 'c1', 'c2', 'c4', 'c5'],
     video: {
-      url: "http://www.w3school.com.cn/example/html5/mov_bbb.mp4",
-      poster: "http://www.w3school.com.cn/i/eg_mouse.jpg"
+      url: 'http://www.w3school.com.cn/example/html5/mov_bbb.mp4',
+      poster: 'http://www.w3school.com.cn/i/eg_mouse.jpg',
     },
     'images|3': [
       {
-        type: "image",
+        type: 'image',
         url: "@image('128x128', '#00405d', '#000', 'mainImg')",
-        name: "图1"
-      }
+        name: '图1',
+      },
     ],
-    attributes: [
-      "含票",
-      "送货上门",
-      "加印logo",
-      "破损包赔",
-      "定制杯盖",
-      "任何奇葩需求"
+    attributes: ['含票', '送货上门', '加印logo', '破损包赔', '定制杯盖', '任何奇葩需求'],
+    'categories|5': [
+      {
+        id: '@id()',
+        label: '@cword(6,10)',
+        content: '@cparagraph(16, 32)',
+      },
     ],
     content: [
       {
-        type: "text",
-        align: "center",
+        type: 'text',
+        align: 'center',
         size: 30,
         padding: 10,
         italic: true,
-        weight: "bold",
+        weight: 'bold',
         value:
-          "文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容"
+          '文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容',
       },
       {
-        type: "image",
-        value:
-          "http://5b0988e595225.cdn.sohucs.com/images/20180827/d236d38d089b44e4b633536853137cf6.jpeg"
+        type: 'image',
+        value: "@image('128x128', '#00405d', '#000', 'contImg')",
+        height: 300,
       },
       {
-        type: "image",
-        value:
-          "http://5b0988e595225.cdn.sohucs.com/images/20180827/21d257b77a634a24be537cb93ad5d5b6.gif"
+        type: 'list',
+        'value|5': [
+          {
+            label: '@cword(2,8)',
+            content: '@csentence(16, 32)',
+          },
+        ],
       },
       {
-        type: "image",
-        value:
-          "http://5b0988e595225.cdn.sohucs.com/images/20180827/21d257b77a634a24be537cb93ad5d5b6.gif"
-      }
-    ]
-  })
+        type: 'image',
+        value: "@image('128x64', '#00405d', '#000', 'contImg')",
+        height: 300,
+      },
+    ],
+  }),
 };

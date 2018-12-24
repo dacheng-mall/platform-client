@@ -23,7 +23,7 @@ export default {
     *init({id}, {call, put}){
       const {data} = yield call(getProduct, id);
       yield new Promise(function(res){
-        setTimeout(() => {res()}, 5000);
+        setTimeout(() => {res()}, 1000);
       })
       yield put({
         type: 'upState',
