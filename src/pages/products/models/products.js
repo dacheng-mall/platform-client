@@ -1,5 +1,4 @@
 import { getProducts } from '../services';
-import { fieldsChange } from "../../../utils/ui";
 
 export default {
   namespace: 'products',
@@ -19,6 +18,9 @@ export default {
             dispatch({ type: 'init', paylaod: 'third' });
             break;
           }
+          default: {
+            break;
+          }
         }
       });
     },
@@ -36,6 +38,6 @@ export default {
   reducers: {
     upState(state, { payload }) {
       return { ...state, ...payload };
-    }
+    },
   },
 };

@@ -38,7 +38,7 @@ export default {
       {
         id: '@id()',
         label: '@cword(6,10)',
-        content: '@cparagraph(16, 32)',
+        content: '@cparagraph(3, 8)',
       },
     ],
     content: [

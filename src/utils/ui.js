@@ -47,9 +47,11 @@ export const onFieldsChange = ns => (props, fields)  => {
 }
 export const fieldsChange = (state, {payload}) => {
   _.forEach(payload, ({name, dirty, value}) => {
+
     if(!dirty) {
       _.set(state[EDITOR], name, value)
     }
   })
+  console.log('state', state)
   return {...state}
 }

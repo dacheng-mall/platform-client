@@ -1,39 +1,44 @@
-import ptrx from "path-to-regexp";
-import { getProduct } from "../services";
+import ptrx from 'path-to-regexp';
+import { getProduct } from '../services';
+import { fieldsChange } from '../../../utils/ui';
+
 export default {
   namespace: 'detail',
   state: {
-    data:null,
+    editor: null,
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         const pn = ptrx('/products/detail/:id').exec(pathname);
-        if(pn){
+        if (pn) {
           const id = ptrx('/products/detail/:id').exec(pathname)[1];
           dispatch({
             type: 'init',
-            id
-          })
+            id,
+          });
         }
       });
     },
   },
   effects: {
-    *init({id}, {call, put}){
-      const {data} = yield call(getProduct, id);
-      yield new Promise(function(res){
-        setTimeout(() => {res()}, 1000);
-      })
+    *init({ id }, { call, put }) {
+      const { data } = yield call(getProduct, id);
+      yield new Promise(function(res) {
+        setTimeout(() => {
+          res();
+        }, 1000);
+      });
       yield put({
         type: 'upState',
-        payload: { data }
-      })
-    }
+        payload: { editor: data },
+      });
+    },
   },
   reducers: {
     upState(state, { payload }) {
       return { ...state, ...payload };
-    }
-  }
-}
+    },
+    fieldsChange,
+  },
+};

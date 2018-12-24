@@ -7,7 +7,6 @@ const Option = Select.Option;
 
 export default class Categories extends React.PureComponent {
   state = {
-    data: this.props.data,
     current: 0,
   };
   changeHandle = (current) => {
@@ -28,7 +27,7 @@ export default class Categories extends React.PureComponent {
           })}
         </Select>
         <div className={styles.cateCont}>
-          {this.state.data[this.state.current].content}
+          {this.props.data[this.state.current].content}
         </div>
       </div>
     );
