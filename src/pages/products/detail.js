@@ -4,6 +4,7 @@ import { Form, Button, Input, InputNumber } from 'antd';
 import Preview from './components/preview';
 import TagsEditor from './components/form/TagsEditor';
 import CateEditor from './components/form/CateEditor';
+import Content from './components/form/Content';
 
 import styles from './detail.less';
 import { goBack } from '../../utils';
@@ -15,6 +16,11 @@ class Detail extends PureComponent {
   };
   submit = () => {
     const { validateFields } = this.props.form;
+    validateFields((errors, values) => {
+      if (!errors) {
+        console.log(values);
+      }
+    });
   };
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -47,6 +53,9 @@ class Detail extends PureComponent {
               <FormItem label="标签">{getFieldDecorator('attributes')(<TagsEditor />)}</FormItem>
               <FormItem label="分类说明">
                 {getFieldDecorator('categories')(<CateEditor />)}
+              </FormItem>
+              <FormItem label="图文内容">
+                {getFieldDecorator('content')(<Content />)}
               </FormItem>
             </Form>
           </div>

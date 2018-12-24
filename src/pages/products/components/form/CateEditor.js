@@ -111,9 +111,7 @@ export default class CateEditor extends PureComponent {
               </Panel>
             ))}
           </Collapse>
-        ) : (
-          <div>没数据</div>
-        )}
+        ) : null}
         {this.state.showInput ? (
           <div>
             添加新的类型说明
