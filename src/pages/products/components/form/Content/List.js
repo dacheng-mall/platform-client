@@ -70,6 +70,13 @@ export default class ListEditor extends PureComponent {
       message.error('提交信息不完整');
     }
   };
+  cancel = () => {
+    this.setState({
+    newItem: {},
+    editor: null,
+  });
+
+  }
   newItem = (type, e) => {
     const { value } = e.target;
     // console.log(value, type);
@@ -103,7 +110,7 @@ export default class ListEditor extends PureComponent {
           <div>
             <Input onChange={this.newItem.bind(null, 'label')} placeholder="请输入标题" />
             <TextArea onChange={this.newItem.bind(null, 'content')} placeholder="请输入内容" />
-            <Button>取消</Button>
+            <Button onClick={this.cancel}>取消</Button>
             <Button onClick={this.add} type="primary">
               添加
             </Button>
