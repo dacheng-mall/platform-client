@@ -48,7 +48,7 @@ export default {
         size: 30,
         padding: 10,
         italic: true,
-        weight: 'bold',
+        weight: true,
         value:
           '文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容',
       },

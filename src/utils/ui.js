@@ -52,6 +52,6 @@ export const fieldsChange = (state, {payload}) => {
       _.set(state[EDITOR], name, value)
     }
   })
-  console.log('state', state)
+  // console.log('state', state)
   return {...state}
 }
