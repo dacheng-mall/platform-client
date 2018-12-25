@@ -47,10 +47,7 @@ export default {
         align: 'center',
         size: 30,
         padding: 10,
-        italic: true,
-        weight: true,
-        value:
-          '文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容文字内容',
+        value: '@cparagraph(2, 4)',
       },
       {
         type: 'image',

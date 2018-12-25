@@ -14,5 +14,30 @@
 }
 .chooseType {
   display: flex;
-  justify-content: space-between
+  justify-content: space-between;
+}
+.listEditor {
+  .preview {
+    padding: 0;
+    margin: 0;
+    li {
+      display: flex;
+      line-height: 0.24rem;
+      .content {
+        flex: 1;
+        margin: 0 0.1rem;
+      }
+      span, b {
+        width: 1rem;
+      }
+      .icons {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 0.16rem;
+        height: 100%;
+        padding-right: 0.1rem;
+      }
+    }
+  }
 }
