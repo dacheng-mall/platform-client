@@ -1,6 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import _ from 'lodash';
-import { Input, Modal, Form, Radio } from 'antd';
+import { Input, Modal, Form, Radio, Upload } from 'antd';
 import ListItem from './ListItem';
 import styles from './styles.less';
 
@@ -17,8 +17,8 @@ export default class ProductsList extends PureComponent {
       case 'edit': {
         this.setState({
           visible: true,
-          editor: this.props.data[index]
-        })
+          editor: this.props.data[index],
+        });
         break;
       }
       default: {
@@ -26,7 +26,16 @@ export default class ProductsList extends PureComponent {
       }
     }
   };
+  hideModal = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+  onSearch = (e) => {
+    console.log(e)
+  }
   render() {
+    console.log('-----', this.state.editor.size)
     return (
       <Fragment>
         <div className={styles.nameEditor}>
@@ -45,13 +54,23 @@ export default class ProductsList extends PureComponent {
             );
           })}
         </div>
-        <Modal title={`编辑商品-${this.state.editor.name}`} visible={this.state.visible}>
-          <Form layout="inline">
+        <Modal
+          title={`编辑商品-${this.state.editor.name}`}
+          visible={this.state.visible}
+          onCancel={this.hideModal}
+        >
+          <Form layout="vertical">
+            <Form.Item label="关联商品">
+              <Input.Search onSearch={this.onSearch} placeholder="请输入关键字搜索商品" />
+            </Form.Item>
             <Form.Item label="尺寸">
               <RadioGroup defaultValue={this.state.editor.size}>
                 <RadioButton value={1}>1x</RadioButton>
                 <RadioButton value={2}>2x</RadioButton>
               </RadioGroup>
+            </Form.Item>
+            <Form.Item label="图片">
+              <Upload />
             </Form.Item>
           </Form>
         </Modal>
