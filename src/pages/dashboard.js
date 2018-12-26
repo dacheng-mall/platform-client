@@ -3,6 +3,7 @@ module.exports = {
   routes: [
     require('./overview'),
     ...require('./users'),
-    ...require('./products')
+    ...require('./products'),
+    ...require('./cms'),
   ],
 };

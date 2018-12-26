@@ -53,7 +53,7 @@ export const menu = () => {
     },
     {
       name: '内容管理',
-      path: 'content',
+      path: 'cms',
       authority: admin,
       children: [
         {

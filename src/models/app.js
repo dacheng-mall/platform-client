@@ -10,7 +10,8 @@ export default {
   state: {
     institutionLogo: null,
     user: {},
-    roles: []
+    roles: [],
+    dict: {}
   },
 
   subscriptions: {

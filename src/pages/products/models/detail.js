@@ -12,7 +12,7 @@ export default {
       history.listen(({ pathname }) => {
         const pn = ptrx('/products/detail/:id').exec(pathname);
         if (pn) {
-          const id = ptrx('/products/detail/:id').exec(pathname)[1];
+          const id = pn[1];
           dispatch({
             type: 'init',
             id,
