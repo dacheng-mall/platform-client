@@ -146,7 +146,7 @@ function parseError(res) {
  */
 export const checkStatus = result => {
   const { res, data } = result;
-  if (res.ok) {
+  if (res.ok || res.code === 0) {
     return result;
   }
   let err = {};
@@ -161,7 +161,6 @@ export const checkStatus = result => {
   if (!err.message) {
     err.message = res.statusText;
   }
-
   throw new Error(JSON.stringify(err));
 };
 
@@ -209,7 +208,11 @@ export default function request(url, { body, method, ...options }) {
     }
   }
   options.method = method;
-  return fetch(apiPrefix + url, options)
+  let _url = apiPrefix + url;
+  if(_url.includes('3000')) {
+    _url = url;
+  }
+  return fetch(_url, options)
     .then(parseResponse)
     .then(checkStatus)
     .catch(err => Promise.reject(err.message));

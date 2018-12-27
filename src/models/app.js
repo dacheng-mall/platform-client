@@ -1,8 +1,10 @@
 import _ from 'lodash';
+import * as qiniu from 'qiniu-js';
 import { login } from '../services/app';
 import { jump } from '../utils';
 import { setAuthority } from '../utils/authority';
 import { menu } from '../pages/_layouts/menuData';
+import { getQiniuToken } from '../services/app';
 
 export default {
   namespace: 'app',
@@ -11,7 +13,8 @@ export default {
     institutionLogo: null,
     user: {},
     roles: [],
-    dict: {}
+    dict: {},
+    qiniu: {},
   },
 
   subscriptions: {
@@ -36,7 +39,7 @@ export default {
             type: 'upState',
             payload: {
               user: JSON.parse(user),
-              menu: menu()
+              menu: menu(),
             },
           });
         } else {
@@ -46,16 +49,16 @@ export default {
     },
     *login({ payload }, { call, put, all }) {
       const { data } = yield call(login);
-      const redirect = menu => {
+      const redirect = (menu) => {
         const allow = _.find(menu, ({ authority }) => authority);
         const makePath = (item, prefix = '/') => {
-          if(item.children && item.children.length > 0) {
+          if (item.children && item.children.length > 0) {
             return makePath(item.children[0], `/${item.path}`);
           }
-          return `${prefix}${item.path}`
-        }
+          return `${prefix}${item.path}`;
+        };
         if (allow) {
-          return makePath(allow)
+          return makePath(allow);
         }
         return '/';
       };
@@ -70,7 +73,57 @@ export default {
         ]);
       }
       sessionStorage.setItem('user', JSON.stringify(data));
-      setAuthority(data.roles)
+      setAuthority(data.roles);
+    },
+    *getQiniuToken(p, { call, put, select }) {
+      const { deadline } = yield select(({ app }) => app.qiniu);
+      const now = new Date().valueOf();
+      if (!deadline || deadline <= now) {
+        const { data } = yield call(getQiniuToken);
+        if (data.code === 0) {
+          const { uploadToken, deadline } = data.data;
+          yield put({
+            type: 'upState',
+            payload: { qiniu: { uploadToken, deadline: now + deadline } },
+          });
+        }
+      }
+    },
+    *upload({ payload }, { call, put, select }) {
+      const { uploadToken, deadline } = yield select(({ app }) => app.qiniu);
+      const now = new Date().valueOf();
+      let token = uploadToken;
+      if (!deadline || deadline <= now) {
+        const { data } = yield call(getQiniuToken);
+        if (data.code === 0) {
+          const { uploadToken, deadline } = data.data;
+          yield put({
+            type: 'upState',
+            payload: { qiniu: { uploadToken, deadline: now + deadline } },
+          });
+          token = uploadToken;
+        }
+      }
+      const { file, ns } = payload;
+      const keymaker = () => {
+        const d = new Date().format('yyyyMMddhhmmss');
+        const random = parseInt(Math.random() * 10000, 10);
+        return d + random + file.name;
+      };
+      
+      // var observable = qiniu.upload(file, keymaker(), token);
+      // var subscription = observable.subscribe(
+      //   (res) => {
+      //     console.log('subscription-next', res)
+      //   },
+      //   (res) => {
+      //     console.log('subscription-error', res)
+      //   },
+      //   (res) => {
+      //     console.log('subscription-complete', res)
+
+      //   }
+      // );
     },
     // *logout(p, { put, call }) {
     //   const { error } = yield call(logout);
