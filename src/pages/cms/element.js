@@ -54,12 +54,17 @@ class ElementEditor extends PureComponent {
       }
     }
   };
+  submit = () => {
+    this.props.dispatch({
+      type: 'elementEditor/submit'
+    })
+  }
   render() {
     return (
       <div className={styles.wrap}>
         <div className={styles.saveBtn}>
           <Button>返回</Button>
-          <Button type="primary" disabled={this.state.editing !== null}>
+          <Button onClick={this.submit} type="primary" disabled={this.state.editing !== null}>
             保存
           </Button>
         </div>

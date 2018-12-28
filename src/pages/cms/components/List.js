@@ -77,9 +77,7 @@ export default class ProductsList extends PureComponent {
     // 表单值的变更仅影响组件内的state, 用于最终subimt方法使用, 提交给上层状态容器
     switch (type) {
       case 'image': {
-        
         this.setState((state) => {
-          console.log(e);
           return { ...state, ...e };
         });
         break;
@@ -88,6 +86,10 @@ export default class ProductsList extends PureComponent {
         this.setState((state) => {
           return { ...state, editor: { ...state.editor, size: e.target.value } };
         });
+        break;
+      }
+      case 'name': {
+        this.props.onEdit('name', e.target.value);
         break;
       }
       default: {
@@ -104,7 +106,7 @@ export default class ProductsList extends PureComponent {
       <div className={styles.wrap}>
         <div className={styles.preview}>
           <div className={styles.nameEditor}>
-            <Input placeholder="请输入列表名称" onChange={this.change.bind(null, 'name')} />
+            <Input value={this.props.name} placeholder="请输入列表名称" onChange={this.change.bind(null, 'name')} />
           </div>
           <div className={styles.listWrap} id="_listWrap">
             {_.map(this.props.data, (d, i) => {
