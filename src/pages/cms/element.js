@@ -56,9 +56,9 @@ class ElementEditor extends PureComponent {
   };
   submit = () => {
     this.props.dispatch({
-      type: 'elementEditor/submit'
-    })
-  }
+      type: 'elementEditor/submit',
+    });
+  };
   render() {
     return (
       <div className={styles.wrap}>

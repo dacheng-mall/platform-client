@@ -70,7 +70,7 @@ export default {
           data = _.filter(data, (d, i) => i !== index);
           break;
         }
-        case 'name': {
+        case 'title': {
           name = value;
           break;
         }

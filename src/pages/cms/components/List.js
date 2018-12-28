@@ -30,7 +30,6 @@ export default class ProductsList extends PureComponent {
       }
       default: {
         // move和delete行为都交给状态容器处理
-
         this.props.onEdit(type, value, index);
         break;
       }
@@ -88,8 +87,8 @@ export default class ProductsList extends PureComponent {
         });
         break;
       }
-      case 'name': {
-        this.props.onEdit('name', e.target.value);
+      case 'title': {
+        this.props.onEdit(type, e.target.value);
         break;
       }
       default: {
@@ -106,7 +105,11 @@ export default class ProductsList extends PureComponent {
       <div className={styles.wrap}>
         <div className={styles.preview}>
           <div className={styles.nameEditor}>
-            <Input value={this.props.name} placeholder="请输入列表名称" onChange={this.change.bind(null, 'name')} />
+            <Input
+              value={this.props.name}
+              placeholder="请输入列表名称"
+              onChange={this.change.bind(null, 'title')}
+            />
           </div>
           <div className={styles.listWrap} id="_listWrap">
             {_.map(this.props.data, (d, i) => {
