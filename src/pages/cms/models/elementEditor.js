@@ -41,7 +41,7 @@ export default {
     },
     *change({ payload }, { put, select }) {
       const { value, index, type } = payload;
-      let { data } = yield select(({ elementEditor }) => elementEditor);
+      let { data, name } = yield select(({ elementEditor }) => elementEditor);
       switch (type) {
         case 'edit': {
           data[index] = value;
@@ -70,6 +70,10 @@ export default {
           data = _.filter(data, (d, i) => i !== index);
           break;
         }
+        case 'title': {
+          name = value;
+          break;
+        }
         default: {
           break;
         }
@@ -78,10 +82,14 @@ export default {
         type: 'upState',
         payload: {
           data: [...data],
+          name,
         },
       });
     },
-    *getTypes(p, { put, call, select }) {},
+    *submit(p, { put, call, select }) {
+      const { id, data, name } = yield select(({ elementEditor }) => elementEditor);
+      console.log('提交数据', { id, data, name });
+    },
   },
   reducers: {
     upState(state, { payload }) {
