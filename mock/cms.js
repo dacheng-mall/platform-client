@@ -32,12 +32,11 @@ export default {
   'GET /api/getCmsSwiper': mockjs.mock({
     id: '@id()',
     type: 'swiper',
-    name: '@cword(1,8)',
     'data|3': [
       {
-        id: '@id()',
+        productId: '@id()',
         name: '@cword(1,4)',
-        path: '/',
+        path: '',
         mainImage: "@image('64x64', '#00405d', '#000', 'img')",
       },
     ],
