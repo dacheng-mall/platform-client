@@ -1,3 +1,26 @@
+.wrap {
+  display: flex;
+  flex: 1;
+  .preview {
+    display: flex;
+    flex-direction: column;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    flex: 1;
+    width: 3.2rem;
+  }
+  .editor {
+    margin: 0 0.1rem;
+    width: 4rem;
+    background-color: #f5f5f5;
+    border: 1px dotted #ddd;
+    padding: 0.1rem;
+    h2 {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.04rem;
+    }
+  }
+}
 .listWrap {
   display: flex;
   flex: 1;
@@ -23,7 +46,7 @@
     }
     .price {
       font-size: 0.14rem;
-      color: #f66
+      color: #f66;
     }
     &:hover {
       .mask {
@@ -37,7 +60,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0 ,0, 0.5);
+      background-color: rgba(0, 0, 0, 0.5);
       color: #fff;
       .operator {
         width: 100%;
@@ -45,7 +68,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center
+        align-items: center;
       }
     }
   }

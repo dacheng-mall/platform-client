@@ -1,16 +1,50 @@
 import React, { PureComponent } from 'react';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { connect } from 'dva';
 import List from './components/List';
 import styles from './styles.less';
 
+const confirm = Modal.confirm;
 class ElementEditor extends PureComponent {
-  edit = () => {}
+  state = {
+    editing: null,
+  };
+  edit = (type, value, index) => {
+    if (type === 'del') {
+      confirm({
+        title: '是否要删除元素?',
+        content: '',
+        onOk: () => {
+          this.changeData(type, value, index);
+        },
+        onCancel: () => {},
+      });
+      return;
+    }
+    this.changeData(type, value, index);
+  };
+  changeData = (type, value, index) => {
+    this.props.dispatch({
+      type: 'elementEditor/change',
+      payload: {
+        type,
+        value,
+        index,
+      },
+    });
+  };
+
+  editing = (editing) => {
+    this.setState({
+      editing,
+    });
+  };
+
   renderCont = () => {
     const { type } = this.props;
     switch (type) {
       case 'list': {
-        return <List {...this.props} onEdit={this.edit} />;
+        return <List {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       case 'swiper': {
         return null;
@@ -23,8 +57,13 @@ class ElementEditor extends PureComponent {
   render() {
     return (
       <div className={styles.wrap}>
-        <Button>保存</Button>
-        <div className={styles.preview}>{this.renderCont()}</div>
+        <div className={styles.saveBtn}>
+          <Button>返回</Button>
+          <Button type="primary" disabled={this.state.editing !== null}>
+            保存
+          </Button>
+        </div>
+        {this.renderCont()}
       </div>
     );
   }

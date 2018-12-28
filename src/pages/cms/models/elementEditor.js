@@ -1,4 +1,5 @@
 import ptrx from 'path-to-regexp';
+import _ from 'lodash';
 import { getCmsList, getCmsSwiper } from '../services';
 
 export default {
@@ -38,8 +39,49 @@ export default {
         },
       });
     },
-    *getTypes(p, { put, call, select }) {
+    *change({ payload }, { put, select }) {
+      const { value, index, type } = payload;
+      let { data } = yield select(({ elementEditor }) => elementEditor);
+      switch (type) {
+        case 'edit': {
+          data[index] = value;
+          break;
+        }
+        case 'move': {
+          let position;
+          switch (value) {
+            case 'up': {
+              position = index - 1;
+              break;
+            }
+            case 'down': {
+              position = index + 1;
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+          const target = data.splice(index, 1)[0];
+          data.splice(position, 0, target);
+          break;
+        }
+        case 'del': {
+          data = _.filter(data, (d, i) => i !== index);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      yield put({
+        type: 'upState',
+        payload: {
+          data: [...data],
+        },
+      });
     },
+    *getTypes(p, { put, call, select }) {},
   },
   reducers: {
     upState(state, { payload }) {

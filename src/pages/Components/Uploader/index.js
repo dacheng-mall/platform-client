@@ -14,8 +14,11 @@ function getObjectURL(file) {
   return url;
 }
 export default class Uploader extends PureComponent {
+  static getDerivedStateFromProps = (props, state) => {
+    return { ...state, fileList: props.fileList };
+  };
   state = {
-    fileList: [],
+    fileList: this.props.fileList || [],
   };
   handlePreview = () => {};
   handleChange = (args) => {
@@ -24,14 +27,17 @@ export default class Uploader extends PureComponent {
     }
   };
   onRemove = (file) => {
-    this.setState((state) => {
-      const index = state.fileList.indexOf(file);
-      const newFileList = state.fileList.slice();
-      newFileList.splice(index, 1);
-      return {
+    const { fileList } = this.state;
+    const index = fileList.indexOf(file);
+    const newFileList = fileList.slice();
+    newFileList.splice(index, 1);
+    if (_.isFunction(this.props.onChange)) {
+      this.props.onChange({ newFileList });
+    } else {
+      this.setState({
         fileList: newFileList,
-      };
-    });
+      });
+    }
   };
   beforeUpload = (file) => {
     file.url = getObjectURL(file);
