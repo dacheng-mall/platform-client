@@ -5,7 +5,21 @@ import { jump } from '../utils';
 import { setAuthority } from '../utils/authority';
 import { menu } from '../pages/_layouts/menuData';
 import { getQiniuToken } from '../services/app';
+import { setToken } from '../utils/request';
 
+const redirect = (menu) => {
+  const allow = _.find(menu, ({ authority }) => authority);
+  const makePath = (item, prefix = '/') => {
+    if (item.children && item.children.length > 0) {
+      return makePath(item.children[0], `/${item.path}`);
+    }
+    return `${prefix}${item.path}`;
+  };
+  if (allow) {
+    return makePath(allow);
+  }
+  return '/';
+};
 export default {
   namespace: 'app',
 
@@ -34,12 +48,15 @@ export default {
         // 用户在非根路径的页面刷新了, 如果sessionStorage有user的值就重置state里的user的值
         // 否则跳转登录界面
         const user = sessionStorage.getItem('user');
-        if (user) {
+        const token = sessionStorage.getItem('token');
+        if (user && token) {
+          yield setToken(() => `Bearer ${token}`);
           yield put({
             type: 'upState',
             payload: {
               user: JSON.parse(user),
               menu: menu(),
+              token,
             },
           });
         } else {
@@ -48,32 +65,19 @@ export default {
       }
     },
     *login({ payload }, { call, put, all }) {
-      const { data } = yield call(login);
-      const redirect = (menu) => {
-        const allow = _.find(menu, ({ authority }) => authority);
-        const makePath = (item, prefix = '/') => {
-          if (item.children && item.children.length > 0) {
-            return makePath(item.children[0], `/${item.path}`);
-          }
-          return `${prefix}${item.path}`;
-        };
-        if (allow) {
-          return makePath(allow);
-        }
-        return '/';
-      };
+      const { data } = yield call(login, payload);
       if (data) {
         const _menu = menu();
-        yield all([
-          put({
-            type: 'upState',
-            payload: { user: data, menu: _menu },
-          }),
-          jump(redirect(_menu)),
-        ]);
+        yield put({
+          type: 'upState',
+          payload: { ...data, menu: _menu },
+        });
+        yield setToken(() => `Bearer ${data.token}`);
+        yield jump(redirect(_menu));
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+        sessionStorage.setItem('token', data.token);
+        setAuthority(data.roles);
       }
-      sessionStorage.setItem('user', JSON.stringify(data));
-      setAuthority(data.roles);
     },
     *getQiniuToken(p, { call, put, select }) {
       const { deadline } = yield select(({ app }) => app.qiniu);
@@ -104,26 +108,25 @@ export default {
           token = uploadToken;
         }
       }
-      const { file, ns } = payload;
+      const { file } = payload;
       const keymaker = () => {
         const d = new Date().format('yyyyMMddhhmmss');
         const random = parseInt(Math.random() * 10000, 10);
         return d + random + file.name;
       };
-      
-      // var observable = qiniu.upload(file, keymaker(), token);
-      // var subscription = observable.subscribe(
-      //   (res) => {
-      //     console.log('subscription-next', res)
-      //   },
-      //   (res) => {
-      //     console.log('subscription-error', res)
-      //   },
-      //   (res) => {
-      //     console.log('subscription-complete', res)
 
-      //   }
-      // );
+      const observable = qiniu.upload(file, keymaker(), token);
+      observable.subscribe(
+        (res) => {
+          console.log('subscription-next', res);
+        },
+        (res) => {
+          console.log('subscription-error', res);
+        },
+        (res) => {
+          console.log('subscription-complete', res);
+        },
+      );
     },
     // *logout(p, { put, call }) {
     //   const { error } = yield call(logout);

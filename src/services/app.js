@@ -1,7 +1,7 @@
-import { get } from '../utils/request';
+import { get, post } from '../utils/request';
 
-export function login() {
-  return get('api/login');
+export function login(data) {
+  return post('v1/api/login', data);
 }
 export function getQiniuToken(){
   return get('http://localhost:3000/v1/qiniuToken')

@@ -3,13 +3,15 @@ import _ from 'lodash';
 import uri from 'url';
 // import cfg from '../../app/cfg';
 
-const credentials = 'include'; //include same-origin
+// const credentials = 'include'; //include same-origin
 const CONTENT_TYPE = 'Content-Type';
 const JSON_TYPE = 'application/json';
 
 // 后台API URI前端
 // let apiPrefix = cfg.api || 'api/';
 let apiPrefix = window.config.api;
+let apiPrefixLocalSSL = 'https://localhost:443/';
+let apiPrefixLocal = 'http://localhost:10010/';
 // token获取方法
 let getToken;
 
@@ -47,7 +49,7 @@ const DefaultOptions = {
   headers: {
     [CONTENT_TYPE]: JSON_TYPE
   },
-  credentials,
+  // credentials,
 };
 /**
  * 获取响应结果的媒体类型（Content-Type）
@@ -180,7 +182,7 @@ export default function request(url, { body, method, ...options }) {
     if (!options.headers) {
       options.headers = {};
     }
-    // options.headers.Authorization = token;
+    options.headers.Authorization = token;
   }
 
   let uriObj;
@@ -208,10 +210,14 @@ export default function request(url, { body, method, ...options }) {
     }
   }
   options.method = method;
-  let _url = apiPrefix + url;
-  if(_url.includes('3000')) {
-    _url = url;
+  let _url = url;
+  const VER = /^v\d\//
+  if(VER.test(_url)) {
+    _url = apiPrefixLocal + url.replace(VER, '');
   }
+  // if(!_url.includes('3000')) {
+  //   _url = apiPrefix + url;
+  // }
   return fetch(_url, options)
     .then(parseResponse)
     .then(checkStatus)

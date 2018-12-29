@@ -7,8 +7,10 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
     e.preventDefault();
     validateFields((err, val) => {
       if (!err) {
+        console.log('val', val)
         dispatch({
           type: 'app/login',
+          payload: val
         });
       }
     });
@@ -18,7 +20,7 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
       <div className={styles.formWrap}>
         <Form onSubmit={submit}>
           <Form.Item>
-            {getFieldDecorator('userName', {
+            {getFieldDecorator('username', {
               rules: [{ required: true, message: '请输入用户名' }],
             })(
               <Input
