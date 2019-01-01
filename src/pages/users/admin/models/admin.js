@@ -38,11 +38,11 @@ export default {
       });
     },
 
-    *create(p, { put, call, select }) {
-      const { editor, pagination, data: oldData } = yield select(({ admin }) => admin);
+    *editUser(p, { put, call, select }) {
+      const { editor, data: oldData } = yield select(({ admin }) => admin);
       let res;
       delete editor.createTime;
-      editor.roles = editor.roles.join(',');
+      // editor.roles = editor.roles.join(',');
       if (editor.id) {
         const { data } = yield call(updateAdmin, editor);
         res = data;
@@ -52,8 +52,14 @@ export default {
       }
       if (res) {
         message.success(`${editor.id ? '编辑' : '新建'}成功`);
-        const { data } = yield call(getAdmin, res);
-        console.log(data);
+        // let data = null;
+        // if(typeof res === 'object') {
+        //   // 编辑后返回了新的用户数据
+        //   data = res
+        // } else {
+        //   // 新建后返回新建的用户id
+        //   data = { data } = yield call(getAdmin, res);
+        // }
         yield put({
           type: 'upState',
           payload: {
