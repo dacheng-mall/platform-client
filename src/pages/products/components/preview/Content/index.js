@@ -3,9 +3,13 @@ import _ from 'lodash';
 import Text from './Text';
 import Img from './Img';
 import List from './List';
+import Empty from "../noneData";
 
 export default function Content(props){
   const {data = []} = props;
+  if(data.length < 1) {
+    return <Empty />
+  }
   return _.map(data, (d, i) => {
     switch(d.type){
       case 'text': {

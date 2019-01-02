@@ -2,6 +2,7 @@ import React from "react";
 import _ from 'lodash';
 import {Carousel} from 'antd';
 import styles from "./styles.less";
+import Empty from "./noneData";
 
 export default function Swiper (props) {
   const {video, images = [], width = 400} = props;
@@ -24,5 +25,5 @@ export default function Swiper (props) {
       </div>
     );
   }
-  return <div>暂无内容</div>
+  return <Empty text="暂无图片或视频" />
 }

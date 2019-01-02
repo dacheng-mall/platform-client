@@ -1,8 +1,8 @@
-import React, { PureComponent } from "react";
-import { connect } from "dva";
-import { Table, Switch, Button } from "antd";
-import { jump } from "../../utils";
-import styles from "./list.less";
+import React, { PureComponent } from 'react';
+import { connect } from 'dva';
+import { Table, Switch, Button } from 'antd';
+import { jump } from '../../utils';
+import styles from './list.less';
 
 class List extends PureComponent {
   columns = [
@@ -13,14 +13,14 @@ class List extends PureComponent {
       render: (t, r) => {
         return (
           <div className={styles.title}>
-            <img src={r.mainImage} title={t} />
+            <img src={r.mainImage} title={t} alt="" />
             <div className={styles.text}>
               <div className={styles.name}>{t}</div>
               {r.category}
             </div>
           </div>
         );
-      }
+      },
     },
     {
       key: 'price',
@@ -33,7 +33,7 @@ class List extends PureComponent {
       title: '状态',
       dataIndex: 'status',
       render(t) {
-        const change = checked => {
+        const change = (checked) => {
           console.log(checked);
         };
         return <Switch size="small" defaultChecked={t === 1} onChange={change} />;
@@ -47,34 +47,53 @@ class List extends PureComponent {
       render: (t) => {
         return (
           <div>
-            <Button onClick={this.edit.bind(null, t)} size="small" shape="circle" type="ghost" icon="edit" />
-            <Button onClick={this.remove.bind(null, t)} size="small" shape="circle" type="danger" icon="delete" />
+            <Button
+              onClick={this.edit.bind(null, t)}
+              size="small"
+              shape="circle"
+              type="ghost"
+              icon="edit"
+            />
+            <Button
+              onClick={this.remove.bind(null, t)}
+              size="small"
+              shape="circle"
+              type="danger"
+              icon="delete"
+            />
           </div>
         );
       },
       align: 'right',
     },
-  ]
+  ];
   edit = (id) => {
-    console.log(id);
-    jump(`/products/detail/${id}`);
-  }
-  remove = () => {}
+    if (id) {
+      jump(`/products/detail/${id}`);
+    } else {
+      jump(`/products/detail`);
+    }
+  };
+  remove = () => {};
   render() {
     return (
       <div className={styles.wrap}>
+        <Button type="primary" onClick={this.edit.bind(null, false)} icon="plus">
+          添加商品
+        </Button>
         <Table
           rowKey="id"
+          size="small"
           columns={this.columns}
           dataSource={this.props.list}
           locale={{ emptyText: '暂无数据' }}
         />
       </div>
-    )
+    );
   }
 }
 
-function mapStateToProps({products}){
+function mapStateToProps({ products }) {
   return products;
 }
 

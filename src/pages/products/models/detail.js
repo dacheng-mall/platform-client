@@ -5,34 +5,46 @@ import { fieldsChange } from '../../../utils/ui';
 export default {
   namespace: 'detail',
   state: {
-    editor: null,
+    editor: {},
+    errors: {},
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         const pn = ptrx('/products/detail/:id').exec(pathname);
+        console.log('id', pn);
+        let id;
         if (pn) {
-          const id = pn[1];
-          dispatch({
-            type: 'init',
-            id,
-          });
+          id = pn[1];
         }
+
+        dispatch({
+          type: 'init',
+          id,
+        });
       });
     },
   },
   effects: {
     *init({ id }, { call, put }) {
-      const { data } = yield call(getProduct, id);
-      yield new Promise(function(res) {
-        setTimeout(() => {
-          res();
-        }, 1000);
-      });
-      yield put({
-        type: 'upState',
-        payload: { editor: data },
-      });
+      if (id) {
+        const { data } = yield call(getProduct, id);
+        yield new Promise(function(res) {
+          setTimeout(() => {
+            res();
+          }, 1000);
+        });
+        yield put({
+          type: 'upState',
+          payload: { editor: data },
+        });
+      } else {
+        console.log('id', id);
+        yield put({
+          type: 'upState',
+          payload: { editor: {} },
+        });
+      }
     },
   },
   reducers: {
