@@ -4,8 +4,6 @@ const _checkAuthority = limitRoles => checkAuthority(limitRoles)(getAuthority())
 
 export const menu = () => {
   const admin = _checkAuthority(['admin']);
-  // const disable = _checkAuthority(['xxx']);
-  console.log('admin', admin)
   return [
     {
       name: '概览',

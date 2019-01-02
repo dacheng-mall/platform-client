@@ -17,6 +17,7 @@ export const FormItem = (props) => {
 };
 
 const EDITOR = 'editor';
+const ERROR = 'errors';
 
 export const mapPropsToFields = (props) => {
   const res = {};
@@ -44,28 +45,72 @@ export const mapPropsToFields = (props) => {
   });
   return res;
 };
-export const onFieldsChange = (ns) => (props, fields) => {
-  const [key, val] = Object.entries(fields)[0];
-  switch(key){
+export const onFieldsChange = (ns) => (props, field, fields) => {
+  const [key, val] = Object.entries(field)[0];
+  switch (key) {
     case 'status': {
-      fields[key].value = val.value ? '1' : '0';
+      field[key].value = val.value ? '1' : '0';
       break;
     }
     case 'roles': {
-      fields[key].value = typeof val.value === 'object' ? val.value.join(',') : val.value;
+      field[key].value = typeof val.value === 'object' ? val.value.join(',') : val.value;
+      break;
+    }
+    default: {
       break;
     }
   }
   props.dispatch({
     type: `${ns}/fieldsChange`,
-    payload: fields,
+    payload: { field, fields },
   });
 };
 export const fieldsChange = (state, { payload }) => {
-  _.forEach(payload, ({ name, dirty, value }) => {
+  _.forEach(payload.fields, ({ name, dirty, value, errors }) => {
     if (!dirty) {
       _.set(state[EDITOR], name, value);
     }
+    if (errors) {
+      _.set(state[ERROR], name, errors);
+    } else {
+      delete state[ERROR][name];
+    }
   });
   return { ...state };
+};
+export const initEditor = (values) => {
+  _.forEach(values, (value, key) => {
+    switch (key) {
+      case 'status': {
+        values[key] = value === '1' ? true : false;
+        break;
+      }
+      case 'roles': {
+        values[key] = value && value.split(',');
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
+  return values;
+};
+export const parseEditor = (values) => {
+  _.forEach(values, (value, key) => {
+    switch (key) {
+      case 'status': {
+        values[key] = value ? "1" : '0';
+        break;
+      }
+      case 'roles': {
+        values[key] = value && value.join(',');
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
+  return values;
 };

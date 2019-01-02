@@ -1,7 +1,6 @@
 import { get, post, put, del } from '../../../utils/request';
 
 export const getAdmins = ({ page, pageSize, total, pageCount, ...other }) => {
-  console.log(page, pageSize, other);
   return get(`v1/api/sys/user/${page}/${pageSize}`, other);
 };
 export const getAdmin = (id) => {

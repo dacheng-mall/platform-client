@@ -1,7 +1,20 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Table, Button, Icon, Switch, Modal, Form, Input, Radio, Checkbox } from 'antd';
-import { FormItem, mapPropsToFields, onFieldsChange } from '../../../utils/ui';
+import {
+  Row,
+  Col,
+  Table,
+  Button,
+  Icon,
+  Switch,
+  Modal,
+  Form,
+  Input,
+  Radio,
+  Checkbox,
+  Divider,
+} from 'antd';
+import { FormItem, mapPropsToFields } from '../../../utils/ui';
 class Admin extends PureComponent {
   state = {
     show: false,
@@ -33,11 +46,14 @@ class Admin extends PureComponent {
         key: 'status',
         title: '状态',
         dataIndex: 'status',
-        render(t) {
+        render: (t, {id, username}) => {
           const change = (checked) => {
-            console.log(checked);
+            this.props.dispatch({
+              type: 'admin/changeStatus',
+              payload: { id, username, status: checked ? '1' : '0' },
+            });
           };
-          return <Switch size="small" defaultChecked={t === '1'} onChange={change} />;
+          return <Switch size="small" checked={t === '1'} onChange={change} />;
         },
         align: 'center',
       },
@@ -49,19 +65,32 @@ class Admin extends PureComponent {
           return (
             <div>
               <Button
+                onClick={this.resetPW.bind(null, r)}
+                size="small"
+                shape="circle"
+                type="ghost"
+                icon="sync"
+              />
+              <Divider type="vertical" />
+              <Button
                 onClick={this.edit.bind(null, r)}
                 size="small"
                 shape="circle"
                 type="ghost"
                 icon="edit"
               />
-              <Button
-                onClick={this.remove.bind(null, t)}
-                size="small"
-                shape="circle"
-                type="danger"
-                icon="delete"
-              />
+              {r.username !== 'adm' ? (
+                <Fragment>
+                  <Divider type="vertical" />
+                  <Button
+                    onClick={this.remove.bind(null, t, r)}
+                    size="small"
+                    shape="circle"
+                    type="danger"
+                    icon="delete"
+                  />
+                </Fragment>
+              ) : null}
             </div>
           );
         },
@@ -69,16 +98,43 @@ class Admin extends PureComponent {
       },
     ];
   };
+  resetPW = ({ id, username }, e) => {
+    console.log(id, username);
+    e.preventDefault();
+    // this.props.dispatch({
+    //   type: 'admin/resetPW',
+    //   payload: { id, username },
+    // });
+    Modal.confirm({
+      title: '是否重置该用户密码?',
+      content: '密码将被重置为“111111”',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'admin/resetPW',
+          payload: { id, username },
+        });
+      },
+    });
+  };
   edit = (record, e) => {
     e.preventDefault();
     this.showModal(record);
   };
-  remove = (id, e) => {
+  remove = (id, data, e) => {
     e.preventDefault();
-    this.props.dispatch({
-      type: 'admin/remove',
-      id
-    })
+    Modal.confirm({
+      title: '是否删除用户?',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'admin/remove',
+          id,
+        });
+      },
+    });
+    // this.props.dispatch({
+    //   type: 'admin/remove',
+    //   id,
+    // });
   };
   showModal = (data) => {
     this.props.dispatch({
@@ -89,10 +145,12 @@ class Admin extends PureComponent {
     });
   };
   handleOk = () => {
-    this.props.form.validateFields((err) => {
-      if (!err) {
-        this.props.dispatch({
-          type: 'admin/create'
+    const { dispatch, form } = this.props;
+    form.validateFields((e, v) => {
+      if (!e) {
+        dispatch({
+          type: 'admin/editUser',
+          payload: v,
         });
       }
     });
@@ -112,7 +170,7 @@ class Admin extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const isNew = !this.props.editor || !this.props.editor.id
+    const isNew = !this.props.editor || !this.props.editor.id;
     return (
       <div>
         <Button onClick={this.showModal.bind(null, {})} type="primary">
@@ -145,22 +203,24 @@ class Admin extends PureComponent {
                 rules: [{ required: true, message: '必填项' }],
               })(<Input placeholder="请输入用户名" />)}
             </FormItem>
-            <FormItem label="密码">
-              {getFieldDecorator('password', {
-                rules: [{ required: isNew, message: '必填项' }],
-              })(
-                <Input
-                  addonAfter={
-                    <Icon
-                      onClick={this.switchType}
-                      type={this.state.shwoPassword ? 'eye-invisible' : 'eye'}
-                    />
-                  }
-                  type={this.state.shwoPassword ? '' : 'password'}
-                  placeholder="请输入密码"
-                />,
-              )}
-            </FormItem>
+            {isNew ? (
+              <FormItem label="密码">
+                {getFieldDecorator('password', {
+                  rules: [{ required: true, message: '必填项' }],
+                })(
+                  <Input
+                    addonAfter={
+                      <Icon
+                        onClick={this.switchType}
+                        type={this.state.shwoPassword ? 'eye-invisible' : 'eye'}
+                      />
+                    }
+                    type={this.state.shwoPassword ? '' : 'password'}
+                    placeholder="请输入密码"
+                  />,
+                )}
+              </FormItem>
+            ) : null}
             <FormItem label="性别">
               {getFieldDecorator('gender', {
                 rules: [{ required: true, message: '必填项' }],
@@ -217,6 +277,4 @@ class Admin extends PureComponent {
 function mapStateToProps({ admin }) {
   return admin;
 }
-export default connect(mapStateToProps)(
-  Form.create({ mapPropsToFields, onFieldsChange: onFieldsChange('admin') })(Admin),
-);
+export default connect(mapStateToProps)(Form.create({ mapPropsToFields })(Admin));

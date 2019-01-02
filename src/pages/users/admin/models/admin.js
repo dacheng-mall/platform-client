@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { getAdmins, createAdmin, updateAdmin, removeAdmin, getAdmin } from '../services';
-import { fieldsChange } from '../../../../utils/ui';
 import { message } from 'antd';
+import { getAdmins, createAdmin, updateAdmin, removeAdmin } from '../services';
+import { parseEditor } from '../../../../utils/ui';
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
 
@@ -11,6 +11,7 @@ export default {
     data: [],
     pagination: PAGE_DEF,
     editor: null,
+    errors: {},
   },
 
   subscriptions: {
@@ -37,29 +38,25 @@ export default {
         payload: data,
       });
     },
-
-    *editUser(p, { put, call, select }) {
-      const { editor, data: oldData } = yield select(({ admin }) => admin);
+    *editUser({ payload }, { call, select, put }) {
+      if (payload.username === 'adm') {
+        return false;
+      }
+      const { editor } = yield select(({ admin }) => admin);
       let res;
       delete editor.createTime;
-      // editor.roles = editor.roles.join(',');
+      const values = parseEditor(payload);
       if (editor.id) {
-        const { data } = yield call(updateAdmin, editor);
+        const { data } = yield call(updateAdmin, { ...editor, ...values });
         res = data;
       } else {
-        const { data } = yield call(createAdmin, editor);
+        const { data } = yield call(createAdmin, { ...editor, ...values });
         res = data;
       }
       if (res) {
-        message.success(`${editor.id ? '编辑' : '新建'}成功`);
-        // let data = null;
-        // if(typeof res === 'object') {
-        //   // 编辑后返回了新的用户数据
-        //   data = res
-        // } else {
-        //   // 新建后返回新建的用户id
-        //   data = { data } = yield call(getAdmin, res);
-        // }
+        yield put({
+          type: 'fetch',
+        });
         yield put({
           type: 'upState',
           payload: {
@@ -68,15 +65,50 @@ export default {
         });
       }
     },
-    *remove({ id }, { call, put }) {
+    *remove({ id }, { call, put, select }) {
       const { data } = yield call(removeAdmin, id);
-      console.log(data);
+      if (data) {
+        const list = yield select(({ admin }) => admin.data);
+        const newList = _.filter(list, ({ id }) => id !== data);
+        yield put({
+          type: 'upState',
+          payload: {
+            data: [...newList],
+          },
+        });
+      }
+    },
+    *resetPW(
+      {
+        payload: { id, username },
+      },
+      { call, put, select },
+    ) {
+      yield call(updateAdmin, { id, username, password: '111111' });
+    },
+    *changeStatus({ payload }, { call, put, select }) {
+      const { data } = yield call(updateAdmin, payload);
+      if (data) {
+        message.success('状态更新成功');
+        const list = yield select(({ admin }) => admin.data);
+        const newList = _.map(list, (item) => {
+          if (item.id === data.id) {
+            item.status = payload.status;
+          }
+          return item;
+        });
+        yield put({
+          type: 'upState',
+          payload: {
+            data: newList,
+          },
+        });
+      }
     },
   },
   reducers: {
     upState(state, { payload }) {
       return { ...state, ...payload };
     },
-    fieldsChange,
   },
 };
