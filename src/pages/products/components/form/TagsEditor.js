@@ -29,7 +29,8 @@ export default class TagsEditor extends PureComponent {
   };
   press = (e) => {
     e.preventDefault();
-    this.props.onChange([...this.props.value, e.target.value]);
+    const value = this.props.value || []
+    this.props.onChange([...value, e.target.value]);
     this.setState({
       inputVisible: false,
     });

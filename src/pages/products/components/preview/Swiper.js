@@ -6,10 +6,15 @@ import Empty from "./noneData";
 
 export default function Swiper (props) {
   const {video, images = [], width = 400} = props;
+  console.log('Swiper', video, images)
   const children = [];
 
-  if(video) {
-    children.unshift(<video className={styles.carouselItem} key={`video`} src={video.url} />);
+  if(video && video.url) {
+    let url = video.url;
+    if(typeof url === 'object') {
+      url = url.url
+    }
+    children.unshift(<video className={styles.carouselItem} key={`video`} src={url} />);
   }
   if(images.length > 0) {
     _.forEach(images, (img, i) => {

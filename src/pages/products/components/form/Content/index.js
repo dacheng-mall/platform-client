@@ -40,17 +40,16 @@ export default class ContEditor extends PureComponent {
     });
   };
   newElem = () => {
+    const value = this.props.value || []
+    this.props.onChange([
+      ...value,
+      { type: this.state.newElem, size: 30, padding: 10, align: 'left' },
+    ]);
     this.setState(
       {
         editor: '',
         newElem: 'text',
-      },
-      () => {
-        this.props.onChange([
-          ...this.props.value,
-          { type: this.state.newElem, size: 30, padding: 10, align: 'left' },
-        ]);
-      },
+      }
     );
   };
   editor = () => {

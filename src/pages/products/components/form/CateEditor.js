@@ -49,6 +49,8 @@ export default class CateEditor extends PureComponent {
   show = () => {
     this.setState({
       showInput: true,
+      content: '',
+      label: '',
     });
   };
   cancel = () => {
@@ -66,7 +68,7 @@ export default class CateEditor extends PureComponent {
     } else if (!content) {
       message.error('请输入分类说明内容');
     } else {
-      this.props.onChange([...value, { label, content }]);
+      this.props.onChange([...(value || []), { label, content }]);
       this.cancel();
     }
   };
@@ -96,7 +98,7 @@ export default class CateEditor extends PureComponent {
           <Collapse accordion>
             {_.map(value, (val, i) => (
               <Panel
-                key={`cateEditor_${i}`}
+                key={`infomation_${i}`}
                 header={
                   <Header
                     onRemove={this.remove}

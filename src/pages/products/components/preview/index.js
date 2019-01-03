@@ -7,7 +7,7 @@ import styles from './styles.less';
 import Empty from './noneData';
 
 export default function Preview({ data }) {
-  const { images, video, title, price, attributes, content, information = [] } = data || {};
+  const { images, video, title, price, attributes = [], content, information = [] } = data || {};
   return (
     <div className={styles.wrap}>
       <Swiper video={video} images={images} />
@@ -18,8 +18,8 @@ export default function Preview({ data }) {
         ) : (
           <Empty text="暂无价格" />
         )}
-        <Tags data={attributes} />
-        {information.length > 0 ? <Catrgories data={information} /> : null}
+        {attributes.length > 0 ? <Tags data={attributes} /> : <Empty text="暂无属性标签" />}
+        {information.length > 0 ? <Catrgories data={information} /> : <Empty text="暂无信息" />}
         <Content data={content} />
       </div>
     </div>

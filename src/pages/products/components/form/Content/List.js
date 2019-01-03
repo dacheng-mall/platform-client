@@ -33,7 +33,7 @@ function Icons({ index, isLast, onMove, onRemove }) {
 export default class ListEditor extends PureComponent {
   static getDerivedStateFromProps(props, state) {
     // 由于props.value.value是个引用变量, 所以重新赋值给state时需要浅拷贝
-    return { ...state, value: [...props.value.value] };
+    return { ...state, value: [...props.value.value || []] };
   }
 
   state = {
@@ -79,7 +79,6 @@ export default class ListEditor extends PureComponent {
   }
   newItem = (type, e) => {
     const { value } = e.target;
-    // console.log(value, type);
     this.setState({
       newItem: { ...this.state.newItem, [type]: value },
     });

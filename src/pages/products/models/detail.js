@@ -12,12 +12,10 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         const pn = ptrx('/products/detail/:id').exec(pathname);
-        console.log('id', pn);
         let id;
         if (pn) {
           id = pn[1];
         }
-
         dispatch({
           type: 'init',
           id,
@@ -39,7 +37,6 @@ export default {
           payload: { editor: data },
         });
       } else {
-        console.log('id', id);
         yield put({
           type: 'upState',
           payload: { editor: {} },

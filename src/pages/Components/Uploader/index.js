@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Upload, Icon } from 'antd';
+import { Upload, Icon, Button } from 'antd';
 import _ from 'lodash';
 
 function getObjectURL(file) {
@@ -13,6 +13,22 @@ function getObjectURL(file) {
   }
   return url;
 }
+
+const UploadButton = ({ type }) => {
+  if (!type || type === 'picture-card') {
+    return (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">上传</div>
+      </div>
+    );
+  }
+  return (
+    <Button icon="upload">
+      上传文件
+    </Button>
+  );
+};
 export default class Uploader extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
     return { ...state, fileList: props.fileList };
@@ -32,27 +48,21 @@ export default class Uploader extends PureComponent {
     const newFileList = fileList.slice();
     newFileList.splice(index, 1);
     if (_.isFunction(this.props.onChange)) {
-      this.props.onChange({ newFileList });
+      this.props.onChange({ fileList: newFileList });
     } else {
       this.setState({
         fileList: newFileList,
       });
     }
   };
-  beforeUpload = (file) => {
+  beforeUpload = (file, fileList) => {
     file.url = getObjectURL(file);
     this.setState(() => ({
-      fileList: [file],
+      fileList,
     }));
     return false;
   };
   render() {
-    const uploadButton = (
-      <div>
-        <Icon type="plus" />
-        <div className="ant-upload-text">上传</div>
-      </div>
-    );
     return (
       <Upload
         listType={this.props.listType || 'picture-card'}
@@ -63,9 +73,9 @@ export default class Uploader extends PureComponent {
         beforeUpload={this.beforeUpload}
         onRemove={this.onRemove}
       >
-        {this.state.fileList && this.state.fileList.length === (this.props.max || 1)
-          ? null
-          : uploadButton}
+        {this.state.fileList && this.state.fileList.length === (this.props.max || 1) ? null : (
+          <UploadButton type={this.props.listType} />
+        )}
       </Upload>
     );
   }

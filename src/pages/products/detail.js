@@ -5,6 +5,7 @@ import Preview from './components/preview';
 import TagsEditor from './components/form/TagsEditor';
 import CateEditor from './components/form/CateEditor';
 import Content from './components/form/Content';
+import Video from './components/form/Video';
 
 import styles from './detail.less';
 import { goBack } from '../../utils';
@@ -40,6 +41,11 @@ class Detail extends PureComponent {
           </div>
           <div className={styles.form}>
             <Form onSubmit={this.submit} layout="horizontal">
+              <FormItem label="视频">
+                {getFieldDecorator('video', {
+                  rules: [{ required: true, message: '必填项' }],
+                })(<Video />)}
+              </FormItem>
               <FormItem label="商品标题">
                 {getFieldDecorator('title', {
                   rules: [{ required: true, message: '必填项' }],
@@ -52,7 +58,7 @@ class Detail extends PureComponent {
               </FormItem>
               <FormItem label="标签">{getFieldDecorator('attributes')(<TagsEditor />)}</FormItem>
               <FormItem label="分类说明">
-                {getFieldDecorator('categories')(<CateEditor />)}
+                {getFieldDecorator('information')(<CateEditor />)}
               </FormItem>
               <FormItem label="图文内容">
                 {getFieldDecorator('content')(<Content />)}
