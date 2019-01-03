@@ -52,7 +52,6 @@ export default {
       {
         type: 'image',
         value: "@image('128x128', '#00405d', '#000', 'contImg')",
-        height: 300,
       },
       {
         type: 'list',
@@ -66,7 +65,6 @@ export default {
       {
         type: 'image',
         value: "@image('128x64', '#00405d', '#000', 'contImg')",
-        height: 300,
       },
     ],
   }),

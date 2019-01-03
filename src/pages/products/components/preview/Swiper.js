@@ -6,7 +6,6 @@ import Empty from "./noneData";
 
 export default function Swiper (props) {
   const {video, images = [], width = 400} = props;
-  console.log('Swiper', video, images)
   const children = [];
 
   if(video && video.url) {

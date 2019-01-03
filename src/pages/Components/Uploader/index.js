@@ -35,14 +35,18 @@ export default class Uploader extends PureComponent {
       return [];
     }
     const res = /\w*\.\w*$/.exec(value);
-    return [
-      {
-        uid: `${res.input}_${type}`,
-        name: res[0],
-        status: 'done',
-        url: res.input,
-      },
-    ];
+    // todo 这个方法有问题, value的值的格式
+    if(res) {
+      return [
+        {
+          uid: `${res.input}_${type}`,
+          name: res[0],
+          status: 'done',
+          url: res.input,
+        },
+      ];
+    }
+    return []
   };
   state = {
     fileList: this.props.fileList || [],

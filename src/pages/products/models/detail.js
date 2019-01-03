@@ -45,6 +45,7 @@ export default {
     },
     *submit({ payload }, { call, put }) {
       yield console.log('payload', payload);
+      // todo 序列化图片和视频的数据结构
     },
   },
   reducers: {
