@@ -6,6 +6,7 @@ import TagsEditor from './components/form/TagsEditor';
 import CateEditor from './components/form/CateEditor';
 import Content from './components/form/Content';
 import Video from './components/form/Video';
+import Images from './components/form/Images';
 
 import styles from './detail.less';
 import { goBack } from '../../utils';
@@ -19,7 +20,10 @@ class Detail extends PureComponent {
     const { validateFields } = this.props.form;
     validateFields((errors, values) => {
       if (!errors) {
-        console.log(values);
+        this.props.dispatch({
+          type: 'detail/submit',
+          payload: values,
+        });
       }
     });
   };
@@ -31,7 +35,7 @@ class Detail extends PureComponent {
           <Button icon="left" onClick={this.back}>
             返回
           </Button>
-          <Button icon="check" type="primary">
+          <Button icon="check" type="primary" onClick={this.submit}>
             提交
           </Button>
         </div>
@@ -40,11 +44,12 @@ class Detail extends PureComponent {
             <Preview data={this.props.editor} />
           </div>
           <div className={styles.form}>
-            <Form onSubmit={this.submit} layout="horizontal">
-              <FormItem label="视频">
-                {getFieldDecorator('video', {
+            <Form layout="horizontal">
+              <FormItem label="视频">{getFieldDecorator('video')(<Video />)}</FormItem>
+              <FormItem label="图片">
+                {getFieldDecorator('images', {
                   rules: [{ required: true, message: '必填项' }],
-                })(<Video />)}
+                })(<Images />)}
               </FormItem>
               <FormItem label="商品标题">
                 {getFieldDecorator('title', {
@@ -60,9 +65,7 @@ class Detail extends PureComponent {
               <FormItem label="分类说明">
                 {getFieldDecorator('information')(<CateEditor />)}
               </FormItem>
-              <FormItem label="图文内容">
-                {getFieldDecorator('content')(<Content />)}
-              </FormItem>
+              <FormItem label="图文内容">{getFieldDecorator('content')(<Content />)}</FormItem>
             </Form>
           </div>
         </div>

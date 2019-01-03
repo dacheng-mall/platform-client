@@ -23,15 +23,26 @@ const UploadButton = ({ type }) => {
       </div>
     );
   }
-  return (
-    <Button icon="upload">
-      上传文件
-    </Button>
-  );
+  return <Button icon="upload">上传文件</Button>;
 };
 export default class Uploader extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
     return { ...state, fileList: props.fileList };
+  };
+  static initFileList = (value, type) => {
+    // 将实际值转换成Uplaod组件中filelist属性可以解析的值
+    if (!value || typeof value !== 'string') {
+      return [];
+    }
+    const res = /\w*\.\w*$/.exec(value);
+    return [
+      {
+        uid: `${res.input}_${type}`,
+        name: res[0],
+        status: 'done',
+        url: res.input,
+      },
+    ];
   };
   state = {
     fileList: this.props.fileList || [],
@@ -39,6 +50,7 @@ export default class Uploader extends PureComponent {
   handlePreview = () => {};
   handleChange = (args) => {
     if (_.isFunction(this.props.onChange)) {
+      args.fileList = args.fileList.slice(0, this.props.max || 1)
       this.props.onChange(args);
     }
   };
@@ -55,7 +67,7 @@ export default class Uploader extends PureComponent {
       });
     }
   };
-  beforeUpload = (file, fileList) => {
+  beforeUpload = (file, fileList = []) => {
     file.url = getObjectURL(file);
     this.setState(() => ({
       fileList,
@@ -66,6 +78,7 @@ export default class Uploader extends PureComponent {
     return (
       <Upload
         listType={this.props.listType || 'picture-card'}
+        multiple={this.props.multiple}
         fileList={this.state.fileList}
         onPreview={this.handlePreview}
         onChange={this.handleChange}

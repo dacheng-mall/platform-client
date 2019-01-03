@@ -43,6 +43,9 @@ export default {
         });
       }
     },
+    *submit({ payload }, { call, put }) {
+      yield console.log('payload', payload);
+    },
   },
   reducers: {
     upState(state, { payload }) {
