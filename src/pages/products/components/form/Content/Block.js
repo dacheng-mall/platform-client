@@ -41,12 +41,16 @@ export default function Block(props) {
             <Icon onClick={up} type="caret-up" style={{ color: '#40a9ff', fontSize: '0.2rem' }} />
           ) : null}
           {isLast ? null : (
-            <Icon onClick={down} type="caret-down" style={{ color: '#40a9ff', fontSize: '0.2rem' }} />
+            <Icon
+              onClick={down}
+              type="caret-down"
+              style={{ color: '#40a9ff', fontSize: '0.2rem' }}
+            />
           )}
           <Icon onClick={remove} type="delete" style={{ color: '#f66', fontSize: '0.2rem' }} />
         </div>
       </div>
-      {props.children}
+      <div className={styles.children}>{props.children}</div>
     </div>
   );
 }

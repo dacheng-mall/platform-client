@@ -40,6 +40,7 @@ export default {
     },
     *editUser({ payload }, { call, select, put }) {
       if (payload.username === 'adm') {
+        message.warning('不能修改管理员的信息')
         return false;
       }
       const { editor } = yield select(({ admin }) => admin);

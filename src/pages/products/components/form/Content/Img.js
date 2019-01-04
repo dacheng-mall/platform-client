@@ -1,19 +1,21 @@
-import React, { PureComponent, Fragment } from 'react';
-import _ from 'lodash';
-import { Input, Button, Collapse, Icon, message } from 'antd';
-import styles from './styles.less';
+import React, { PureComponent } from 'react';
 import Uploader from '../../../../Components/Uploader';
 
+// const 
 export default class Img extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
-    console.log(props, state);
-    if(props.value && props.value.value) {
-      return { ...state, fileList: Uploader.initFileList(props.value.value) };
+    if (props.value && props.value.value) {
+      return { ...state, fileList: Uploader.initSingleFile(props.value.value) };
     }
-    return { ...state };
+    return { ...state, fileList: [] };
   };
-  state = {};
-  onChange = () => {};
+  state = {
+    fileList: [],
+  };
+  onChange = ({ fileList }) => {
+    const file = fileList[0]
+    this.props.onChange(file || null, `[${this.props.index}].value`);
+  };
   render() {
     return <Uploader onChange={this.onChange} fileList={this.state.fileList} />;
   }

@@ -14,7 +14,7 @@ export default class VideoEditor extends PureComponent {
         if (typeof val === 'object') {
           value[key] = [val];
         } else if (typeof val === 'string') {
-          value[key] = Uploader.initFileList(val);
+          value[key] = Uploader.initSingleFile(val);
         }
       } else {
         value[key] = [];

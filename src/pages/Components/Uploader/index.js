@@ -29,24 +29,34 @@ export default class Uploader extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
     return { ...state, fileList: props.fileList };
   };
-  static initFileList = (value, type) => {
+  static initSingleFile = (value, type) => {
     // 将实际值转换成Uplaod组件中filelist属性可以解析的值
-    if (!value || typeof value !== 'string') {
-      return [];
-    }
-    const res = /\w*\.\w*$/.exec(value);
-    // todo 这个方法有问题, value的值的格式
-    if(res) {
+    if (value && typeof value === 'string') {
+      const res = value.split('/');
       return [
         {
-          uid: `${res.input}_${type}`,
-          name: res[0],
+          uid: `${value}_${type}`,
+          name: res[res.length - 1],
           status: 'done',
-          url: res.input,
+          url: value,
         },
       ];
     }
-    return []
+    if(value && typeof value === 'object') {
+      if (value.lastModified) {
+        // 这是新上传的
+        return [value];
+      }
+      // 这是本来就有的
+      return [{
+        uid: `old`,
+        name: value.name,
+        url: value.url,
+        status: 'done',
+        dontTouch: true,
+      }];
+    }
+    return [];
   };
   state = {
     fileList: this.props.fileList || [],
@@ -54,7 +64,7 @@ export default class Uploader extends PureComponent {
   handlePreview = () => {};
   handleChange = (args) => {
     if (_.isFunction(this.props.onChange)) {
-      args.fileList = args.fileList.slice(0, this.props.max || 1)
+      args.fileList = args.fileList.slice(0, this.props.max || 1);
       this.props.onChange(args);
     }
   };
@@ -80,20 +90,22 @@ export default class Uploader extends PureComponent {
   };
   render() {
     return (
-      <Upload
-        listType={this.props.listType || 'picture-card'}
-        multiple={this.props.multiple}
-        fileList={this.state.fileList}
-        onPreview={this.handlePreview}
-        onChange={this.handleChange}
-        customRequest={this.customRequest}
-        beforeUpload={this.beforeUpload}
-        onRemove={this.onRemove}
-      >
-        {this.state.fileList && this.state.fileList.length === (this.props.max || 1) ? null : (
-          <UploadButton type={this.props.listType} />
-        )}
-      </Upload>
+      <div>
+        <Upload
+          listType={this.props.listType || 'picture-card'}
+          multiple={this.props.multiple}
+          fileList={this.state.fileList}
+          onPreview={this.handlePreview}
+          onChange={this.handleChange}
+          customRequest={this.customRequest}
+          beforeUpload={this.beforeUpload}
+          onRemove={this.onRemove}
+        >
+          {this.state.fileList && this.state.fileList.length === (this.props.max || 1) ? null : (
+            <UploadButton type={this.props.listType} />
+          )}
+        </Upload>
+      </div>
     );
   }
 }

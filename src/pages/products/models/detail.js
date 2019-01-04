@@ -43,9 +43,14 @@ export default {
         });
       }
     },
-    *submit({ payload }, { call, put }) {
-      yield console.log('payload', payload);
-      // todo 序列化图片和视频的数据结构
+    *submit(p, { call, put, select }) {
+      const { editor, errors } = yield select(({ detail }) => detail);
+      const errorKeys = Object.keys(errors);
+      if (errorKeys.length > 0) {
+        return;
+      }
+      // todo 上传图片和序列化商品数据在这里进行
+      console.log('需要提交的数据', editor);
     },
   },
   reducers: {

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import _ from 'lodash';
 import { Form, Button, Input, InputNumber } from 'antd';
 import Preview from './components/preview';
 import TagsEditor from './components/form/TagsEditor';
@@ -20,15 +21,22 @@ class Detail extends PureComponent {
     const { validateFields } = this.props.form;
     validateFields((errors, values) => {
       if (!errors) {
-        this.props.dispatch({
-          type: 'detail/submit',
-          payload: values,
-        });
+        
       }
     });
+    this.props.dispatch({
+      type: 'detail/submit'
+    });
+  };
+  parseErrorMessage = (error) => {
+    if (error) {
+      return _.map(error, ({ message }, i) => `${i !== 0 ? ',' : ''}${message}`);
+    }
+    return null;
   };
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { errors } = this.props;
     return (
       <div className={styles.wrap}>
         <div className={styles.header}>
@@ -46,17 +54,29 @@ class Detail extends PureComponent {
           <div className={styles.form}>
             <Form layout="horizontal">
               <FormItem label="视频">{getFieldDecorator('video')(<Video />)}</FormItem>
-              <FormItem label="图片">
+              <FormItem
+                label="图片"
+                validateStatus={errors.images ? 'error' : ''}
+                help={this.parseErrorMessage(errors.images)}
+              >
                 {getFieldDecorator('images', {
                   rules: [{ required: true, message: '必填项' }],
                 })(<Images />)}
               </FormItem>
-              <FormItem label="商品标题">
+              <FormItem
+                label="商品标题"
+                validateStatus={errors.title ? 'error' : ''}
+                help={this.parseErrorMessage(errors.title)}
+              >
                 {getFieldDecorator('title', {
                   rules: [{ required: true, message: '必填项' }],
                 })(<Input placeholder="请输入商品标题" />)}
               </FormItem>
-              <FormItem label="商品单价(元)">
+              <FormItem
+                label="商品单价(元)"
+                validateStatus={errors.price ? 'error' : ''}
+                help={this.parseErrorMessage(errors.price)}
+              >
                 {getFieldDecorator('price', {
                   rules: [{ required: true, message: '必填项' }],
                 })(<InputNumber placeholder="请输入商品单价" />)}
