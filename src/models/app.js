@@ -116,6 +116,7 @@ export default {
       };
 
       const observable = qiniu.upload(file, keymaker(), token);
+      
       observable.subscribe(
         (res) => {
           console.log('subscription-next', res);

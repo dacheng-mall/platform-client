@@ -8,7 +8,6 @@ import CateEditor from './components/form/CateEditor';
 import Content from './components/form/Content';
 import Video from './components/form/Video';
 import Images from './components/form/Images';
-
 import styles from './detail.less';
 import { goBack } from '../../utils';
 import { FormItem, mapPropsToFields, onFieldsChange } from '../../utils/ui';
@@ -19,11 +18,7 @@ class Detail extends PureComponent {
   };
   submit = () => {
     const { validateFields } = this.props.form;
-    validateFields((errors, values) => {
-      if (!errors) {
-        
-      }
-    });
+    validateFields();
     this.props.dispatch({
       type: 'detail/submit'
     });

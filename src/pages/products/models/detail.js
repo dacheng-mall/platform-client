@@ -1,6 +1,7 @@
 import ptrx from 'path-to-regexp';
 import { getProduct } from '../services';
 import { fieldsChange } from '../../../utils/ui';
+import { upload } from '../../../utils';
 
 export default {
   namespace: 'detail',
@@ -43,14 +44,20 @@ export default {
         });
       }
     },
-    *submit(p, { call, put, select }) {
+    *submit(p, { call, put, select, all }) {
       const { editor, errors } = yield select(({ detail }) => detail);
       const errorKeys = Object.keys(errors);
       if (errorKeys.length > 0) {
         return;
       }
+      
+      // const res3 = yield all([
+      //   upload(null, 3000, 3000),
+      //   upload(null, 1000, 1000),
+      //   upload(null, 2000, 2000),
+      // ])
       // todo 上传图片和序列化商品数据在这里进行
-      console.log('需要提交的数据', editor);
+      // console.log('需要提交的数据', res3);
     },
   },
   reducers: {

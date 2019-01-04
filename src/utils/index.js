@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import uri from 'url';
 import router from 'umi/router';
+import * as qiniu from 'qiniu-js';
+import { getQiniuToken } from '../services/app';
 
 export const jump = (pathname, search, state) => {
   pathname = _.startsWith(pathname, '/') ? pathname : '/' + pathname;
@@ -70,4 +72,59 @@ Date.prototype.format = function(fmt) {
     }
   }
   return fmt;
+};
+
+export const getData = (key) => {
+  const res = sessionStorage.getItem(key);
+  if (res) {
+    return JSON.parse(res);
+  }
+  return null;
+};
+export const setData = (key, data) => {
+  if (sessionStorage && data !== undefined) {
+    let value;
+    switch (typeof data) {
+      case 'object': {
+        if (data !== null) {
+          value = JSON.stringify(data);
+        }
+        break;
+      }
+      default: {
+        value = data;
+        break;
+      }
+    }
+    sessionStorage.setItem(key, value);
+  }
+};
+
+export const upload = async function(file, delay = 3000, resD) {
+  const { uploadToken, deadline } = getData('qiniu') || {};
+  const now = new Date().valueOf();
+  let token = uploadToken;
+  if (!deadline || deadline <= now) {
+    const { data } = await getQiniuToken();
+    if (data) {
+      data.deadline = now + data.deadline * 1000;
+      setData('qiniu', data);
+    }
+    token = data.uploadToken;
+  }
+  if (file) {
+    const keymaker = () => {
+      const d = new Date().format('yyyyMMddhhmmss');
+      const random = parseInt(Math.random() * 10000, 10);
+      return d + random + file.name;
+    };
+
+    const observable = qiniu.upload(file, keymaker(), token);
+    console.log(observable);
+  }
+  return new Promise((res) => {
+    setTimeout(() => {
+      res(resD)
+    }, delay)
+  })
 };
