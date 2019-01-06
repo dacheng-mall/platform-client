@@ -1,7 +1,8 @@
 import { get, post } from '../../utils/request';
 
 export const addProducts = (data) => {
-  return post('api/sys/product', data)
+  console.log('addPro-services', data)
+  return post('v1/api/sys/product', data)
 }
 export const getProducts = (page) => {
   return get('api/products', page)

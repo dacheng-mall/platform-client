@@ -100,7 +100,7 @@ export const setData = (key, data) => {
   }
 };
 
-export const upload = async function(file, delay = 3000, resD) {
+export const upload = (file) => async function() {
   const { uploadToken, deadline } = getData('qiniu') || {};
   const now = new Date().valueOf();
   let token = uploadToken;
@@ -116,15 +116,15 @@ export const upload = async function(file, delay = 3000, resD) {
     const keymaker = () => {
       const d = new Date().format('yyyyMMddhhmmss');
       const random = parseInt(Math.random() * 10000, 10);
-      return d + random + file.name;
+      return `${d}_${random}__${file.name}`;
     };
 
     const observable = qiniu.upload(file, keymaker(), token);
-    console.log(observable);
+    return new Promise((res, rej) => {
+      observable.subscribe({
+        error: err => rej(err),
+        complete: data => res(data),
+      })
+    })
   }
-  return new Promise((res) => {
-    setTimeout(() => {
-      res(resD)
-    }, delay)
-  })
 };

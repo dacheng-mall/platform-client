@@ -6,7 +6,7 @@ import Uploader from '../../../Components/Uploader';
 export default class VideoEditor extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
     if (!props.value) {
-      return { ...state, url: [], poster: [] };
+      return { ...state, name: [], poster: [] };
     }
     const value = {};
     _.forEach(props.value, (val, key) => {
@@ -41,8 +41,8 @@ export default class VideoEditor extends PureComponent {
           <h3 className={styles.videoTitle}>视频文件</h3>
           <Uploader
             listType="text"
-            onChange={this.onChange.bind(null, 'url')}
-            fileList={this.state.url}
+            onChange={this.onChange.bind(null, 'name')}
+            fileList={this.state.name}
           />
         </div>
       </div>

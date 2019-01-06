@@ -8,8 +8,8 @@ export default function Swiper (props) {
   const {video, images = [], width = 400} = props;
   const children = [];
 
-  if(video && video.url) {
-    let url = video.url;
+  if(video && video.name) {
+    let url = video.name;
     if(typeof url === 'object') {
       url = url.url
     }

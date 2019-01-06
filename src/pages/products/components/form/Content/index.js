@@ -42,9 +42,19 @@ export default class ContEditor extends PureComponent {
   };
   newElem = () => {
     const value = this.props.value || []
+    const textDefaultAttr = { size: 30, padding: 10, align: 'left' };
+    let changeAttr = {
+      type: this.state.newElem
+    }
+    if(this.state.newElem === 'text') {
+      changeAttr = {
+        ...changeAttr,
+        ...textDefaultAttr
+      }
+    }
     this.props.onChange([
       ...value,
-      { type: this.state.newElem, size: 30, padding: 10, align: 'left' },
+      changeAttr,
     ]);
     this.setState(
       {
@@ -68,7 +78,7 @@ export default class ContEditor extends PureComponent {
               <Button type="ghost" onClick={this.showEditor.bind(null, '')}>
                 取消
               </Button>
-              <Button type="primary" onClick={this.newElem.bind(null, '')}>
+              <Button type="primary" onClick={this.newElem}>
                 下一步
               </Button>
             </ButtonGroup>
