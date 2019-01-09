@@ -100,31 +100,32 @@ export const setData = (key, data) => {
   }
 };
 
-export const upload = (file) => async function() {
-  const { uploadToken, deadline } = getData('qiniu') || {};
-  const now = new Date().valueOf();
-  let token = uploadToken;
-  if (!deadline || deadline <= now) {
-    const { data } = await getQiniuToken();
-    if (data) {
-      data.deadline = now + data.deadline * 1000;
-      setData('qiniu', data);
+export const upload = (file) =>
+  async function() {
+    const { uploadToken, deadline } = getData('qiniu') || {};
+    const now = new Date().valueOf();
+    let token = uploadToken;
+    if (!deadline || deadline <= now) {
+      const { data } = await getQiniuToken();
+      if (data) {
+        data.deadline = now + data.deadline * 1000;
+        setData('qiniu', data);
+      }
+      token = data.uploadToken;
     }
-    token = data.uploadToken;
-  }
-  if (file) {
-    const keymaker = () => {
-      const d = new Date().format('yyyyMMddhhmmss');
-      const random = parseInt(Math.random() * 10000, 10);
-      return `${d}_${random}__${file.name}`;
-    };
+    if (file) {
+      const keymaker = () => {
+        const d = new Date().format('yyyyMMddhhmmss');
+        const random = parseInt(Math.random() * 10000, 10);
+        return `${d}_${random}__${file.name}`;
+      };
 
-    const observable = qiniu.upload(file, keymaker(), token);
-    return new Promise((res, rej) => {
-      observable.subscribe({
-        error: err => rej(err),
-        complete: data => res(data),
-      })
-    })
-  }
-};
+      const observable = qiniu.upload(file, keymaker(), token);
+      return new Promise((res, rej) => {
+        observable.subscribe({
+          error: (err) => rej(err),
+          complete: (data) => res(data),
+        });
+      });
+    }
+  };
