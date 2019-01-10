@@ -4,19 +4,21 @@ import { Table, Switch, Button } from 'antd';
 import { jump } from '../../utils';
 import styles from './list.less';
 
+const { source } = require('../../../setting');
+
 class List extends PureComponent {
   columns = [
     {
-      key: 'name',
+      key: 'title',
       title: '名称',
-      dataIndex: 'name',
+      dataIndex: 'title',
       render: (t, r) => {
         return (
           <div className={styles.title}>
-            <img src={r.mainImage} title={t} alt="" />
+            <img src={`${source}${r.mainImageUrl}`} title={t} alt="" className={styles.mainImage} />
             <div className={styles.text}>
               <div className={styles.name}>{t}</div>
-              {r.category}
+              {r.category.name || '无分类'}
             </div>
           </div>
         );
@@ -85,7 +87,7 @@ class List extends PureComponent {
           rowKey="id"
           size="small"
           columns={this.columns}
-          dataSource={this.props.list}
+          dataSource={this.props.data}
           locale={{ emptyText: '暂无数据' }}
         />
       </div>
@@ -94,6 +96,7 @@ class List extends PureComponent {
 }
 
 function mapStateToProps({ products }) {
+  console.log('products', products);
   return products;
 }
 

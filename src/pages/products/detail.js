@@ -63,7 +63,7 @@ class Detail extends PureComponent {
                 validateStatus={errors.title ? 'error' : ''}
                 help={this.parseErrorMessage(errors.title)}
               >
-                {getFieldDecorator('name', {
+                {getFieldDecorator('title', {
                   rules: [{ required: true, message: '必填项' }],
                 })(<Input placeholder="请输入商品标题" />)}
               </FormItem>

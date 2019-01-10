@@ -1,3 +1,4 @@
+/* eslint-disable */
 import _ from 'lodash';
 import uri from 'url';
 import router from 'umi/router';
@@ -43,7 +44,6 @@ export const icon = (name, size) => {
   }
   return <i className={name} style={{ fontSize: size || '22px' }} />;
 };
-
 Date.prototype.format = function(fmt) {
   const o = {
     'y+': this.getFullYear(),

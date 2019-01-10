@@ -1,12 +1,11 @@
 import { get, post } from '../../utils/request';
 
 export const addProducts = (data) => {
-  console.log('addPro-services', data)
   return post('v1/api/sys/product', data)
 }
-export const getProducts = (page) => {
-  return get('api/products', page)
+export const getProducts = ({page = 1, pageSize = 10} = {}) => {
+  return get(`v1/api/sys/product/${page}/${pageSize}`)
 }
 export const getProduct = (id) => {
-  return get('api/product', id)
+  return get('v1/api/sys/product', {id})
 }

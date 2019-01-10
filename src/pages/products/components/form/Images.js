@@ -11,6 +11,7 @@ export default class ImageEditor extends PureComponent {
         return data;
       }
       // 这是本来就有的
+      console.log('这是本来就有的')
       return {
         uid: `old_${i}`,
         name: data.name,

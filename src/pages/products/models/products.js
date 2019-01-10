@@ -1,5 +1,10 @@
 import { getProducts } from '../services';
 
+const DEFAULT_PAGE = {
+  page: 1,
+  pageSize: 10
+}
+
 export default {
   namespace: 'products',
   state: {
@@ -27,8 +32,8 @@ export default {
   },
 
   effects: {
-    *init({ paylaod }, { put, call, select }) {
-      const { data } = yield call(getProducts);
+    *init({ paylaod = DEFAULT_PAGE }, { put, call, select }) {
+      const { data } = yield call(getProducts, paylaod);
       yield put({
         type: 'upState',
         payload: data,
