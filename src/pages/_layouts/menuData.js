@@ -39,6 +39,11 @@ export const menu = () => {
       path: 'products',
       children: [
         {
+          name: '商品分类管理',
+          path: 'categories',
+          authority: admin,
+        },
+        {
           name: '自营商品',
           path: 'self',
           authority: admin,

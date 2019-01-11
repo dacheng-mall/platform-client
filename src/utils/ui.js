@@ -20,6 +20,7 @@ const EDITOR = 'editor';
 const ERROR = 'errors';
 
 export const mapPropsToFields = (props) => {
+  console.log('mapPropsToFields', props)
   const res = {};
   _.forEach(props[EDITOR], (value, key) => {
     switch (key) {

@@ -15,3 +15,16 @@ export const getProducts = ({ page = 1, pageSize = 10 } = {}) => {
 export const getProduct = (id) => {
   return get('v1/api/sys/product', { id });
 };
+// 分类
+export const getCategories = ({ page = 1, pageSize = 10 } = {}) => {
+  return get(`v1/api/sys/productCategary/${page}/${pageSize}`);
+};
+export const getCate = () => {
+  return get(`v1/api/sys/productCategary`);
+};
+export const addCate = () => {
+  return post(`v1/api/sys/productCategary`);
+};
+export const updateCate = () => {
+  return put(`v1/api/sys/productCategary`);
+};

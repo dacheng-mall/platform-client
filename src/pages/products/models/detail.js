@@ -4,6 +4,7 @@ import { getProduct, addProducts, updateProducts } from '../services';
 import { fieldsChange } from '../../../utils/ui';
 import { upload } from '../../../utils';
 import { source } from '../../../../setting';
+import { message } from 'antd';
 
 export default {
   namespace: 'detail',
@@ -176,6 +177,7 @@ export default {
       } else {
         const { data } = yield call(addProducts, editor);
         if (data) {
+          message.success('新建商品成功')
           yield put({
             type: 'init',
             id: editor.id,

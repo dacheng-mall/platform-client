@@ -15,4 +15,8 @@ module.exports = [
     path: '/products/detail',
     component: 'products/detail'
   },
+  {
+    path: '/products/categories',
+    component: 'products/categories'
+  },
 ]

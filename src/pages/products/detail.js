@@ -20,13 +20,12 @@ class Detail extends PureComponent {
     const { validateFields } = this.props.form;
     validateFields();
     this.props.dispatch({
-      type: 'detail/submit'
+      type: 'detail/submit',
     });
   };
   test = () => {
-    
     this.props.dispatch({
-      type: 'detail/test'
+      type: 'detail/test',
     });
   };
   parseErrorMessage = (error) => {
@@ -54,6 +53,22 @@ class Detail extends PureComponent {
           </div>
           <div className={styles.form}>
             <Form layout="horizontal">
+              <FormItem
+                label="商品标题"
+                validateStatus={errors.title ? 'error' : ''}
+                help={this.parseErrorMessage(errors.title)}
+              >
+                {getFieldDecorator('title', {
+                  rules: [{ required: true, message: '必填项' }],
+                })(<Input placeholder="请输入商品标题" />)}
+              </FormItem>
+              <FormItem
+                label="商品编码"
+                validateStatus={errors.sn ? 'error' : ''}
+                help={this.parseErrorMessage(errors.sn)}
+              >
+                {getFieldDecorator('sn')(<Input placeholder="请输入商品编码" style={{width: '2rem'}} />)}
+              </FormItem>
               <FormItem label="视频">{getFieldDecorator('video')(<Video />)}</FormItem>
               <FormItem
                 label="图片"
@@ -63,15 +78,6 @@ class Detail extends PureComponent {
                 {getFieldDecorator('images', {
                   rules: [{ required: true, message: '必填项' }],
                 })(<Images />)}
-              </FormItem>
-              <FormItem
-                label="商品标题"
-                validateStatus={errors.title ? 'error' : ''}
-                help={this.parseErrorMessage(errors.title)}
-              >
-                {getFieldDecorator('title', {
-                  rules: [{ required: true, message: '必填项' }],
-                })(<Input placeholder="请输入商品标题" />)}
               </FormItem>
               <FormItem
                 label="商品单价(元)"
@@ -86,9 +92,11 @@ class Detail extends PureComponent {
               <FormItem label="分类说明">
                 {getFieldDecorator('information')(<CateEditor />)}
               </FormItem>
-              <FormItem label="图文内容">{getFieldDecorator('content', {
-                rules: [{ required: true, message: '必填项' }],
-              })(<Content />)}</FormItem>
+              <FormItem label="图文内容">
+                {getFieldDecorator('content', {
+                  rules: [{ required: true, message: '必填项' }],
+                })(<Content />)}
+              </FormItem>
             </Form>
           </div>
         </div>
