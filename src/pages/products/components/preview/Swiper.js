@@ -9,7 +9,7 @@ export default function Swiper (props) {
   const children = [];
 
   if(video && video.name) {
-    let url = video.name;
+    let url = video.url;
     if(typeof url === 'object') {
       url = url.url
     }

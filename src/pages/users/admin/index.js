@@ -99,12 +99,7 @@ class Admin extends PureComponent {
     ];
   };
   resetPW = ({ id, username }, e) => {
-    console.log(id, username);
     e.preventDefault();
-    // this.props.dispatch({
-    //   type: 'admin/resetPW',
-    //   payload: { id, username },
-    // });
     Modal.confirm({
       title: '是否重置该用户密码?',
       content: '密码将被重置为“111111”',

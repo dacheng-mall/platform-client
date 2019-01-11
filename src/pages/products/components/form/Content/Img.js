@@ -5,7 +5,13 @@ import Uploader from '../../../../Components/Uploader';
 export default class Img extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
     if (props.value && props.value.value) {
-      return { ...state, fileList: Uploader.initSingleFile(props.value.value) };
+      const fileList = (function(val){
+        if(typeof val.value === 'string') {
+          return Uploader.initSingleFile(val.url)
+        }
+        return [val.value]
+      }(props.value))
+      return { ...state, fileList };
     }
     return { ...state, fileList: [] };
   };

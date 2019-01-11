@@ -1,10 +1,10 @@
 import React from 'react';
 
 export default function Img(props) {
-  const { value, name = '' } = props.data;
+  const { value, url, name } = props.data;
   const src = (function(v) {
     if (value && typeof v === 'string') {
-      return v;
+      return url;
     }
     if (value && typeof v === 'object') {
       return value.url;

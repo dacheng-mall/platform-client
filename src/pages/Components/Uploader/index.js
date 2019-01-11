@@ -42,19 +42,20 @@ export default class Uploader extends PureComponent {
         },
       ];
     }
-    if(value && typeof value === 'object') {
+    if (value && typeof value === 'object') {
       if (value.lastModified) {
         // 这是新上传的
         return [value];
       }
       // 这是本来就有的
-      return [{
-        uid: `old`,
-        name: value.name,
-        url: value.url,
-        status: 'done',
-        dontTouch: true,
-      }];
+      return [
+        {
+          uid: `old`,
+          name: value.name,
+          url: value.url,
+          status: 'done'
+        },
+      ];
     }
     return [];
   };
@@ -63,6 +64,9 @@ export default class Uploader extends PureComponent {
   };
   handlePreview = () => {};
   handleChange = (args) => {
+    if (args.file.status === 'removed') {
+      return;
+    }
     if (_.isFunction(this.props.onChange)) {
       args.fileList = args.fileList.slice(0, this.props.max || 1);
       this.props.onChange(args);
@@ -75,11 +79,10 @@ export default class Uploader extends PureComponent {
     newFileList.splice(index, 1);
     if (_.isFunction(this.props.onChange)) {
       this.props.onChange({ fileList: newFileList });
-    } else {
-      this.setState({
-        fileList: newFileList,
-      });
     }
+    this.setState({
+      fileList: newFileList,
+    });
   };
   beforeUpload = (file, fileList = []) => {
     file.url = getObjectURL(file);

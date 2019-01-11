@@ -182,7 +182,9 @@ export default function request(url, { body, method, ...options }) {
     if (!options.headers) {
       options.headers = {};
     }
-    options.headers.Authorization = token;
+    if(!options.headers.Authorization) {
+      options.headers.Authorization = token;
+    }
   }
 
   let uriObj;
@@ -211,13 +213,10 @@ export default function request(url, { body, method, ...options }) {
   }
   options.method = method;
   let _url = url;
-  const VER = /^v\d\//
+  const VER = /^v\d\//;
   if(VER.test(_url)) {
     _url = apiPrefixLocal + url.replace(VER, '');
   }
-  // if(!_url.includes('3000')) {
-  //   _url = apiPrefix + url;
-  // }
   return fetch(_url, options)
     .then(parseResponse)
     .then(checkStatus)

@@ -23,6 +23,12 @@ class Detail extends PureComponent {
       type: 'detail/submit'
     });
   };
+  test = () => {
+    
+    this.props.dispatch({
+      type: 'detail/test'
+    });
+  };
   parseErrorMessage = (error) => {
     if (error) {
       return _.map(error, ({ message }, i) => `${i !== 0 ? ',' : ''}${message}`);

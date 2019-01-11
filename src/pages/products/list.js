@@ -96,7 +96,6 @@ class List extends PureComponent {
 }
 
 function mapStateToProps({ products }) {
-  console.log('products', products);
   return products;
 }
 

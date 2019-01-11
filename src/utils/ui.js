@@ -67,6 +67,9 @@ export const onFieldsChange = (ns) => (props, field, fields) => {
 };
 export const fieldsChange = (state, { payload }) => {
   _.forEach(payload.fields, ({ name, dirty, value, errors }) => {
+    if (!name) {
+      return;
+    }
     if (!dirty) {
       _.set(state[EDITOR], name, value);
     }
@@ -100,7 +103,7 @@ export const parseEditor = (values) => {
   _.forEach(values, (value, key) => {
     switch (key) {
       case 'status': {
-        values[key] = value ? "1" : '0';
+        values[key] = value ? '1' : '0';
         break;
       }
       case 'roles': {

@@ -99,20 +99,29 @@ export const setData = (key, data) => {
     sessionStorage.setItem(key, value);
   }
 };
-
-export const upload = (file) =>
-  async function() {
+export const qiniuToken = () =>
+  new Promise((res, rej) => {
     const { uploadToken, deadline } = getData('qiniu') || {};
     const now = new Date().valueOf();
     let token = uploadToken;
-    if (!deadline || deadline <= now) {
-      const { data } = await getQiniuToken();
-      if (data) {
-        data.deadline = now + data.deadline * 1000;
-        setData('qiniu', data);
-      }
-      token = data.uploadToken;
+    if (!uploadToken || (!deadline || deadline <= now)) {
+      getQiniuToken()
+        .then(({ data }) => {
+          if (data) {
+            data.deadline = now + data.deadline * 1000;
+            setData('qiniu', data);
+          }
+          token = data.uploadToken;
+          res(token);
+        })
+        .catch((err) => rej(err));
+    } else {
+      res(token);
     }
+  });
+export const upload = (file) =>
+  async function() {
+    const token = await qiniuToken();
     if (file) {
       const keymaker = () => {
         const d = new Date().format('yyyyMMddhhmmss');

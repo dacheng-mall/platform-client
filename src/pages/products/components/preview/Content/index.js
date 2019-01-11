@@ -6,8 +6,8 @@ import List from './List';
 import Empty from "../noneData";
 
 export default function Content(props){
-  const {data = []} = props;
-  if(data.length < 1) {
+  const {data} = props;
+  if(!data || data.length < 1) {
     return <Empty />
   }
   return _.map(data, (d, i) => {

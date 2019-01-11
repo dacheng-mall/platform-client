@@ -18,7 +18,6 @@ export default class ContEditor extends PureComponent {
   change = (value, path) => {
     const _Value = this.props.value;
     _.set(_Value, path, value);
-    console.log(_Value, path)
     this.props.onChange(_Value);
   };
   move = (index, type) => {

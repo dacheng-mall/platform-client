@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import _ from 'lodash';
 import styles from './styles.less';
 import Uploader from '../../../Components/Uploader';
 
@@ -9,17 +8,23 @@ export default class VideoEditor extends PureComponent {
       return { ...state, name: [], poster: [] };
     }
     const value = {};
-    _.forEach(props.value, (val, key) => {
-      if (val) {
-        if (typeof val === 'object') {
-          value[key] = [val];
-        } else if (typeof val === 'string') {
-          value[key] = Uploader.initSingleFile(val);
-        }
-      } else {
-        value[key] = [];
-      }
-    });
+    const { poster, name, url, posterUrl } = props.value;
+    if(typeof poster === 'string') {
+      // 这是有初始化值的
+      value.poster = Uploader.initSingleFile(posterUrl);
+    } else if(poster && poster.originFileObj) {
+      value.poster = [poster]
+    } else {
+      value.poster = []
+    }
+    if(typeof name === 'string') {
+      // 这是有初始化值的
+      value.name = Uploader.initSingleFile(url);
+    } else if(name && name.originFileObj) {
+      value.name = [name]
+    } else {
+      value.name = []
+    }
     if (props.value && typeof props.value === 'object') {
       return { ...state, ...value };
     }

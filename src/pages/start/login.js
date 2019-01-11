@@ -7,7 +7,6 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
     e.preventDefault();
     validateFields((err, val) => {
       if (!err) {
-        console.log('val', val)
         dispatch({
           type: 'app/login',
           payload: val
