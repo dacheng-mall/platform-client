@@ -20,13 +20,12 @@ const EDITOR = 'editor';
 const ERROR = 'errors';
 
 export const mapPropsToFields = (props) => {
-  console.log('mapPropsToFields', props)
   const res = {};
   _.forEach(props[EDITOR], (value, key) => {
     switch (key) {
       case 'status': {
         res[key] = createFormField({
-          value: value === '1' ? true : false,
+          value: (value === '1' || value === 1) ? true : false,
         });
         break;
       }

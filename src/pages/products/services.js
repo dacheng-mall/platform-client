@@ -19,12 +19,13 @@ export const getProduct = (id) => {
 export const getCategories = ({ page = 1, pageSize = 10 } = {}) => {
   return get(`v1/api/sys/productCategary/${page}/${pageSize}`);
 };
-export const getCate = () => {
-  return get(`v1/api/sys/productCategary`);
+export const getCate = (data) => {
+  return get('v1/api/sys/productCategary', data);
 };
-export const addCate = () => {
-  return post(`v1/api/sys/productCategary`);
+export const addCate = (data) => {
+  return post(`v1/api/sys/productCategary`, data);
 };
-export const updateCate = () => {
-  return put(`v1/api/sys/productCategary`);
+export const updateCate = (data) => {
+  console.log(data)
+  return put(`v1/api/sys/productCategary`, data);
 };
