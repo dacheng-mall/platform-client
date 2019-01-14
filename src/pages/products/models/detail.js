@@ -1,6 +1,6 @@
 import ptrx from 'path-to-regexp';
 import _ from 'lodash';
-import { getProduct, addProducts, updateProducts } from '../services';
+import { getProduct, addProducts, updateProducts, getCate } from '../services';
 import { fieldsChange } from '../../../utils/ui';
 import { upload } from '../../../utils';
 import { source } from '../../../../setting';
@@ -11,6 +11,7 @@ export default {
   state: {
     editor: {},
     errors: {},
+    categories: [],
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -19,16 +20,33 @@ export default {
         let id;
         if (pn) {
           id = pn[1];
+          dispatch({
+            type: 'init',
+            id,
+          });
         }
-        dispatch({
-          type: 'init',
-          id,
-        });
       });
     },
   },
   effects: {
-    *init({ id }, { call, put }) {
+    *init({ id }, { call, put, select }) {
+      const { resource } = yield select(({ categories: _cates }) => _cates);
+      if (resource) {
+        yield put({
+          type: 'upState',
+          payload: {
+            categories: resource,
+          },
+        });
+      } else {
+        const { data: _cates } = yield call(getCate);
+        yield put({
+          type: 'upState',
+          payload: {
+            categories: _cates,
+          },
+        });
+      }
       if (id) {
         const { data } = yield call(getProduct, id);
         if (data.length > 0) {
@@ -54,7 +72,7 @@ export default {
             editor.content = JSON.parse(editor.content);
             _.forEach(editor.content, (cont) => {
               if (cont.type === 'image') {
-                cont.url = `${source}${cont.value}`
+                cont.url = `${source}${cont.value}`;
               }
             });
           }
@@ -98,7 +116,6 @@ export default {
       }
     },
     *submit(p, { call, put, select, all }) {
-      debugger;
       const { editor: _editor, errors } = yield select(({ detail }) => detail);
       const { user } = yield select(({ app }) => app);
       const errorKeys = Object.keys(errors);
@@ -169,18 +186,29 @@ export default {
         editor.mainImageUrl = editor.images[0].name;
       }
       if (user.userType === 1) {
-        editor.isSelf = true;
+        editor.institutionId = '';
+        editor.institutionName = '平台自营';
+      } else {
+        editor.institutionId = user.institutionId;
+        editor.institutionName = user.institutionName;
       }
       if (editor.id) {
         const { data } = yield call(updateProducts, editor);
         console.log('修改', data);
-      } else {
-        const { data } = yield call(addProducts, editor);
         if (data) {
-          message.success('新建商品成功')
+          message.success('修改商品成功');
           yield put({
             type: 'init',
             id: editor.id,
+          });
+        }
+      } else {
+        const { data } = yield call(addProducts, editor);
+        if (data) {
+          message.success('新建商品成功');
+          yield put({
+            type: 'init',
+            id: data.id,
           });
         }
       }

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Switch, Button } from 'antd';
+import { Table, Switch, Button, Divider } from 'antd';
 import { jump } from '../../utils';
 import styles from './list.less';
 
@@ -18,17 +18,23 @@ class List extends PureComponent {
             <img src={`${source}${r.mainImageUrl}`} title={t} alt="" className={styles.mainImage} />
             <div className={styles.text}>
               <div className={styles.name}>{t}</div>
-              {r.category.name || '无分类'}
             </div>
           </div>
         );
       },
     },
     {
+      key: 'category',
+      title: '分类',
+      dataIndex: 'category.name',
+      align: 'center',
+    },
+    {
       key: 'price',
       title: '单价(元)',
       dataIndex: 'price',
       align: 'center',
+      render: (t) => <div className={styles.price}>{t.toFixed(2)}</div>,
     },
     {
       key: 'status',
@@ -56,6 +62,7 @@ class List extends PureComponent {
               type="ghost"
               icon="edit"
             />
+            <Divider type="vertical" />
             <Button
               onClick={this.remove.bind(null, t)}
               size="small"

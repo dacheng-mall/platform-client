@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Form, Button, Input, InputNumber } from 'antd';
+import { Form, Button, Input, InputNumber, Select } from 'antd';
 import Preview from './components/preview';
 import TagsEditor from './components/form/TagsEditor';
 import CateEditor from './components/form/CateEditor';
@@ -67,7 +67,26 @@ class Detail extends PureComponent {
                 validateStatus={errors.sn ? 'error' : ''}
                 help={this.parseErrorMessage(errors.sn)}
               >
-                {getFieldDecorator('sn')(<Input placeholder="请输入商品编码" style={{width: '2rem'}} />)}
+                {getFieldDecorator('sn')(
+                  <Input placeholder="请输入商品编码" style={{ width: '2rem' }} />,
+                )}
+              </FormItem>
+              <FormItem
+                label="商品分类"
+                validateStatus={errors.sn ? 'error' : ''}
+                help={this.parseErrorMessage(errors.sn)}
+              >
+                {getFieldDecorator('cateId', {
+                  initialValue: undefined,
+                })(
+                  <Select placeholder="请选择商品分类" filterOption={false}>
+                    {_.map(this.props.categories, (cate, i) => (
+                      <Select.Option key={cate.id} value={cate.id}>
+                        {cate.name}
+                      </Select.Option>
+                    ))}
+                  </Select>,
+                )}
               </FormItem>
               <FormItem label="视频">{getFieldDecorator('video')(<Video />)}</FormItem>
               <FormItem
