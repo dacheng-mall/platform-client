@@ -7,41 +7,79 @@ import { FormItem, mapPropsToFields } from '../../utils/ui';
 
 let timer = '';
 
+const normalize = (d) => {
+  const data = _.cloneDeep(d);
+  const index = [];
+  const _data = [];
+  while (data.length > 0) {
+    let current = [];
+    if (index.length < 1) {
+      // 如果索引不存在, 就取根分类
+      current = _.remove(data, ({ pid }) => !pid);
+    } else {
+      // 否则, 从index里取第一个值
+      const parentKeys = index[0];
+      current = _.remove(data, ({ pid }) => _.includes(parentKeys, pid));
+    }
+    const keys = _.map(current, ({ id }) => id);
+    index.unshift(keys);
+    _data.unshift(current);
+  }
+  _.forEach(_data, (d, i) => {
+    const children = d;
+    const parent = _data[i + 1];
+    _.forEach(children, (child, i) => {
+      const pid = child.pid;
+      const currentParent = _.find(parent, ['id', pid]);
+      if (currentParent && !currentParent.children) {
+        currentParent.children = [child];
+      } else if (!currentParent) {
+        // currentParent.children.push(child)
+      } else {
+        currentParent.children.push(child);
+      }
+    });
+  });
+  return _.last(_data);
+};
+
 class Categories extends PureComponent {
   state = {
     visible: false,
-    result: [],
     fetching: false,
+    data: [],
   };
-  onChange = (e) => {
-    console.log(e);
-  };
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
+  static getDerivedStateFromProps(props, state) {
+    // 列表数据更新后, 重新渲染页面, 否则不再执行序列化
+    if (props.needUpdate || !state.data || state.data.length < 1) {
+      const data = normalize(props.data);
+      props.dispatch({
+        type: 'categories/upState',
+        payload: {
+          needUpdate: false,
+        },
+      });
+      return { ...state, data };
+    }
+    return null;
+  }
   close = () => {
-    this.setState({
-      visible: false,
-    });
+    this.props.form.resetFields();
     this.props.dispatch({
       type: 'categories/upState',
-      payload: {editor: {}}
-    })
-    this.props.form.resetFields()
+      payload: { editor: null },
+    });
   };
   submit = () => {
     const { validateFields } = this.props.form;
     validateFields((err, value) => {
-      console.log(value)
-      if(!err) {
+      if (!err) {
         this.props.dispatch({
           type: 'categories/submit',
           value,
         });
       }
-    })
+    });
   };
   fetch = (e) => {
     if (timer) {
@@ -50,42 +88,45 @@ class Categories extends PureComponent {
     timer = setTimeout(() => {
       this.props.dispatch({
         type: 'categories/fetchCate',
-        payload: { name:e} ,
+        payload: { name: e },
       });
       clearTimeout(timer);
       timer = null;
     }, 300);
   };
-  changeStatus = (id, value) => {
-    console.log(id, value)
-  }
+  changeStatus = (data, value) => {
+    data.status = value;
+    this.props.dispatch({
+      type: 'categories/submit',
+      value: data,
+    });
+  };
   edit = (data) => {
     this.props.dispatch({
       type: 'categories/edit',
-      payload: data
-    })
-    this.showModal()
-  }
-  remove = () => {}
+      payload: data,
+    });
+  };
+  remove = () => {};
   columns = [
     {
       key: 'name',
       dataIndex: 'name',
-      title: '名称'
+      title: '名称',
     },
     {
       key: 'description',
       dataIndex: 'description',
-      title: '描述'
+      title: '描述',
     },
     {
       key: 'status',
       dataIndex: 'status',
       render: (text, record) => {
-        return <Switch checked={text === 1} onChange={this.changeStatus.bind(null, record.id)} />
+        return <Switch checked={text === 1} onChange={this.changeStatus.bind(null, record)} />;
       },
       align: 'center',
-      title: '状态'
+      title: '状态',
     },
     {
       key: 'operator',
@@ -112,38 +153,31 @@ class Categories extends PureComponent {
             />
           </div>
         );
-      }
-    }
-  ]
-  onExpand = (expanded, record) => {
-    if(expanded) {
-      this.props.dispatch({
-        type: 'categories/fetchData',
-        pid: record.id,
-        path: record.path
-      })
-    }
-  }
+      },
+    },
+  ];
   render() {
     const { getFieldDecorator } = this.props.form;
     const { fetching } = this.state;
-    getFieldDecorator('id', {
-      initialValue: this.props.editor.id
-    })
+    if (this.props.editor) {
+      getFieldDecorator('id', {
+        initialValue: this.props.editor.id,
+      });
+    }
     return (
       <div>
-        <Button icon="plus" type="primary" onClick={this.showModal}>
+        <Button icon="plus" type="primary" onClick={this.edit.bind(null, {})}>
           添加商品分类
         </Button>
         <Table
           columns={this.columns}
-          dataSource={this.props.data}
+          dataSource={this.state.data}
           rowKey="id"
           onExpand={this.onExpand}
         />
         <Modal
           title={this.state.id ? '编辑分类' : '新建分类'}
-          visible={this.state.visible}
+          visible={!!this.props.editor}
           onCancel={this.close}
           onOk={this.submit}
         >
@@ -157,9 +191,15 @@ class Categories extends PureComponent {
                   filterOption={false}
                   onSearch={this.fetch}
                 >
-                  {this.props.parentCategories.length > 0 ? _.map(this.props.parentCategories, (cate, index) => {
-                    return <Select.Option key={`option_${index}`} value={cate.id}>{cate.name}</Select.Option>
-                  }) : null}
+                  {this.props.parentCategories.length > 0
+                    ? _.map(this.props.parentCategories, (cate, index) => {
+                        return (
+                          <Select.Option key={`option_${index}`} value={cate.id}>
+                            {cate.name}
+                          </Select.Option>
+                        );
+                      })
+                    : null}
                 </Select>,
               )}
             </FormItem>
@@ -171,9 +211,11 @@ class Categories extends PureComponent {
             <FormItem label="分类描述">
               {getFieldDecorator('description')(<Input.TextArea placeholder="请输入分类描述" />)}
             </FormItem>
-            <FormItem label="状态">{getFieldDecorator('status', {
-              valuePropName: 'checked'
-            })(<Switch />)}</FormItem>
+            <FormItem label="状态">
+              {getFieldDecorator('status', {
+                valuePropName: 'checked',
+              })(<Switch />)}
+            </FormItem>
           </Form>
         </Modal>
       </div>

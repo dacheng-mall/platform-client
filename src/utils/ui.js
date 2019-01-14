@@ -25,7 +25,7 @@ export const mapPropsToFields = (props) => {
     switch (key) {
       case 'status': {
         res[key] = createFormField({
-          value: (value === '1' || value === 1) ? true : false,
+          value: value === 1 ? true : false,
         });
         break;
       }

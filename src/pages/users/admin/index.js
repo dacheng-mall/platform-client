@@ -50,10 +50,10 @@ class Admin extends PureComponent {
           const change = (checked) => {
             this.props.dispatch({
               type: 'admin/changeStatus',
-              payload: { id, username, status: checked ? '1' : '0' },
+              payload: { id, username, status: checked ? 1 : 0 },
             });
           };
-          return <Switch size="small" checked={t === '1'} onChange={change} />;
+          return <Switch size="small" checked={t === 1} onChange={change} />;
         },
         align: 'center',
       },
