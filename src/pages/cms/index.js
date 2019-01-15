@@ -4,7 +4,11 @@ module.exports = [
     component: 'cms/elements'
   },
   {
-    path: '/cms/element/:type/:id',
+    path: '/cms/element/:id',
+    component: 'cms/element'
+  },
+  {
+    path: '/cms/element',
     component: 'cms/element'
   },
   {

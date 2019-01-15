@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Radio } from 'antd';
 import { connect } from 'dva';
 import List from './components/List';
 import styles from './styles.less';
@@ -8,6 +8,7 @@ const confirm = Modal.confirm;
 class ElementEditor extends PureComponent {
   state = {
     editing: null,
+    type: '',
   };
   edit = (type, value, index) => {
     if (type === 'del') {
@@ -39,7 +40,19 @@ class ElementEditor extends PureComponent {
       editing,
     });
   };
-
+  changeType = (e) => {
+    this.setState({
+      type: e.target.value,
+    });
+  };
+  newElement = () => {
+    this.props.dispatch({
+      type: 'elementEditor/upState',
+      payload: {
+        type: this.state.type
+      }
+    })
+  }
   renderCont = () => {
     const { type } = this.props;
     switch (type) {
@@ -50,7 +63,18 @@ class ElementEditor extends PureComponent {
         return null;
       }
       default: {
-        return null;
+        return (
+          <div className={styles.beforeNew}>
+            <h2>请选择要创建的元素类型</h2>
+            <Radio.Group value={this.state.type} onChange={this.changeType} buttonStyle="solid">
+              <Radio.Button value="list">块状列表</Radio.Button>
+              <Radio.Button value="swiper">滚动图</Radio.Button>
+            </Radio.Group>
+            <div className={styles.nextbtn}>
+              <Button type="danger" disabled={!this.state.type} onClick={this.newElement}>下一步</Button>
+            </div>
+          </div>
+        );
       }
     }
   };
@@ -62,12 +86,12 @@ class ElementEditor extends PureComponent {
   render() {
     return (
       <div className={styles.wrap}>
-        <div className={styles.saveBtn}>
+        {this.props.type ? <div className={styles.saveBtn}>
           <Button>返回</Button>
           <Button onClick={this.submit} type="primary" disabled={this.state.editing !== null}>
             保存
           </Button>
-        </div>
+        </div> : null}
         {this.renderCont()}
       </div>
     );

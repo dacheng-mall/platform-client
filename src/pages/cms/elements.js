@@ -68,8 +68,11 @@ class CmsElements extends PureComponent {
     },
   ];
   edit = (record) => {
-    console.log(record);
-    jump(`/cms/element/${record.type}/${record.id}`);
+    if(record) {
+      jump(`/cms/element/${record.id}`);
+    } else {
+      jump(`/cms/element`);
+    }
   };
   remove = (id) => {
     console.log(id);
@@ -77,7 +80,7 @@ class CmsElements extends PureComponent {
   render() {
     return (
       <div>
-        <Button icon="plus" type="primary">
+        <Button icon="plus" type="primary" onClick={this.edit.bind(null, null)}>
           新建新的内容元素
         </Button>
         <Table
