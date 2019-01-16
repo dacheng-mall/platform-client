@@ -1,9 +1,8 @@
 import ptrx from 'path-to-regexp';
 import _ from 'lodash';
 import { message } from 'antd';
-import { getCmsElements } from '../services';
 import { upload } from '../../../utils';
-import { addCmsElement } from '../services';
+import { addCmsElement, updateCmsElement, getCmsElementsWithoutPage } from '../services';
 
 export default {
   namespace: 'elementEditor',
@@ -28,13 +27,14 @@ export default {
   effects: {
     *init({ id }, { put, call }) {
       if (id) {
-        const { data } = yield call(getCmsElements, { id });
-        yield put({
-          type: 'upState',
-          payload: {
-            ...data,
-          },
-        });
+        const { data: res } = yield call(getCmsElementsWithoutPage, { id });
+        if (res.length > 0) {
+          res[0].data = JSON.parse(res[0].data);
+          yield put({
+            type: 'upState',
+            payload: res[0],
+          });
+        }
       }
     },
     *change({ payload }, { put, select }) {
@@ -96,7 +96,6 @@ export default {
         message.error('没有可以提交的内容');
         return;
       }
-
       const todos = {};
       _.forEach(listData, (d, i) => {
         if (d.fileList && d.fileList[0]) {
@@ -116,12 +115,19 @@ export default {
           _.set(listData, path, res[i].key);
         });
       }
+      elementEditor.count = listData.length;
       elementEditor.data = JSON.stringify(listData);
-      console.log('final elementEditor: ', elementEditor);
       if (!elementEditor.id) {
-        const { data } = yield call(addCmsElement, elementEditor);
-        console.log('添加后的返回值', data);
+        yield call(addCmsElement, elementEditor);
+      } else {
+        delete elementEditor.createTime;
+        delete elementEditor.lastModifyDate;
+        yield call(updateCmsElement, elementEditor);
       }
+      yield put({
+        type: 'init',
+        id: elementEditor.id,
+      });
     },
   },
   reducers: {

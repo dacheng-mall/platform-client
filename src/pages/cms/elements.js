@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import { Table, Button, Switch } from 'antd';
+import { Table, Button, Switch, Divider } from 'antd';
 import { connect } from 'dva';
 import { jump } from '../../utils';
 
@@ -10,6 +10,12 @@ class CmsElements extends PureComponent {
       key: 'name',
       title: '名称',
       dataIndex: 'name',
+      render: (t) => {
+        if (t !== null && t !== undefined && t !== '') {
+          return t;
+        }
+        return '[[未定义元素名称]]';
+      },
     },
     {
       key: 'type',
@@ -25,7 +31,7 @@ class CmsElements extends PureComponent {
     },
     {
       key: 'count',
-      title: '包含商品数',
+      title: '元素数',
       dataIndex: 'count',
       align: 'center',
     },
@@ -33,11 +39,10 @@ class CmsElements extends PureComponent {
       key: 'status',
       title: '状态',
       dataIndex: 'status',
-      render(t) {
-        const change = (checked) => {
-          console.log(checked);
-        };
-        return <Switch size="small" defaultChecked={t === 1} onChange={change} />;
+      render: (t, r) => {
+        return (
+          <Switch size="small" checked={t === 1} onChange={this.changeStatus.bind(null, r.id)} />
+        );
       },
       align: 'center',
     },
@@ -54,6 +59,7 @@ class CmsElements extends PureComponent {
               type="ghost"
               icon="edit"
             />
+            <Divider type="vertical" />
             <Button
               onClick={this.remove.bind(null, t)}
               size="small"
@@ -68,7 +74,7 @@ class CmsElements extends PureComponent {
     },
   ];
   edit = (record) => {
-    if(record) {
+    if (record) {
       jump(`/cms/element/${record.id}`);
     } else {
       jump(`/cms/element`);
@@ -76,6 +82,14 @@ class CmsElements extends PureComponent {
   };
   remove = (id) => {
     console.log(id);
+  };
+  changeStatus = (id, status) => {
+    // console.log(status, data);
+    this.props.dispatch({
+      type: 'elements/setStatus',
+      id,
+      status,
+    });
   };
   render() {
     return (
@@ -87,7 +101,7 @@ class CmsElements extends PureComponent {
           rowKey="id"
           size="small"
           columns={this.columns}
-          dataSource={this.props.list}
+          dataSource={this.props.data}
           locale={{ emptyText: '暂无数据' }}
         />
       </div>

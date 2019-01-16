@@ -27,7 +27,9 @@ export default {
     institutionLogo: null,
     user: {},
     roles: [],
-    dict: {},
+    dict: {
+      elementsTypes: [{ id: 'elemType_0', code: 'list', name: '商品列表' }, { id: 'elemType_1', code: 'swiper', name: '滚动图' }],
+    },
     qiniu: {},
   },
 
@@ -116,7 +118,7 @@ export default {
       };
 
       const observable = qiniu.upload(file, keymaker(), token);
-      
+
       observable.subscribe(
         (res) => {
           console.log('subscription-next', res);

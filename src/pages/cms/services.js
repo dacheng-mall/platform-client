@@ -10,11 +10,11 @@ export const updateCmsElement = (data) => {
 export const removeCmsElement = (id) => {
   return del(`v1/api/sys/element/${id}`);
 };
-export const getCmsElements = (data) => {
+export const getCmsElementsWithoutPage = (data) => {
   return get('v1/api/sys/element', data);
 };
-export const getCmsElementsWithPage = ({ page, pagesize, other }) => {
-  return get(`v1/api/sys/element/${page}/${pagesize}`, other);
+export const getCmsElements = ({ page, pageSize, other }) => {
+  return get(`v1/api/sys/element/${page}/${pageSize}`, other);
 };
 
 // page
@@ -30,8 +30,8 @@ export const removePage = (id) => {
 export const getPages = (data) => {
   return get('v1/api/sys/page', data);
 };
-export const getPagesWithPage = ({ page, pagesize, other }) => {
-  return get(`v1/api/sys/page/${page}/${pagesize}`, other);
+export const getPagesWithPage = ({ page, pageSize, other }) => {
+  return get(`v1/api/sys/page/${page}/${pageSize}`, other);
 };
 
 // mock
