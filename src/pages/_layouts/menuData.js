@@ -66,8 +66,8 @@ export const menu = () => {
           authority: admin,
         },
         {
-          name: '首页管理',
-          path: 'home',
+          name: '页面管理',
+          path: 'pages',
           authority: admin,
         },
       ],

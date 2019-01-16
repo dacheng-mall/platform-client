@@ -12,7 +12,7 @@ module.exports = [
     component: 'cms/element'
   },
   {
-    path: '/cms/home',
-    component: 'cms/home'
+    path: '/cms/pages',
+    component: 'cms/pages'
   }
 ]
