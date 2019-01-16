@@ -14,11 +14,14 @@ export default {
       history.listen(({ pathname }) => {
         const pn = ptrx('/cms/element/:id').exec(pathname);
         if (pn) {
-          // const typeCode = pn[1];
           const id = pn[1];
           dispatch({
             type: 'init',
             id,
+          });
+        } else {
+          dispatch({
+            type: 'init',
           });
         }
       });
@@ -35,18 +38,36 @@ export default {
             payload: res[0],
           });
         }
+      } else {
+        yield put({
+          type: 'upState',
+          payload: {
+            data: [],
+            name: '',
+            type: '',
+            createTime: null,
+            lastModifyDate: null,
+            id: null,
+            count: null,
+            status: 1,
+          },
+        });
       }
     },
     *change({ payload }, { put, select }) {
       const { value, index, type } = payload;
-      let { data, name } = yield select(({ elementEditor }) => elementEditor);
+      let { data, name, type: listType } = yield select(({ elementEditor }) => elementEditor);
       switch (type) {
         case 'edit': {
           data[index] = value;
           break;
         }
         case 'add': {
-          data.push({ size: 1 });
+          if (listType === 'list') {
+            data.push({ size: 1 });
+          } else {
+            data.push({});
+          }
           break;
         }
         case 'move': {
@@ -90,14 +111,16 @@ export default {
     },
     *submit(p, { put, call, select, all }) {
       const elementEditor = yield select(({ elementEditor }) => elementEditor);
-      const listData = _.cloneDeep(elementEditor.data);
-      _.remove(listData, ({ productId }) => !productId);
-      if (!listData || listData.length < 1) {
+      const listData = _.cloneDeep(elementEditor);
+      _.remove(listData.data, ({ productId, categoryId, path }) => {
+        return !productId && !categoryId && path;
+      });
+      if (!listData.data || listData.data.length < 1) {
         message.error('没有可以提交的内容');
         return;
       }
       const todos = {};
-      _.forEach(listData, (d, i) => {
+      _.forEach(listData.data, (d, i) => {
         if (d.fileList && d.fileList[0]) {
           if (d.fileList[0].originFileObj) {
             // 新上传了元素图, 覆盖了商品图
@@ -112,21 +135,26 @@ export default {
       if (ups.length > 0) {
         const res = yield all(_.map(ups, (up) => up()));
         _.forEach(paths, (path, i) => {
-          _.set(listData, path, res[i].key);
+          _.set(listData.data, path, res[i].key);
         });
       }
-      elementEditor.count = listData.length;
-      elementEditor.data = JSON.stringify(listData);
-      if (!elementEditor.id) {
-        yield call(addCmsElement, elementEditor);
+      listData.count = listData.data.length;
+      listData.data = JSON.stringify(listData.data);
+
+      delete listData.createTime;
+      delete listData.lastModifyDate;
+      let id;
+      if (!listData.id) {
+        delete listData.id;
+        const { data } = yield call(addCmsElement, listData);
+        id = data.id;
       } else {
-        delete elementEditor.createTime;
-        delete elementEditor.lastModifyDate;
-        yield call(updateCmsElement, elementEditor);
+        const { data } = yield call(updateCmsElement, listData);
+        id = data.id;
       }
       yield put({
         type: 'init',
-        id: elementEditor.id,
+        id,
       });
     },
   },

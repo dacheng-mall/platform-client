@@ -34,7 +34,6 @@ export default {
       const { data: res } = yield call(updateCmsElement, { id, status: status ? 1 : 0 });
       if (res) {
         const { data } = yield select(({ elements }) => elements);
-        console.log(data);
         _.find(data, ['id', res.id]).status = res.status;
         yield put({
           type: 'upState',

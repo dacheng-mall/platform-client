@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Button, Modal, Radio } from 'antd';
 import { connect } from 'dva';
 import List from './components/List';
+import Swiper from './components/Swiper';
 import styles from './styles.less';
 
 const confirm = Modal.confirm;
@@ -60,7 +61,7 @@ class ElementEditor extends PureComponent {
         return <List {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       case 'swiper': {
-        return null;
+        return <Swiper {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       default: {
         return (

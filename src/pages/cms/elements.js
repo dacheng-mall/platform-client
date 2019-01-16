@@ -84,7 +84,6 @@ class CmsElements extends PureComponent {
     console.log(id);
   };
   changeStatus = (id, status) => {
-    // console.log(status, data);
     this.props.dispatch({
       type: 'elements/setStatus',
       id,
@@ -95,7 +94,7 @@ class CmsElements extends PureComponent {
     return (
       <div>
         <Button icon="plus" type="primary" onClick={this.edit.bind(null, null)}>
-          新建新的内容元素
+          新建内容
         </Button>
         <Table
           rowKey="id"
