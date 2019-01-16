@@ -14,5 +14,13 @@ module.exports = [
   {
     path: '/cms/pages',
     component: 'cms/pages'
-  }
+  },
+  {
+    path: '/cms/page/:id',
+    component: 'cms/page'
+  },
+  {
+    path: '/cms/page',
+    component: 'cms/page'
+  },
 ]

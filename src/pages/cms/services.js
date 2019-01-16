@@ -27,10 +27,10 @@ export const updatePage = (data) => {
 export const removePage = (id) => {
   return del(`v1/api/sys/page/${id}`);
 };
-export const getPages = (data) => {
+export const getPagesWithoutPage = (data) => {
   return get('v1/api/sys/page', data);
 };
-export const getPagesWithPage = ({ page, pageSize, other }) => {
+export const getPages = ({ page, pageSize, other }) => {
   return get(`v1/api/sys/page/${page}/${pageSize}`, other);
 };
 
