@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Input, Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import { connect } from 'dva';
 import PageEditor from './components/Page';
 import styles from './styles.less';
@@ -29,6 +29,11 @@ class Pages extends PureComponent {
         index,
       },
     });
+  };
+  submit = () => {
+    this.props.dispatch({
+      type: 'pages/submit'
+    })
   };
   render() {
     return (

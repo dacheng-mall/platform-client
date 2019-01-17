@@ -10,7 +10,7 @@ const JSON_TYPE = 'application/json';
 // 后台API URI前端
 // let apiPrefix = cfg.api || 'api/';
 let apiPrefix = window.config.api;
-let apiPrefixLocalSSL = 'https://localhost:443/';
+// let apiPrefixLocalSSL = 'https://localhost:443/';
 let apiPrefixLocal = 'http://localhost:10010/';
 // token获取方法
 let getToken;
@@ -148,7 +148,7 @@ function parseError(res) {
  */
 export const checkStatus = result => {
   const { res, data } = result;
-  if (res.ok || res.code === 0) {
+  if (res.ok) {
     return result;
   }
   let err = {};

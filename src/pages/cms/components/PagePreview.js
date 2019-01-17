@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { Swiper } from 'antd';
+import { Carousel } from 'antd';
 import styles from './styles.less';
 import { source } from '../../../../setting';
 
@@ -28,15 +28,25 @@ function List(props) {
   );
 }
 
+function Swiper(props) {
+  return (
+    <Carousel className={styles.swipterWrap}>
+      {_.map(props.data, (data, i) => {
+        return <img key={`${props.id}_${i}`} src={`${source}${data.mainImage}`} alt={data.name} />;
+      })}
+    </Carousel>
+  );
+}
+
 export default function PagePreview(props) {
-  const render = (elem, i) => {
+  const render = (elem) => {
     const { type, data, id } = elem;
     switch (type) {
       case 'list': {
         return <List id={id} key={id} height={props.height} data={JSON.parse(data)} />;
       }
       case 'swiper': {
-        return 'swiper';
+        return <Swiper id={id} key={id} data={JSON.parse(data)} />;
       }
       default: {
         return null;

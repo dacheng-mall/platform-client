@@ -9,17 +9,26 @@ class CmsHome extends PureComponent {
       key: 'name',
       dataIndex: 'name',
       title: '名称',
+      width: 128
     },
     {
       key: 'code',
       dataIndex: 'code',
       title: 'code',
+      width: 128,
+      align: 'center',
     },
     {
-      key: 'elements',
-      dataIndex: 'elements',
+      key: 'count',
+      dataIndex: 'count',
       title: '元素数',
-      render: (t) => t.length,
+      align: 'center',
+      width: 128
+    },
+    {
+      key: 'description',
+      dataIndex: 'description',
+      title: '描述',
     },
     {
       key: 'status',
@@ -30,6 +39,7 @@ class CmsHome extends PureComponent {
           <Switch size="small" checked={t === 1} onChange={this.changeStatus.bind(null, r.id)} />
         );
       },
+      width: 128,
       align: 'center',
     },
     {
@@ -57,9 +67,16 @@ class CmsHome extends PureComponent {
         );
       },
       align: 'right',
+      width: 128
     },
   ];
-  changeStatus = () => {};
+  changeStatus = (id, status) => {
+    this.props.dispatch({
+      type: 'pages/setStatus',
+      id,
+      status,
+    });
+  };
   edit = (record) => {
     if (record) {
       jump(`/cms/page/${record.id}`);

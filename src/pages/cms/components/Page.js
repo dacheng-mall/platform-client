@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import _ from 'lodash';
-import { Input, Form, Button, Icon, Divider, Select, message } from 'antd';
+import { Input, Form, Button, Divider, Select } from 'antd';
 import PagePreview from './PagePreview';
 import styles from './styles.less';
 import { getCmsElementsWithoutPage } from '../services';
@@ -34,8 +34,14 @@ export default class PageEditor extends PureComponent {
     const target = _.find(options, ['id', key]);
     this.props.onEdit('add', target);
     this.setState({
-      options: []
-    })
+      options: [],
+    });
+  };
+  move = (value, i) => {
+    this.props.onEdit('move', value, i);
+  };
+  remove = (type, i) => {
+    this.props.onEdit(type, null, i);
   };
 
   changeText = (type, e) => {
@@ -62,23 +68,30 @@ export default class PageEditor extends PureComponent {
       <div className={styles.wrap}>
         <div className={styles.preview}>
           <div id="_listWrap">
-            <PagePreview data={this.props.elements} height={this.state.height} />
+            <PagePreview data={this.props.editor.elements} height={this.state.height} />
           </div>
         </div>
-        <div className={styles.editor}>
+        <div className={styles.pageEditor}>
           <h2>编辑页面</h2>
           <Form layout="horizontal">
             <Form.Item label="页面名称" {...wrapCol}>
               <Input
-                value={this.props.name}
+                value={this.props.editor.name}
                 onChange={this.changeText.bind(null, 'title')}
                 placeholder="请输入页面名称"
               />
             </Form.Item>
             <Form.Item label="页面code" {...wrapCol}>
               <Input
-                value={this.props.code}
+                value={this.props.editor.code}
                 onChange={this.changeText.bind(null, 'code')}
+                placeholder="请输入页面名称"
+              />
+            </Form.Item>
+            <Form.Item label="描述" {...wrapCol}>
+              <Input.TextArea
+                value={this.props.editor.description}
+                onChange={this.changeText.bind(null, 'description')}
                 placeholder="请输入页面名称"
               />
             </Form.Item>
@@ -97,9 +110,42 @@ export default class PageEditor extends PureComponent {
                   </Select.Option>
                 ))}
               </Select>
-              <ul>
-                {_.map(this.props.elements, (elem, i) => (
-                  <li key={`elem_list_${i}`}>{elem.name}</li>
+              <ul className={styles.elementsEditor}>
+                {_.map(this.props.editor.elements, (elem, i) => (
+                  <li key={`elem_list_${i}`}>
+                    {elem.name}
+                    <div className={styles.elemItem}>
+                      {i === 0 ? null : (
+                        <Fragment>
+                          <Button
+                            icon="up"
+                            size="small"
+                            shape="circle"
+                            onClick={this.move.bind(null, 'up', i)}
+                          />
+                          <Divider type="vertical" />
+                        </Fragment>
+                      )}
+                      {i === this.props.editor.elements.length - 1 ? null : (
+                        <Fragment>
+                          <Button
+                            icon="down"
+                            size="small"
+                            shape="circle"
+                            onClick={this.move.bind(null, 'down', i)}
+                          />
+                          <Divider type="vertical" />
+                        </Fragment>
+                      )}
+                      <Button
+                        icon="cross"
+                        type="danger"
+                        size="small"
+                        shape="circle"
+                        onClick={this.remove.bind(null, 'del', i)}
+                      />
+                    </div>
+                  </li>
                 ))}
               </ul>
             </Form.Item>
