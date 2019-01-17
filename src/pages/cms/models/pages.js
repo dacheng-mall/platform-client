@@ -180,8 +180,8 @@ export default {
       let _res = false;
       if (!id) {
         // add
-        const { data } = yield call(addPage, body);
         body.status = 1;
+        const { data } = yield call(addPage, body);
         if (data) {
           _res = data;
           message.success('新建页面成功');
