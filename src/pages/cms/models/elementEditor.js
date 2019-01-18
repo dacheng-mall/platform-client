@@ -8,6 +8,7 @@ export default {
   namespace: 'elementEditor',
   state: {
     data: [],
+    attr: {},
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -33,6 +34,7 @@ export default {
         const { data: res } = yield call(getCmsElementsWithoutPage, { id });
         if (res.length > 0) {
           res[0].data = JSON.parse(res[0].data);
+          res[0].attributes = res[0].attributes && JSON.parse(res[0].attributes);
           yield put({
             type: 'upState',
             payload: res[0],
@@ -56,7 +58,9 @@ export default {
     },
     *change({ payload }, { put, select }) {
       const { value, index, type } = payload;
-      let { data, name, type: listType } = yield select(({ elementEditor }) => elementEditor);
+      let { data, name, type: listType, attr } = yield select(
+        ({ elementEditor }) => elementEditor,
+      );
       switch (type) {
         case 'edit': {
           data[index] = value;
@@ -98,6 +102,11 @@ export default {
           break;
         }
         default: {
+          const preFix = /^attributes\./;
+          if (preFix.test(type)) {
+            const path = type.replace(preFix, '');
+            _.set(attr, path, value);
+          }
           break;
         }
       }
@@ -106,6 +115,7 @@ export default {
         payload: {
           data: [...data],
           name,
+          attr,
         },
       });
     },
@@ -139,10 +149,19 @@ export default {
         });
       }
       listData.count = listData.data.length;
+      _.forEach(listData.data, (d) => {
+        _.forEach(d, (val, key) => {
+          if(val === undefined) {
+            delete d[key]
+          }
+        })
+      })
       listData.data = JSON.stringify(listData.data);
+      listData.attributes = JSON.stringify(listData.attr);
 
       delete listData.createTime;
       delete listData.lastModifyDate;
+      delete listData.attr;
       let id;
       if (!listData.id) {
         delete listData.id;

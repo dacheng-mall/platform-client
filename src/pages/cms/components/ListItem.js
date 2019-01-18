@@ -29,8 +29,8 @@ export default function ListItem({ data, index, size, onEdit, height, current })
           暂无图片
         </div>
       )}
-      <div className={styles.name}>{data.displayName || data.name || '未命名'}</div>
-      <div className={styles.price}>{data.price !== undefined ? `￥${data.price}` : '未定价'}</div>
+      <div className={styles.name}>{data.displayName || data.name || null}</div>
+      <div className={styles.price}>{data.price !== undefined ? `￥${data.price}` : null}</div>
       {current !== null ? null : (
         <div className={styles.mask}>
           <Mask onPress={edit} data={data} />
