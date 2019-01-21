@@ -113,7 +113,7 @@ export default {
       yield put({
         type: 'upState',
         payload: {
-          data: [...data],
+          data: _.cloneDeep(data),
           name,
           attr,
         },

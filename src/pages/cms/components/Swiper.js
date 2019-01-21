@@ -281,8 +281,8 @@ export default class ProductsList extends PureComponent {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    const { attributes, itemType, editing } = this.state;
-    const { name, data } = this.props;
+    const { itemType, editing } = this.state;
+    const { name, data, attr: attributes } = this.props;
     return (
       <div className={styles.swiperWrap}>
         <div className={styles.preview}>
