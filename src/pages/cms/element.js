@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import _ from 'lodash';
 import { Button, Modal, Radio } from 'antd';
 import { connect } from 'dva';
 import List from './components/List';
@@ -63,13 +64,15 @@ class ElementEditor extends PureComponent {
       case 'swiper': {
         return <Swiper {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
+      case 'grid': {
+        return <Swiper {...this.props} onEdit={this.edit} editing={this.editing} />;
+      }
       default: {
         return (
           <div className={styles.beforeNew}>
             <h2>请选择要创建的元素类型</h2>
             <Radio.Group value={this.state.type} onChange={this.changeType} buttonStyle="solid">
-              <Radio.Button value="list">块状列表</Radio.Button>
-              <Radio.Button value="swiper">滚动图</Radio.Button>
+              {_.map(this.props.elementsTypes, type => <Radio.Button key={type.id} value={type.code}>{type.name}</Radio.Button>)}
             </Radio.Group>
             <div className={styles.nextbtn}>
               <Button type="danger" disabled={!this.state.type} onClick={this.newElement}>下一步</Button>
@@ -99,8 +102,8 @@ class ElementEditor extends PureComponent {
   }
 }
 
-function mapStateToProps({ elementEditor }) {
-  return elementEditor;
+function mapStateToProps({ app: {dict: {elementsTypes}}, elementEditor }) {
+  return {...elementEditor, elementsTypes};
 }
 
 export default connect(mapStateToProps)(ElementEditor);
