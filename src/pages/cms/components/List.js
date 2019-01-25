@@ -33,9 +33,9 @@ export default class ProductsList extends PureComponent {
           editing: index,
         };
         if (editor.productId) {
-          const { productId, productName, name, mainImage } = editor;
+          const { productId, productName, name, mainImage, price, isSelf } = editor;
           newState.productOpts = [
-            { title: productName || name, id: productId, mainImageUrl: mainImage },
+            { title: productName || name, id: productId, mainImageUrl: mainImage, price, isSelf },
           ];
           newState.itemType = 'product';
         }
@@ -164,10 +164,12 @@ export default class ProductsList extends PureComponent {
         case 'product': {
           getProductsWithoutPage({ title }).then(({ data }) => {
             _this.setState({
-              productOpts: _.map(data, ({ id, title, mainImageUrl }) => ({
+              productOpts: _.map(data, ({ id, title, mainImageUrl, price, institutionId }) => ({
                 id,
                 title,
                 mainImageUrl,
+                price,
+                isSelf: !institutionId
               })),
             });
           });
@@ -195,13 +197,15 @@ export default class ProductsList extends PureComponent {
     switch (type) {
       case 'product': {
         const target = _.find(productOpts, ['id', key]);
-        const { mainImageUrl, title } = target || {};
+        const { mainImageUrl, title, price, isSelf } = target || {};
         newState.editor = {
           ...this.state.editor,
           productId: key,
           productImage: mainImageUrl,
           mainImage: mainImageUrl,
           productName: title,
+          price,
+          isSelf,
           pageId: undefined,
           pageName: undefined,
         };
@@ -226,6 +230,7 @@ export default class ProductsList extends PureComponent {
           productImage: undefined,
           productName: undefined,
           price: undefined,
+          isSelf: undefined,
         };
         break;
       }
