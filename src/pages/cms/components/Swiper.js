@@ -8,6 +8,7 @@ import { getProductsWithoutPage } from '../../products/services';
 import { getPagesWithoutPage } from '../services';
 import { source } from '../../../../setting';
 import Selecter from './Selecter';
+import SelecterX from './Selector';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -23,6 +24,7 @@ export default class ProductsList extends PureComponent {
     productOpts: [],
     pageOpts: [],
     itemType: 'product',
+    oriented: {},
   };
   edit = (type, value, index) => {
     switch (type) {
@@ -33,18 +35,25 @@ export default class ProductsList extends PureComponent {
           visible: true,
           editor,
           editing: index,
+          oriented: {},
         };
+        console.log('editor', editor);
         if (editor.productId) {
           const { productId, productName, name, mainImage } = editor;
-          newState.productOpts = [
-            { title: productName || name, id: productId, mainImageUrl: mainImage },
-          ];
-          newState.itemType = 'product';
+          newState.oriented = {
+            title: productName || name,
+            id: productId,
+            mainImageUrl: mainImage,
+            type: 'product',
+          };
         }
         if (editor.pageId) {
           const { pageId, pageName } = editor;
-          newState.pageOpts = [{ title: pageName, id: pageId }];
-          newState.itemType = 'page';
+          newState.oriented = {
+            title: pageName,
+            id: pageId,
+            type: 'page',
+          };
         }
         this.setState(newState, () => {
           this.resetImage();
@@ -61,7 +70,7 @@ export default class ProductsList extends PureComponent {
   };
   resetImage = () => {
     let fileList = [];
-    const {fileList: FL, mainImage, productImage, productId, productName} = this.state.editor;
+    const { fileList: FL, mainImage, productImage, productId, productName } = this.state.editor;
     if (FL) {
       fileList = FL;
     } else if (mainImage) {
@@ -103,6 +112,7 @@ export default class ProductsList extends PureComponent {
       visible: false,
       editor: {},
       editing: null,
+      oriented: {},
     });
     this.props.editing(null);
   };
@@ -110,96 +120,6 @@ export default class ProductsList extends PureComponent {
     const { value } = e.target;
     this.setState({ itemType: value });
   };
-  onSearch = (type, title) => {
-    if (timer) {
-      clearTimeout(timer);
-    }
-    const _this = this;
-    timer = setTimeout(() => {
-      switch (type) {
-        case 'product': {
-          getProductsWithoutPage({ title }).then(({ data }) => {
-            _this.setState({
-              productOpts: _.map(data, ({ id, title, mainImageUrl }) => ({
-                id,
-                title,
-                mainImageUrl,
-              })),
-            });
-          });
-          break;
-        }
-        case 'page': {
-          getPagesWithoutPage({ name: title }).then(({ data }) => {
-            _this.setState({
-              pageOpts: _.map(data, ({ id, name: title }) => ({ id, title })),
-            });
-          });
-          break;
-        }
-        default: {
-          return;
-        }
-      }
-      clearTimeout(timer);
-      timer = null;
-    }, 300);
-  };
-  choose = (type, key) => {
-    const { productOpts, pageOpts } = this.state;
-    const newState = {};
-    let editor = {};
-    const fileList = [];
-    switch (type) {
-      case 'product': {
-        /**
-         * 选择商品时将商品的主图写入, 并写入fileList;
-         * fileList其实是个临时文件, 所有图片的变更都更新fileList;
-         * editor.productImage指向的是关联商品的主图
-         * editor.mainImage指向的是该元素的主图,覆盖商品图
-         * */
-        const target = _.find(productOpts, ['id', key]);
-        const { mainImageUrl, title } = target || {};
-        editor = {
-          ...this.state.editor,
-          productId: key,
-          productImage: mainImageUrl,
-          mainImage: mainImageUrl,
-          productName: title,
-          pageId: undefined,
-          pageName: undefined,
-        };
-        fileList.push({
-          uid: key,
-          name: title,
-          url: `${source}${mainImageUrl}`,
-          status: 'done',
-        });
-        newState.editor = editor;
-        newState.fileList = fileList;
-        break;
-      }
-      case 'page': {
-        const target = _.find(pageOpts, ['id', key]);
-        const { title } = target || {};
-        editor = {
-          ...this.state.editor,
-          pageId: key,
-          pageName: title,
-          productId: undefined,
-          productImage: undefined,
-          productName: undefined,
-        };
-        newState.editor = editor;
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-    this.setState(newState);
-  };
-
   changeName = (e) => {
     this.setState({
       editor: { ...this.state.editor, displayName: e.target.value },
@@ -211,12 +131,16 @@ export default class ProductsList extends PureComponent {
   }
   submit = () => {
     // 编辑元素信息的行为在这里交给状态容器处理
-    const { editor, fileList, editing } = this.state;
-    this.props.onEdit(
-      'edit',
-      { ...editor, fileList },
-      editing,
-    );
+
+    const { fileList, editing, oriented } = this.state;
+    const newEditor = {
+      [oriented.type + 'Id']: oriented.id,
+      [oriented.type + 'Name']: oriented.title,
+    };
+    if (oriented.type === 'product') {
+      newEditor.productImage = oriented.mainImageUrl;
+    }
+    this.props.onEdit('edit', { ...newEditor, fileList }, editing);
     this.hideModal();
   };
   newBlock = () => {
@@ -245,35 +169,18 @@ export default class ProductsList extends PureComponent {
       }
     }
   };
-  renderLink = (itemType) => {
-    switch (itemType) {
-      case 'product': {
-        return (
-          <Selecter
-            onSearch={this.onSearch.bind(null, 'product')}
-            onChange={this.choose.bind(null, 'product')}
-            placeholder="请输入关键字搜索商品"
-            value={this.state.editor.productId}
-            options={this.state.productOpts}
-            type="productOpts"
-          />
-        );
-      }
-      case 'page': {
-        return (
-          <Selecter
-            onSearch={this.onSearch.bind(null, 'page')}
-            onChange={this.choose.bind(null, 'page')}
-            placeholder="请输入关键字搜索页面"
-            value={this.state.editor.pageId}
-            options={this.state.pageOpts}
-            type="pageOpts"
-          />
-        );
-      }
-      default: {
-        return null;
-      }
+  onSelect = (detail) => {
+    this.setState({
+      oriented: detail,
+    });
+  };
+  changeType = (value) => {
+    const key = `${value}Id`;
+    const name = `${value}Name`;
+    if (this.state.editor[key]) {
+      this.onSelect({ id: this.state.editor[key], name: this.state.editor[name], type: value });
+    } else {
+      this.onSelect({ type: value });
     }
   };
   render() {
@@ -281,7 +188,7 @@ export default class ProductsList extends PureComponent {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    const { attributes, itemType, editing } = this.state;
+    const { attributes, editing } = this.state;
     const { name, data } = this.props;
     return (
       <div className={styles.swiperWrap}>
@@ -308,7 +215,7 @@ export default class ProductsList extends PureComponent {
                   padding: '0.3rem 0',
                   fontSize: '0.16rem',
                   color: '#aaa',
-                  width: '100%'
+                  width: '100%',
                 }}
               >
                 暂无元素, 请点击下方按钮添加
@@ -351,14 +258,11 @@ export default class ProductsList extends PureComponent {
               <h2>{`编辑第 ${editing + 1} 个元素`}</h2>
               <Form layout="horizontal">
                 <Form.Item label="关联" {...wrapCol} help="选定关联内容后会覆盖之前的设置">
-                  <RadioGroup onChange={this.typeChange} value={itemType} buttonStyle="solid">
-                    <RadioButton value="product">商品</RadioButton>
-                    <RadioButton value="page">页面</RadioButton>
-                    <RadioButton value="category" disabled>
-                      分类
-                    </RadioButton>
-                  </RadioGroup>
-                  {this.renderLink(itemType)}
+                  <SelecterX
+                    value={this.state.oriented}
+                    changeType={this.changeType}
+                    onSelect={this.onSelect}
+                  />
                 </Form.Item>
                 <Form.Item label="图片" {...wrapCol}>
                   <Uploader
