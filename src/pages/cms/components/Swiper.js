@@ -37,7 +37,6 @@ export default class ProductsList extends PureComponent {
           editing: index,
           oriented: {},
         };
-        console.log('editor', editor);
         if (editor.productId) {
           const { productId, productName, name, mainImage } = editor;
           newState.oriented = {
@@ -92,7 +91,7 @@ export default class ProductsList extends PureComponent {
       fileList,
     });
   };
-  userProductImage = (editor) => {
+  userProductImage = (editor, oriented) => {
     if (editor.productImage) {
       this.setState({
         fileList: [
@@ -100,6 +99,16 @@ export default class ProductsList extends PureComponent {
             uid: editor.productId,
             name: editor.name,
             url: `${source}${editor.productImage}`,
+          },
+        ],
+      });
+    } else if (oriented.productImage) {
+      this.setState({
+        fileList: [
+          {
+            uid: oriented.productId,
+            name: oriented.productName,
+            url: `${source}${oriented.productImage}`,
           },
         ],
       });
@@ -115,10 +124,6 @@ export default class ProductsList extends PureComponent {
       oriented: {},
     });
     this.props.editing(null);
-  };
-  typeChange = (e) => {
-    const { value } = e.target;
-    this.setState({ itemType: value });
   };
   changeName = (e) => {
     this.setState({
@@ -149,6 +154,7 @@ export default class ProductsList extends PureComponent {
   change = (type, e) => {
     // 表单值的变更仅影响组件内的state, 用于最终subimt方法使用, 提交给上层状态容器
     switch (type) {
+      // 仅变更内部state
       case 'image': {
         this.setState((state) => {
           return { ...state, ...e };
@@ -188,7 +194,7 @@ export default class ProductsList extends PureComponent {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    const { itemType, editing } = this.state;
+    const { editing, editor } = this.state;
     const { name, data, attr: attributes } = this.props;
     return (
       <div className={styles.swiperWrap}>
@@ -269,6 +275,10 @@ export default class ProductsList extends PureComponent {
                     fileList={this.state.fileList}
                     onChange={this.change.bind(null, 'image')}
                   />
+                  <Button.Group>
+                    <Button onClick={this.resetImage.bind(null, editing)}>还原</Button>
+                    <Button onClick={this.userProductImage.bind(null, editor, this.state.oriented)}>使用商品主图</Button>
+                  </Button.Group>
                 </Form.Item>
                 <Row>
                   <Col span={14} offset={6}>

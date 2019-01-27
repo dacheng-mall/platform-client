@@ -3,7 +3,6 @@ import { Radio } from 'antd';
 import _ from 'lodash';
 import { getProductsWithoutPage } from '../../products/services';
 import { getPagesWithoutPage } from '../services';
-import { source } from '../../../../setting';
 import Selecter from './Selecter';
 
 const TYPES = [
