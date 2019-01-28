@@ -13,9 +13,6 @@ export default class ProductsList extends PureComponent {
     editor: this.props.data || {},
     editing: null,
     attributes: this.props.attributes || {},
-    height: 0,
-    productOpts: [],
-    pageOpts: [],
     itemType: 'product',
     oriented: {},
   };
@@ -28,25 +25,28 @@ export default class ProductsList extends PureComponent {
           visible: true,
           editor,
           editing: index,
-          oriented: {},
+          oriented: {
+            title: editor.name,
+            id: editor.id,
+            image: editor.image,
+            displayName: editor.displayName,
+          },
         };
-        if (editor.productId) {
-          const { productId, productName, name, mainImage, productImage } = editor;
-          newState.oriented = {
-            title: productName || name,
-            id: productId,
-            mainImageUrl: mainImage,
-            productImage,
-            type: 'product',
-          };
-        }
-        if (editor.pageId) {
-          const { pageId, pageName } = editor;
-          newState.oriented = {
-            title: pageName,
-            id: pageId,
-            type: 'page',
-          };
+        switch (editor.type) {
+          case 'product': {
+            const { productImage, institutionId, price } = editor;
+            newState.oriented.productImage = productImage
+            newState.oriented.institutionId = institutionId
+            newState.oriented.price = price
+            newState.oriented.type = 'product'
+            break;
+          }
+          case 'page': {
+            newState.oriented.type = 'page'
+            break;
+          }
+          default: {
+          }
         }
         this.setState(newState, () => {
           this.resetImage();
@@ -63,21 +63,21 @@ export default class ProductsList extends PureComponent {
   };
   resetImage = () => {
     let fileList = [];
-    const { fileList: FL, mainImage, productImage, productId, productName } = this.state.editor;
+    const { fileList: FL, image, productImage, id, name } = this.state.editor;
     if (FL) {
       fileList = FL;
-    } else if (mainImage) {
+    } else if (image) {
       // 如果没有新上传的图, 并且有主图, 优先使用主图
       fileList.push({
         uid: 'init',
         name: 'mainImage',
-        url: `${source}${mainImage}`,
+        url: `${source}${image}`,
       });
     } else if (productImage) {
       // 如果没有主图, 优先使用商品图
       fileList.push({
-        uid: productId,
-        name: productName,
+        uid: id,
+        name: name,
         url: `${source}${productImage}`,
       });
     }
@@ -85,30 +85,31 @@ export default class ProductsList extends PureComponent {
       fileList,
     });
   };
-  userProductImage = (editor, oriented) => {
+  userProductImage = (editor, oriented) => {const fileList = [];
     if (editor.productImage) {
-      this.setState({
-        fileList: [
-          {
-            uid: editor.productId,
-            name: editor.name,
-            url: `${source}${editor.productImage}`,
-          },
-        ],
-      });
+      fileList.push({
+        uid: editor.id,
+        name: editor.name,
+        url: `${source}${editor.productImage}`,
+      })
+      editor.image = editor.productImage
     } else if (oriented.productImage) {
-      this.setState({
-        fileList: [
-          {
-            uid: oriented.id,
-            name: oriented.title,
-            url: `${source}${oriented.productImage}`,
-          },
-        ],
-      });
+      fileList.push(
+        {
+          uid: oriented.id,
+          name: oriented.title,
+          url: `${source}${oriented.productImage}`,
+        })
+        
+      editor.image = oriented.productImage
     } else {
       message.error('尚未绑定商品');
+      return
     }
+    this.setState({
+      fileList,
+      editor
+    })
   };
   hideModal = () => {
     this.setState({
@@ -126,17 +127,25 @@ export default class ProductsList extends PureComponent {
   };
   componentDidMount() {
     const width = document.getElementById('_listWrap').clientWidth - 20;
-    this.setState({ height: width * 0.48 + 'px', width });
+    this.setState({ width });
   }
   submit = () => {
     // 编辑元素信息的行为在这里交给状态容器处理
-    const { fileList, editing, oriented } = this.state;
+    const { fileList, editing, oriented, editor } = this.state;
+    const { id, title, productImage, institutionId, price, type } = oriented;
+    const { size, displayName, image } = editor;
     const newData = {
-      [oriented.type + 'Id']: oriented.id,
-      [oriented.type + 'Name']: oriented.title,
+      id,
+      name: title,
+      size: size,
+      displayName: displayName,
+      image: image || productImage,
+      type,
     };
     if (oriented.type === 'product') {
-      newData.productImage = oriented.mainImageUrl;
+      newData.productImage = productImage;
+      newData.institutionId = institutionId;
+      newData.price = price;
     }
     this.props.onEdit('edit', { ...newData, fileList }, editing);
     this.hideModal();
@@ -187,12 +196,11 @@ export default class ProductsList extends PureComponent {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    const { editing, editor } = this.state;
+    const { editing, editor, visible, oriented, fileList } = this.state;
     const { name, data, attributes } = this.props;
     return (
       <div className={styles.swiperWrap}>
         <div className={styles.preview}>
-          <div className={styles.nameEditor} />
           <div className={styles.listWrap} id="_listWrap">
             {_.map(data, (d, i) => {
               return (
@@ -234,7 +242,7 @@ export default class ProductsList extends PureComponent {
         </div>
 
         <div className={styles.editor}>
-          <h2>{`编辑基础属性`}</h2>
+          <h2>编辑基础属性</h2>
           <Form layout="horizontal">
             <Form.Item label="元素组名称" {...wrapCol}>
               <Input
@@ -257,24 +265,24 @@ export default class ProductsList extends PureComponent {
               />
             </Form.Item>
           </Form>
-          {this.state.visible ? (
+          {visible ? (
             <Fragment>
               <h2>{`编辑第 ${editing + 1} 个元素`}</h2>
               <Form layout="horizontal">
                 <Form.Item label="关联" {...wrapCol} help="选定关联内容后会覆盖之前的设置">
                   <SelecterX
-                    value={this.state.oriented}
+                    value={oriented}
                     changeType={this.changeType}
                     onSelect={this.onSelect}
                   />
                 </Form.Item>
                 <Form.Item label="图片" {...wrapCol}>
                   <ImagePicker
-                    fileList={this.state.fileList}
+                    fileList={fileList}
                     onChange={this.change.bind(null, 'image')}
                     resetImage={this.resetImage.bind(null, editing)}
                     userProductImage={this.userProductImage.bind(null, editor, this.state.oriented)}
-                    oriented={this.state.oriented}
+                    oriented={oriented}
                   />
                 </Form.Item>
                 <Row>

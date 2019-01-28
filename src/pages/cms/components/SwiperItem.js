@@ -19,8 +19,8 @@ export default function ListItem({
   };
   const getImageUrl = ((file, data) => {
     if (file === undefined || typeof file !== 'object') {
-      const { mainImage, productImage } = data;
-      const res = mainImage || productImage;
+      const { image, productImage } = data;
+      const res = image || productImage;
       if (res) {
         return `${source}${res}`;
       }

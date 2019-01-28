@@ -3,15 +3,15 @@ import Mask from './Mask';
 import styles from './styles.less';
 import { source } from '../../../../setting';
 
-export default function ListItem({ data, index, size, onEdit, height, current }) {
+export default function ListItem({ data, index, size, onEdit, height, current, isHead, isTail }) {
   const edit = (type, value) => {
     // 点击编辑按钮后,初始化待编辑的元素数据
     onEdit(type, value, index);
   };
   const getImageUrl = ((file, data) => {
     if (file === undefined || typeof file !== 'object') {
-      const { mainImage, productImage } = data;
-      const res = mainImage || productImage;
+      const { image, productImage } = data;
+      const res = image || productImage;
       if (res) {
         return `${source}${res}`;
       }
@@ -33,7 +33,7 @@ export default function ListItem({ data, index, size, onEdit, height, current })
       <div className={styles.price}>{data.price !== undefined ? `￥${data.price}` : null}</div>
       {current !== null ? null : (
         <div className={styles.mask}>
-          <Mask onPress={edit} data={data} />
+          <Mask onPress={edit} data={data} isHead={isHead} isTail={isTail} />
         </div>
       )}
     </div>

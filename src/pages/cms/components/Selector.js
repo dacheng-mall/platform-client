@@ -15,7 +15,7 @@ const TYPES = [
     code: 'page',
   },
   {
-    label: '分类',
+    label: '商品分类',
     code: 'category',
     disabled: true,
   },
@@ -84,10 +84,11 @@ export default class Selector extends PureComponent {
         case 'product': {
           const { data } = await getProductsWithoutPage({ title });
           _this.setState({
-            productOpts: _.map(data, ({ id, title, mainImageUrl }) => ({
+            productOpts: _.map(data, ({ id, title, mainImageUrl, price, institutionId }) => ({
               id,
               title,
-              mainImageUrl,
+              price,
+              institutionId, // 判断是否自营, 如果是空字符串则为自营
               productImage: mainImageUrl,
             })),
           });

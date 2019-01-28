@@ -124,8 +124,8 @@ export default {
     *submit(p, { put, call, select, all }) {
       const elementEditor = yield select(({ elementEditor }) => elementEditor);
       const listData = _.cloneDeep(elementEditor);
-      _.remove(listData.data, ({ productId, categoryId, path }) => {
-        return !productId && !categoryId && path;
+      _.remove(listData.data, ({ id }) => {
+        return !id;
       });
       if (!listData.data || listData.data.length < 1) {
         message.error('没有可以提交的内容');
@@ -136,7 +136,7 @@ export default {
         if (d.fileList && d.fileList[0]) {
           if (d.fileList[0].originFileObj) {
             // 新上传了元素图, 覆盖了商品图
-            todos[`[${i}].mainImage`] = upload(d.fileList[0].originFileObj);
+            todos[`[${i}].image`] = upload(d.fileList[0].originFileObj);
           }
           delete d.fileList;
         }
@@ -158,6 +158,7 @@ export default {
           }
         });
       });
+      console.log('listData---', listData.data)
       listData.data = JSON.stringify(listData.data);
       listData.attributes = JSON.stringify(listData.attributes);
 
