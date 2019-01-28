@@ -8,7 +8,10 @@ export default {
   namespace: 'elementEditor',
   state: {
     data: [],
-    attr: {},
+    attributes: {},
+    name: '',
+    type: '',
+    count: 0,
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -58,9 +61,7 @@ export default {
     },
     *change({ payload }, { put, select }) {
       const { value, index, type } = payload;
-      let { data, name, type: listType, attr } = yield select(
-        ({ elementEditor }) => elementEditor,
-      );
+      let { data, name, type: listType, attributes } = yield select(({ elementEditor }) => elementEditor);
       switch (type) {
         case 'edit': {
           data[index] = value;
@@ -105,7 +106,8 @@ export default {
           const preFix = /^attributes\./;
           if (preFix.test(type)) {
             const path = type.replace(preFix, '');
-            _.set(attr, path, value);
+            _.set(attributes, path, value);
+
           }
           break;
         }
@@ -115,7 +117,7 @@ export default {
         payload: {
           data: _.cloneDeep(data),
           name,
-          attr,
+          attributes,
         },
       });
     },
@@ -151,13 +153,13 @@ export default {
       listData.count = listData.data.length;
       _.forEach(listData.data, (d) => {
         _.forEach(d, (val, key) => {
-          if(val === undefined) {
-            delete d[key]
+          if (val === undefined) {
+            delete d[key];
           }
-        })
-      })
+        });
+      });
       listData.data = JSON.stringify(listData.data);
-      listData.attributes = JSON.stringify(listData.attr);
+      listData.attributes = JSON.stringify(listData.attributes);
 
       delete listData.createTime;
       delete listData.lastModifyDate;

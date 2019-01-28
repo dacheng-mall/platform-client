@@ -1,18 +1,11 @@
 import React, { PureComponent, Fragment } from 'react';
 import _ from 'lodash';
-import { Input, Form, Radio, Button, Row, Col, message, InputNumber } from 'antd';
+import { Input, Form, Button, Row, Col, message, InputNumber } from 'antd';
 import SwiperItem from './SwiperItem';
 import styles from './styles.less';
 import Uploader from '../../Components/Uploader';
-import { getProductsWithoutPage } from '../../products/services';
-import { getPagesWithoutPage } from '../services';
 import { source } from '../../../../setting';
-import Selecter from './Selecter';
 import SelecterX from './Selector';
-
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
-let timer;
 
 export default class ProductsList extends PureComponent {
   state = {
@@ -195,7 +188,7 @@ export default class ProductsList extends PureComponent {
       wrapperCol: { span: 14 },
     };
     const { editing, editor } = this.state;
-    const { name, data, attr: attributes } = this.props;
+    const { name, data, attributes } = this.props;
     return (
       <div className={styles.swiperWrap}>
         <div className={styles.preview}>
@@ -203,15 +196,17 @@ export default class ProductsList extends PureComponent {
           <div className={styles.listWrap} id="_listWrap">
             {_.map(data, (d, i) => {
               return (
-                <SwiperItem
-                  key={`item_${d.id}_${i}`}
-                  current={editing}
-                  data={d}
-                  index={i}
-                  size={d.size}
-                  onEdit={this.edit}
-                  height={this.state.height}
-                />
+                <div key={`item_${d.id}_${i}`} className={styles.swiperItem}>
+                  <div className={styles.swiperIndex}>{i + 1}</div>
+                  <SwiperItem
+                    current={editing}
+                    data={d}
+                    index={i}
+                    size={d.size}
+                    onEdit={this.edit}
+                    height={this.state.height}
+                  />
+                </div>
               );
             })}
             {data.length === 0 ? (
@@ -277,7 +272,9 @@ export default class ProductsList extends PureComponent {
                   />
                   <Button.Group>
                     <Button onClick={this.resetImage.bind(null, editing)}>还原</Button>
-                    <Button onClick={this.userProductImage.bind(null, editor, this.state.oriented)}>使用商品主图</Button>
+                    <Button onClick={this.userProductImage.bind(null, editor, this.state.oriented)}>
+                      使用商品主图
+                    </Button>
                   </Button.Group>
                 </Form.Item>
                 <Row>
