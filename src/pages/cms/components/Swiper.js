@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Input, Form, Button, Row, Col, message, InputNumber } from 'antd';
 import SwiperItem from './SwiperItem';
 import styles from './styles.less';
-import Uploader from '../../Components/Uploader';
+import ImagePicker from './ImagePicker';
 import { source } from '../../../../setting';
 import SelecterX from './Selector';
 
@@ -31,11 +31,12 @@ export default class ProductsList extends PureComponent {
           oriented: {},
         };
         if (editor.productId) {
-          const { productId, productName, name, mainImage } = editor;
+          const { productId, productName, name, mainImage, productImage } = editor;
           newState.oriented = {
             title: productName || name,
             id: productId,
             mainImageUrl: mainImage,
+            productImage,
             type: 'product',
           };
         }
@@ -99,8 +100,8 @@ export default class ProductsList extends PureComponent {
       this.setState({
         fileList: [
           {
-            uid: oriented.productId,
-            name: oriented.productName,
+            uid: oriented.id,
+            name: oriented.title,
             url: `${source}${oriented.productImage}`,
           },
         ],
@@ -125,20 +126,19 @@ export default class ProductsList extends PureComponent {
   };
   componentDidMount() {
     const width = document.getElementById('_listWrap').clientWidth - 20;
-    this.setState({ height: width * 0.48 + 'px' });
+    this.setState({ height: width * 0.48 + 'px', width });
   }
   submit = () => {
     // 编辑元素信息的行为在这里交给状态容器处理
-
     const { fileList, editing, oriented } = this.state;
-    const newEditor = {
+    const newData = {
       [oriented.type + 'Id']: oriented.id,
       [oriented.type + 'Name']: oriented.title,
     };
     if (oriented.type === 'product') {
-      newEditor.productImage = oriented.mainImageUrl;
+      newData.productImage = oriented.mainImageUrl;
     }
-    this.props.onEdit('edit', { ...newEditor, fileList }, editing);
+    this.props.onEdit('edit', { ...newData, fileList }, editing);
     this.hideModal();
   };
   newBlock = () => {
@@ -204,7 +204,10 @@ export default class ProductsList extends PureComponent {
                     index={i}
                     size={d.size}
                     onEdit={this.edit}
-                    height={this.state.height}
+                    width={this.state.width}
+                    isHead={i === 0}
+                    isTail={i === data.length - 1}
+                    attributes={this.props.attributes}
                   />
                 </div>
               );
@@ -266,16 +269,13 @@ export default class ProductsList extends PureComponent {
                   />
                 </Form.Item>
                 <Form.Item label="图片" {...wrapCol}>
-                  <Uploader
+                  <ImagePicker
                     fileList={this.state.fileList}
                     onChange={this.change.bind(null, 'image')}
+                    resetImage={this.resetImage.bind(null, editing)}
+                    userProductImage={this.userProductImage.bind(null, editor, this.state.oriented)}
+                    oriented={this.state.oriented}
                   />
-                  <Button.Group>
-                    <Button onClick={this.resetImage.bind(null, editing)}>还原</Button>
-                    <Button onClick={this.userProductImage.bind(null, editor, this.state.oriented)}>
-                      使用商品主图
-                    </Button>
-                  </Button.Group>
                 </Form.Item>
                 <Row>
                   <Col span={14} offset={6}>

@@ -88,6 +88,7 @@ export default class Selector extends PureComponent {
               id,
               title,
               mainImageUrl,
+              productImage: mainImageUrl,
             })),
           });
           break;

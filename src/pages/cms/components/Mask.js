@@ -13,6 +13,7 @@ export default class Mask extends React.PureComponent {
     this.props.onPress('del');
   };
   render() {
+    const { isHead, isTail } = this.props;
     return (
       <div className={styles.operator}>
         <div>
@@ -20,8 +21,12 @@ export default class Mask extends React.PureComponent {
           <Button onClick={this.remove} type="danger" shape="circle" icon="delete" />
         </div>
         <div>
-          <Button onClick={this.move.bind(null, 'up')} shape="circle" icon="arrow-up" />
-          <Button onClick={this.move.bind(null, 'down')} shape="circle" icon="arrow-down" />
+          {isHead ? null : (
+            <Button onClick={this.move.bind(null, 'up')} shape="circle" icon="arrow-up" />
+          )}
+          {isTail ? null : (
+            <Button onClick={this.move.bind(null, 'down')} shape="circle" icon="arrow-down" />
+          )}
         </div>
       </div>
     );
