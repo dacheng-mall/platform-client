@@ -7,13 +7,12 @@ import ImagePicker from './ImagePicker';
 import { source } from '../../../../setting';
 import SelecterX from './Selector';
 
-export default class ProductsList extends PureComponent {
+export default class SwiperEditor extends PureComponent {
   state = {
     visible: false,
     editor: this.props.data || {},
     editing: null,
     attributes: this.props.attributes || {},
-    itemType: 'product',
     oriented: {},
   };
   edit = (type, value, index) => {

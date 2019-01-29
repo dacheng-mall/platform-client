@@ -8,7 +8,7 @@ function ListItem({ height, data }) {
   return (
     <div className={styles.listItem} style={{ width: data.size === 2 ? '100%' : '48%' }}>
       <img
-        src={`${source}${data.mainImage || data.productImage}`}
+        src={`${source}${data.image || data.productImage}`}
         alt={data.name}
         style={{ height }}
       />
@@ -50,6 +50,33 @@ function Swiper(props) {
     </Carousel>
   );
 }
+function GridItem({ data }) {
+  return (
+    <div className={styles.gridItem}>
+      <img src={`${source}${data.image || data.productImage}`} alt={data.name} />
+      <div className={styles.name}>{data.displayName || data.name || null}</div>
+    </div>
+  );
+}
+function Grids(props) {
+  const { attributes: { cols = 4, rows = 2 } = {}, data } = props;
+  const size = 1 / cols;
+  const initCount = new Array(cols * rows);
+  return (
+    <div className={styles.listWrap}>
+      {_.map(initCount, (d, i) => {
+        return (
+          <div
+            key={`item_${i}`}
+            style={{ width: `${size * 100}%`, height: props.width * size + 'px' }}
+          >
+            <GridItem data={data[i]} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function PagePreview(props) {
   const render = (elem) => {
@@ -61,6 +88,17 @@ export default function PagePreview(props) {
       case 'swiper': {
         return (
           <Swiper
+            id={id}
+            key={id}
+            data={JSON.parse(data)}
+            width={props.width}
+            attributes={JSON.parse(attributes || {})}
+          />
+        );
+      }
+      case 'grid': {
+        return (
+          <Grids
             id={id}
             key={id}
             data={JSON.parse(data)}

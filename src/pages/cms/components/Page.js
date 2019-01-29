@@ -52,7 +52,6 @@ export default class PageEditor extends PureComponent {
     this.setState({ height: width * 0.48 + 'px', width});
   }
   submit = () => {
-    // 编辑元素信息的行为在这里交给状态容器处理
     this.props.onEdit(
       'edit',
       { ...this.state.editor, fileList: this.state.fileList },
@@ -95,11 +94,11 @@ export default class PageEditor extends PureComponent {
                 placeholder="请输入页面名称"
               />
             </Form.Item>
-            <Form.Item label="选择元素" {...wrapCol}>
+            <Form.Item label="选择素材" {...wrapCol}>
               <Select
                 onSearch={this.onSearch}
                 onChange={this.chooseElement}
-                placeholder="请输入关键字搜索元素"
+                placeholder="请输入关键字搜索素材"
                 showSearch
                 filterOption={false}
                 value={undefined}

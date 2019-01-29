@@ -17,15 +17,15 @@ export default class Mask extends React.PureComponent {
     return (
       <div className={styles.operator}>
         <div>
-          <Button onClick={this.edit} type="primary" shape="circle" icon="edit" />
-          <Button onClick={this.remove} type="danger" shape="circle" icon="delete" />
+          <Button size="small" onClick={this.edit} type="primary" shape="circle" icon="edit" />
+          <Button size="small" onClick={this.remove} type="danger" shape="circle" icon="delete" />
         </div>
         <div>
           {isHead ? null : (
-            <Button onClick={this.move.bind(null, 'up')} shape="circle" icon="arrow-up" />
+            <Button size="small" onClick={this.move.bind(null, 'up')} shape="circle" icon="arrow-up" />
           )}
           {isTail ? null : (
-            <Button onClick={this.move.bind(null, 'down')} shape="circle" icon="arrow-down" />
+            <Button size="small" onClick={this.move.bind(null, 'down')} shape="circle" icon="arrow-down" />
           )}
         </div>
       </div>

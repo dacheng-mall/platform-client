@@ -4,6 +4,7 @@ import { Button, Modal, Radio } from 'antd';
 import { connect } from 'dva';
 import List from './components/List';
 import Swiper from './components/Swiper';
+import Grid from './components/Grid';
 import styles from './styles.less';
 
 const confirm = Modal.confirm;
@@ -65,7 +66,7 @@ class ElementEditor extends PureComponent {
         return <Swiper {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       case 'grid': {
-        return <Swiper {...this.props} onEdit={this.edit} editing={this.editing} />;
+        return <Grid {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       default: {
         return (

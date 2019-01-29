@@ -9,15 +9,12 @@ import ImagePicker from './ImagePicker';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-export default class ProductsList extends PureComponent {
+export default class ListEditor extends PureComponent {
   state = {
     visible: false,
     editor: this.props.data || {},
     editing: null,
     height: 0,
-    productOpts: [],
-    pageOpts: [],
-    itemType: 'product',
     oriented: {},
   };
   // same

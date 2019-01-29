@@ -38,6 +38,14 @@ export default {
         if (res.length > 0) {
           res[0].data = JSON.parse(res[0].data);
           res[0].attributes = res[0].attributes && JSON.parse(res[0].attributes);
+          if(res[0].type === 'grid') {
+            if(!res[0].attributes.cols) {
+              res[0].attributes.cols = 4
+            }
+            if(!res[0].attributes.rows) {
+              res[0].attributes.rows = 2
+            }
+          }
           yield put({
             type: 'upState',
             payload: res[0],
@@ -107,7 +115,6 @@ export default {
           if (preFix.test(type)) {
             const path = type.replace(preFix, '');
             _.set(attributes, path, value);
-
           }
           break;
         }
@@ -124,8 +131,8 @@ export default {
     *submit(p, { put, call, select, all }) {
       const elementEditor = yield select(({ elementEditor }) => elementEditor);
       const listData = _.cloneDeep(elementEditor);
-      _.remove(listData.data, ({ id }) => {
-        return !id;
+      _.remove(listData.data, (item) => {
+        return !item || !item.id;
       });
       if (!listData.data || listData.data.length < 1) {
         message.error('没有可以提交的内容');
@@ -153,7 +160,6 @@ export default {
       listData.count = listData.data.length;
       _.forEach(listData.data, (d) => {
         _.forEach(d, (val, key) => {
-          console.log(val, key)
           if (val === undefined) {
             delete d[key];
           }

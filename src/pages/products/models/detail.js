@@ -57,17 +57,20 @@ export default {
               case 'id':
               case 'title':
               case 'video':
-              case 'cateId':
               case 'price':
               case 'attributes':
               case 'content':
+              case 'sn':
+              case 'information':
                 editor[key] = val;
+                break;
+              case 'cateId':
+                editor[key] = val || undefined;
                 break;
               default: {
               }
             }
           });
-
           if (editor.content) {
             editor.content = JSON.parse(editor.content);
             _.forEach(editor.content, (cont) => {
@@ -194,7 +197,6 @@ export default {
       }
       if (editor.id) {
         const { data } = yield call(updateProducts, editor);
-        console.log('修改', data);
         if (data) {
           message.success('修改商品成功');
           yield put({
