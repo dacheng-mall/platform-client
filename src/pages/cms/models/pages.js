@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ptrx from 'path-to-regexp';
-import { addPage, updatePage, getPages, getPagesWithoutPage } from '../services';
+import { addPage, updatePage, getPages, removePage, getPagesWithoutPage } from '../services';
 import { message } from 'antd';
 
 const DEF_PAGINATION = {
@@ -69,6 +69,17 @@ export default {
           payload: { ...data },
         });
       }
+    },
+    *remove({ id }, { call, select, put }) {
+      const { data } = yield select(({ pages }) => pages);
+      yield call(removePage, id);
+      _.remove(data, (d) => d.id === id);
+      yield put({
+        type: 'upState',
+        payload: {
+          data: [...data],
+        },
+      });
     },
     *editInit({ id }, { put, call, select }) {
       if (id) {
@@ -165,7 +176,7 @@ export default {
         message.error('暂无可提交内容');
         return;
       }
-      if(!name || !code) {
+      if (!name || !code) {
         message.error('名称和code是必填项, code不可重复');
         return;
       }

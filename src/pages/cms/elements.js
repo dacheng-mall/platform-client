@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import { Table, Button, Switch, Divider } from 'antd';
+import { Table, Button, Switch, Divider, Modal } from 'antd';
 import { connect } from 'dva';
 import { jump } from '../../utils';
 
@@ -49,6 +49,7 @@ class CmsElements extends PureComponent {
     {
       key: 'operator',
       title: '操作',
+      dataIndex: 'id',
       render: (t, r) => {
         return (
           <div>
@@ -81,7 +82,15 @@ class CmsElements extends PureComponent {
     }
   };
   remove = (id) => {
-    console.log(id);
+    Modal.confirm({
+      title: '删除此元素?',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'elements/remove',
+          id
+        })
+      }
+    })
   };
   changeStatus = (id, status) => {
     this.props.dispatch({

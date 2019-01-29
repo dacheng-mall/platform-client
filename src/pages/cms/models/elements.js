@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getCmsElements, updateCmsElement } from '../services';
+import { getCmsElements, updateCmsElement, removeCmsElement } from '../services';
 
 export default {
   namespace: 'elements',
@@ -28,6 +28,17 @@ export default {
       yield put({
         type: 'upState',
         payload: { ...data },
+      });
+    },
+    *remove({ id }, { call, select, put }) {
+      const { data } = yield select(({ elements }) => elements);
+      yield call(removeCmsElement, id);
+      _.remove(data, (d) => d.id === id);
+      yield put({
+        type: 'upState',
+        payload: {
+          data: [...data],
+        },
       });
     },
     *setStatus({ id, status }, { call, put, select }) {

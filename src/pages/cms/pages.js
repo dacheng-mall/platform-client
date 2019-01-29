@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Table, Button, Switch, Divider } from 'antd';
+import { Table, Button, Switch, Divider, Modal } from 'antd';
 import { connect } from 'dva';
 import { jump } from '../../utils';
 
@@ -45,6 +45,7 @@ class CmsHome extends PureComponent {
     {
       key: 'operator',
       title: '操作',
+      dataIndex: 'id',
       render: (t, r) => {
         return (
           <div>
@@ -84,7 +85,17 @@ class CmsHome extends PureComponent {
       jump(`/cms/page`);
     }
   };
-  remove = () => {};
+  remove = (id) => {
+    Modal.confirm({
+      title: '删除此页面?',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'pages/remove',
+          id
+        })
+      }
+    })
+  };
   render() {
     return (
       <div>
