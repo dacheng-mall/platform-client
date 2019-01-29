@@ -29,10 +29,23 @@ function List(props) {
 }
 
 function Swiper(props) {
+  let height = props.width || 0;
+  if (props.attributes.rate) {
+    const [w = 1, h = 1] = props.attributes.rate;
+    height = height * (h / w);
+  }
   return (
     <Carousel className={styles.swipterWrap}>
       {_.map(props.data, (data, i) => {
-        return <img key={`${props.id}_${i}`} src={`${source}${data.mainImage}`} alt={data.name} />;
+        return (
+          <div key={`${props.id}_${i}`}>
+            <img
+              style={{ height: height + 'px', width: '100%' }}
+              src={`${source}${data.image}`}
+              alt={data.name}
+            />
+          </div>
+        );
       })}
     </Carousel>
   );
@@ -40,13 +53,21 @@ function Swiper(props) {
 
 export default function PagePreview(props) {
   const render = (elem) => {
-    const { type, data, id } = elem;
+    const { type, data, id, attributes } = elem;
     switch (type) {
       case 'list': {
         return <List id={id} key={id} height={props.height} data={JSON.parse(data)} />;
       }
       case 'swiper': {
-        return <Swiper id={id} key={id} data={JSON.parse(data)} />;
+        return (
+          <Swiper
+            id={id}
+            key={id}
+            data={JSON.parse(data)}
+            width={props.width}
+            attributes={JSON.parse(attributes || {})}
+          />
+        );
       }
       default: {
         return null;

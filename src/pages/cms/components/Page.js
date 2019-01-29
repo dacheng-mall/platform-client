@@ -49,7 +49,7 @@ export default class PageEditor extends PureComponent {
   };
   componentDidMount() {
     const width = document.getElementById('_listWrap').clientWidth - 20;
-    this.setState({ height: width * 0.48 + 'px' });
+    this.setState({ height: width * 0.48 + 'px', width});
   }
   submit = () => {
     // 编辑元素信息的行为在这里交给状态容器处理
@@ -68,7 +68,7 @@ export default class PageEditor extends PureComponent {
       <div className={styles.wrap}>
         <div className={styles.preview}>
           <div id="_listWrap">
-            <PagePreview data={this.props.editor.elements} height={this.state.height} />
+            <PagePreview data={this.props.editor.elements} height={this.state.height} width={this.state.width} />
           </div>
         </div>
         <div className={styles.pageEditor}>

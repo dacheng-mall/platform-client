@@ -9,8 +9,8 @@ class Pages extends PureComponent {
   edit = (type, value, index) => {
     if (type === 'del') {
       confirm({
-        title: '是否要删除元素?',
-        content: '',
+        title: '删除素材?',
+        content: '此操作将制定素材从页面中删除, 并不会影响素材实体',
         onOk: () => {
           this.changeData(type, value, index);
         },

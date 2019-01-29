@@ -188,24 +188,20 @@ export default {
         elements: elemKeys,
         count: elemKeys.length,
       };
-      let _res = false;
       if (!id) {
         // add
         body.status = 1;
         const { data } = yield call(addPage, body);
         if (data) {
-          _res = data;
-          message.success('新建页面成功');
+          message.success('添加页面操作成功');
         }
       } else {
         body.id = id;
         const { data } = yield call(updatePage, body);
         if (data) {
-          _res = data;
-          message.success('修改页面成功');
+          message.success('更新页面操作成功');
         }
       }
-      console.log('_res', _res);
     },
   },
   reducers: {

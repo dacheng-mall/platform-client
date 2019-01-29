@@ -133,8 +133,8 @@ export default {
       }
       const todos = {};
       _.forEach(listData.data, (d, i) => {
-        if (d.fileList && d.fileList[0]) {
-          if (d.fileList[0].originFileObj) {
+        if (d.fileList) {
+          if (d.fileList[0] && d.fileList[0].originFileObj) {
             // 新上传了元素图, 覆盖了商品图
             todos[`[${i}].image`] = upload(d.fileList[0].originFileObj);
           }
@@ -153,12 +153,12 @@ export default {
       listData.count = listData.data.length;
       _.forEach(listData.data, (d) => {
         _.forEach(d, (val, key) => {
+          console.log(val, key)
           if (val === undefined) {
             delete d[key];
           }
         });
       });
-      console.log('listData---', listData.data)
       listData.data = JSON.stringify(listData.data);
       listData.attributes = JSON.stringify(listData.attributes);
 
@@ -169,9 +169,11 @@ export default {
       if (!listData.id) {
         delete listData.id;
         const { data } = yield call(addCmsElement, listData);
+        message.success('添加素材操作成功')
         id = data.id;
       } else {
         const { data } = yield call(updateCmsElement, listData);
+        message.success('更新素材操作成功')
         id = data.id;
       }
       yield put({

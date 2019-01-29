@@ -40,14 +40,14 @@ export default class ProductsList extends PureComponent {
         switch (editor.type) {
           case 'product': {
             const { productImage, institutionId, price } = editor;
-            newState.oriented.productImage = productImage
-            newState.oriented.institutionId = institutionId
-            newState.oriented.price = price
-            newState.oriented.type = 'product'
+            newState.oriented.productImage = productImage;
+            newState.oriented.institutionId = institutionId;
+            newState.oriented.price = price;
+            newState.oriented.type = 'product';
             break;
           }
           case 'page': {
-            newState.oriented.type = 'page'
+            newState.oriented.type = 'page';
             break;
           }
           default: {
@@ -70,7 +70,7 @@ export default class ProductsList extends PureComponent {
   resetImage = () => {
     let fileList = [];
     const { fileList: FL, image, productImage, id, name } = this.state.editor;
-    if (FL) {
+    if (FL && FL.length > 0) {
       fileList = FL;
     } else if (image) {
       // 如果没有新上传的图, 并且有主图, 优先使用主图
@@ -99,25 +99,24 @@ export default class ProductsList extends PureComponent {
         uid: editor.id,
         name: editor.name,
         url: `${source}${editor.productImage}`,
-      })
-      editor.image = editor.productImage
+      });
+      editor.image = editor.productImage;
     } else if (oriented.productImage) {
-      fileList.push(
-        {
-          uid: oriented.id,
-          name: oriented.title,
-          url: `${source}${oriented.productImage}`,
-        })
-        
-      editor.image = oriented.productImage
+      fileList.push({
+        uid: oriented.id,
+        name: oriented.title,
+        url: `${source}${oriented.productImage}`,
+      });
+
+      editor.image = oriented.productImage;
     } else {
       message.error('尚未绑定商品');
-      return
+      return;
     }
     this.setState({
       fileList,
-      editor
-    })
+      editor,
+    });
   };
   // same
   hideModal = () => {
@@ -189,18 +188,18 @@ export default class ProductsList extends PureComponent {
       }
     }
   };
-
   onSelect = (detail) => {
-    console.log('onSelect', detail);
-    this.setState({
+    const update = {
       oriented: detail,
-    });
+    };
+    if (!this.state.editor.type) {
+      update.editor = { ...this.state.editor, ...detail };
+    }
+    this.setState(update);
   };
   changeType = (value) => {
-    const key = `${value}Id`;
-    const name = `${value}Name`;
-    if (this.state.editor[key]) {
-      this.onSelect({ id: this.state.editor[key], name: this.state.editor[name], type: value });
+    if (this.state.editor.type === value) {
+      this.onSelect(this.state.editor);
     } else {
       this.onSelect({ type: value });
     }

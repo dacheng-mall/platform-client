@@ -31,9 +31,6 @@ export default class Selector extends PureComponent {
     pageOpts: [],
     itemType: 'product',
   };
-  // static getDerivedStateFromProps = (props, state) => {
-  //   return null;
-  // };
   componentDidMount() {
     if (this.props.value) {
       const { title, id, mainImage, type } = this.props.value;
