@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { Radio } from 'antd';
 import _ from 'lodash';
-import { getProductsWithoutPage } from '../../products/services';
+import { getProductsWithoutPage, getCate } from '../../products/services';
 import { getPagesWithoutPage } from '../services';
 import Selecter from './Selecter';
 
@@ -17,7 +17,6 @@ const TYPES = [
   {
     label: '商品分类',
     code: 'category',
-    disabled: true,
   },
 ];
 
@@ -98,6 +97,13 @@ export default class Selector extends PureComponent {
           });
           break;
         }
+        case 'category': {
+          const { data } = await getCate({ name: title });
+          _this.setState({
+            categoryOpts: _.map(data, ({ id, name: title }) => ({ id, title })),
+          });
+          break;
+        }
         default: {
           return;
         }
@@ -107,7 +113,7 @@ export default class Selector extends PureComponent {
     }, 300);
   };
   choose = (type, key) => {
-    const { productOpts, pageOpts } = this.state;
+    const { productOpts, pageOpts, categoryOpts } = this.state;
     let target;
     switch (type) {
       case 'product': {
@@ -116,6 +122,10 @@ export default class Selector extends PureComponent {
       }
       case 'page': {
         target = _.find(pageOpts, ['id', key]);
+        break;
+      }
+      case 'category': {
+        target = _.find(categoryOpts, ['id', key]);
         break;
       }
       default: {
@@ -150,6 +160,18 @@ export default class Selector extends PureComponent {
             value={this.props.value.id}
             options={this.state.pageOpts}
             type="pageOpts"
+          />
+        );
+      }
+      case 'category': {
+        return (
+          <Selecter
+            onSearch={this.onSearch.bind(null, 'category')}
+            onChange={this.choose.bind(null, 'category')}
+            placeholder="请输入关键字搜索商品分类"
+            value={this.props.value.id}
+            options={this.state.categoryOpts}
+            type="categoryOpts"
           />
         );
       }

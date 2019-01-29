@@ -26,7 +26,6 @@ export const getCategories = ({ page = 1, pageSize = 10 } = {}) => {
   return get(`v1/api/sys/productCategary/${page}/${pageSize}`);
 };
 export const getCate = (data) => {
-  console.log('sdfasdf')
   return get('v1/api/sys/productCategary', data);
 };
 export const addCate = (data) => {

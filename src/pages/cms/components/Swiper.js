@@ -41,11 +41,9 @@ export default class ProductsList extends PureComponent {
             newState.oriented.type = 'product';
             break;
           }
-          case 'page': {
-            newState.oriented.type = 'page';
-            break;
-          }
           default: {
+            newState.oriented.type = editor.type;
+            break;
           }
         }
         this.setState(newState, () => {
