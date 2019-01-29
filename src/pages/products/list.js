@@ -40,11 +40,10 @@ class List extends PureComponent {
       key: 'status',
       title: '状态',
       dataIndex: 'status',
-      render(t) {
-        const change = (checked) => {
-          console.log(checked);
-        };
-        return <Switch size="small" defaultChecked={t === 1} onChange={change} />;
+      render: (t, r) => {
+        return (
+          <Switch size="small" checked={t === 1} onChange={this.changeStatus.bind(null, r.id)} />
+        );
       },
       align: 'center',
     },
@@ -82,6 +81,13 @@ class List extends PureComponent {
     } else {
       jump(`/products/detail`);
     }
+  };
+  changeStatus = (id, status) => {
+    this.props.dispatch({
+      type: 'products/setStatus',
+      id,
+      status,
+    });
   };
   remove = () => {};
   render() {

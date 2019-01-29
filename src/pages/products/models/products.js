@@ -1,4 +1,5 @@
-import { getProducts } from '../services';
+import _ from 'lodash';
+import { getProducts, updateProducts } from '../services';
 
 const DEFAULT_PAGE = {
   page: 1,
@@ -38,6 +39,17 @@ export default {
         type: 'upState',
         payload: data,
       });
+    },
+    *setStatus({ id, status }, { call, put, select }) {
+      const { data: res } = yield call(updateProducts, { id, status: status ? 1 : 0 });
+      if (res) {
+        const { data } = yield select(({ products }) => products);
+        _.find(data, ['id', res.id]).status = res.status;
+        yield put({
+          type: 'upState',
+          payload: { data: [...data] },
+        });
+      }
     },
   },
   reducers: {
