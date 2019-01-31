@@ -22,7 +22,7 @@ export default class ListEditor extends PureComponent {
     switch (type) {
       case 'edit': {
         // 点击元素上的编辑按钮, 进入编辑状态
-        const editor = this.props.data[index];
+        const editor = _.cloneDeep(this.props.data[index] || {});
         const newState = {
           visible: true,
           editor,
@@ -88,22 +88,21 @@ export default class ListEditor extends PureComponent {
   };
   // same
   userProductImage = (editor, oriented) => {
-    const fileList = [];
-    if (editor.productImage) {
+    const fileList = []; 
+    if (oriented.productImage) {
+      fileList.push({
+        uid: oriented.id,
+        name: oriented.title,
+        url: `${source}${oriented.productImage}`,
+      });
+      editor.image = oriented.productImage;
+    } else if (editor.productImage) {
       fileList.push({
         uid: editor.id,
         name: editor.name,
         url: `${source}${editor.productImage}`,
       });
       editor.image = editor.productImage;
-    } else if (oriented.productImage) {
-      fileList.push({
-        uid: oriented.id,
-        name: oriented.title,
-        url: `${source}${oriented.productImage}`,
-      });
-
-      editor.image = oriented.productImage;
     } else {
       message.error('尚未绑定商品');
       return;

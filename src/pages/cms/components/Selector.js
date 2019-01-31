@@ -32,14 +32,18 @@ export default class Selector extends PureComponent {
   };
   componentDidMount() {
     if (this.props.value) {
-      const { title, id, mainImage, type } = this.props.value;
+      const { title, id, image, type } = this.props.value;
       const productOpts = [];
       const pageOpts = [];
       const categoryOpts = [];
-      const option = { title, id };
+      const option = { title, id, image };
       switch (type) {
         case 'product': {
-          option.mainImageUrl = mainImage;
+          const { productImage, price, institutionId } = this.props.value;
+          option.mainImageUrl = productImage;
+          option.price = price;
+          option.institutionId = institutionId;
+          option.productImage = productImage;
           productOpts.push(option);
           break;
         }
