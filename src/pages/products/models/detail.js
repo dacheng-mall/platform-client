@@ -6,11 +6,15 @@ import { upload } from '../../../utils';
 import { source } from '../../../../setting';
 import { message } from 'antd';
 
+const INIT_STATE = {
+  editor: {},
+  errors: {},
+};
+
 export default {
   namespace: 'detail',
   state: {
-    editor: {},
-    errors: {},
+    ...INIT_STATE,
     categories: [],
   },
   subscriptions: {
@@ -25,17 +29,22 @@ export default {
             id,
           });
         }
+        if(pathname === '/products/detail') {
+          dispatch({
+            type: 'init'
+          });
+        }
       });
     },
   },
   effects: {
     *init({ id }, { call, put, select }) {
-      const { resource } = yield select(({ categories: _cates }) => _cates);
-      if (resource) {
+      const { data } = yield select(({ categories: _cates }) => _cates);
+      if (data.length > 0) {
         yield put({
           type: 'upState',
           payload: {
-            categories: resource,
+            categories: data,
           },
         });
       } else {
@@ -215,6 +224,14 @@ export default {
         }
       }
     },
+    *clear(p, {put}){
+      yield put({
+        type: 'upState',
+        payload: {
+          ...INIT_STATE
+        }
+      })
+    }
   },
   reducers: {
     upState(state, { payload }) {
