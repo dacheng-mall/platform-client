@@ -62,7 +62,7 @@ export default {
           const editor = {};
           _.forEach(data[0], (val, key) => {
             switch (key) {
-              case 'images':
+              case 'images': 
               case 'id':
               case 'title':
               case 'video':
@@ -100,7 +100,7 @@ export default {
             _.forEach(editor.images, (image) => {
               if (image.type === 'image') {
                 image.url = `${source}${image.name}`;
-                images.push(image);
+                images[image.displayOrder] = image;
               }
               if (image.type === 'video') {
                 if (image.name) {
@@ -154,9 +154,10 @@ export default {
                   todos[`images[${i}].name`] = upload(val.originFileObj);
                   editor.images[i] = {
                     type: 'image',
-                    name: '',
+                    name: ''
                   };
                 }
+                editor.images[i].displayOrder = i
               });
               break;
             }
@@ -204,6 +205,7 @@ export default {
         editor.institutionId = user.institutionId;
         editor.institutionName = user.institutionName;
       }
+      // return;
       if (editor.id) {
         const { data } = yield call(updateProducts, editor);
         if (data) {
