@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import * as qiniu from 'qiniu-js';
-import { login } from '../services/app';
+import { login, getQiniuToken, logout } from '../services/app';
 import { jump } from '../utils';
 import { setAuthority } from '../utils/authority';
 import { menu } from '../pages/_layouts/menuData';
-import { getQiniuToken } from '../services/app';
 import { setToken } from '../utils/request';
 
 const redirect = (menu) => {
@@ -135,17 +134,17 @@ export default {
         },
       );
     },
-    // *logout(p, { put, call }) {
-    //   const { error } = yield call(logout);
-    //   if (!error) {
-    //     sessionStorage.clear();
-    //     jump('/');
-    //     yield put({
-    //       type: 'upState',
-    //       payload: { user: {} },
-    //     });
-    //   }
-    // },
+    *logout(p, { put, call }) {
+      const { error } = yield call(logout);
+      if (!error) {
+        sessionStorage.clear();
+        jump('/');
+        yield put({
+          type: 'upState',
+          payload: { user: {} },
+        });
+      }
+    },
   },
 
   reducers: {

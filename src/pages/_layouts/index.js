@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import withRouter from 'umi/withRouter';
-import { Layout, Breadcrumb } from 'antd';
+import { Layout, Breadcrumb, Button } from 'antd';
 import Menu from './Components/Menu';
 import styles from './index.less';
 
@@ -14,10 +14,23 @@ class BasicLayout extends PureComponent {
   static getDerivedStateFromProps(props, state) {
     return { menu: props.menu };
   }
+  logout = () => {
+    this.props.dispatch({
+      type: 'app/logout'
+    })
+  }
   render() {
     return (
       <Layout className={styles.layout}>
-        <Header className={styles.header}>答橙 · 平台管理</Header>
+        <Header className={styles.header}>
+          <div>
+            <img src={require('../../access/imgs/logo.png')} style={{width: '44px', borderRadius: '50%', marginRight: '10px'}} />答橙 · 平台管理
+          </div>
+          {this.props.user ? <div>
+            {this.props.user.name}
+            <Button onClick={this.logout} icon="logout" type="default" />
+          </div> : null}
+        </Header>
         <Layout>
           <Sider className={styles.sider} collapsible theme="dark">
             <Menu data={this.state.menu} currentPath={this.props.location.pathname} />

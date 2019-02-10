@@ -1,3 +1,6 @@
+import React from "react";
+import Init from '../Components/Init'
+
 export default function() {
-  return 'overviwe';
+  return <Init title="welcome" />;
 }
