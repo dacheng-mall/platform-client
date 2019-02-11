@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getProducts, updateProducts } from '../services';
+import { getProducts, updateProducts, removeProduct } from '../services';
 
 const DEFAULT_PAGE = {
   page: 1,
@@ -9,7 +9,8 @@ const DEFAULT_PAGE = {
 export default {
   namespace: 'products',
   state: {
-    list: [],
+    data: [],
+    pagination: DEFAULT_PAGE
   },
 
   subscriptions: {
@@ -17,11 +18,11 @@ export default {
       history.listen(({ pathname }) => {
         switch (pathname) {
           case '/products/self': {
-            dispatch({ type: 'init', paylaod: 'self' });
+            dispatch({ type: 'fetch', paylaod: 'self' });
             break;
           }
           case '/products/third': {
-            dispatch({ type: 'init', paylaod: 'third' });
+            dispatch({ type: 'fetch', paylaod: 'third' });
             break;
           }
           default: {
@@ -33,8 +34,8 @@ export default {
   },
 
   effects: {
-    *init({ paylaod = DEFAULT_PAGE }, { put, call, select }) {
-      const { data } = yield call(getProducts, paylaod);
+    *fetch({ payload = DEFAULT_PAGE }, { put, call, select }) {
+      const { data } = yield call(getProducts, payload);
       yield put({
         type: 'upState',
         payload: data,
@@ -51,6 +52,17 @@ export default {
         });
       }
     },
+    *remove({id}, {call, put, select}){
+      yield call(removeProduct, id);
+      const {data} = yield select(({products}) => products);
+      const newList = _.filter(data, ({ id: pid }) => id !== pid);
+      yield put({
+        type: 'upState',
+        payload: {
+          data: [...newList]
+        }
+      })
+    }
   },
   reducers: {
     upState(state, { payload }) {

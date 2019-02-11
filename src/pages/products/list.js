@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Switch, Button, Divider } from 'antd';
+import { Table, Switch, Button, Divider, Modal } from 'antd';
 import { jump } from '../../utils';
 import styles from './list.less';
 
@@ -89,7 +89,18 @@ class List extends PureComponent {
       status,
     });
   };
-  remove = () => {};
+  remove = (id, e) => {
+    e.preventDefault();
+    Modal.confirm({
+      title: '是否删除商品?',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'products/remove',
+          id,
+        });
+      },
+    });
+  };
   render() {
     return (
       <div className={styles.wrap}>
@@ -102,6 +113,18 @@ class List extends PureComponent {
           columns={this.columns}
           dataSource={this.props.data}
           locale={{ emptyText: '暂无数据' }}
+          pagination={{
+            pageSize: this.props.pagination.pageSize,
+            total: this.props.pagination.total,
+            current: this.props.pagination.page,
+            onChange: (page, pageSize) => {
+              console.log(page, pageSize)
+              this.props.dispatch({
+                type: 'products/fetch',
+                payload: {page, pageSize}
+              })
+            }
+          }}
         />
       </div>
     );

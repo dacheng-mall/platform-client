@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getCate, addCate, updateCate } from '../services';
+import { getCate, addCate, updateCate, removeCate } from '../services';
 import { message } from 'antd';
 
 const getChildren = (id, list) => {
@@ -115,6 +115,20 @@ export default {
           data: [...list],
           needUpdate: true,
           editor: null,
+        },
+      });
+    },
+    *remove({ id }, { call, put, select }) {
+      yield call(removeCate, id);
+      
+      const list = yield select(({ categories }) => categories.data);
+      const newList = _.filter(list, ({ id:pid }) => id !== pid);
+      console.log('newList', newList)
+      yield put({
+        type: 'upState',
+        payload: {
+          data: [...newList],
+          needUpdate: true
         },
       });
     },

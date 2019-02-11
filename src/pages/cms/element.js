@@ -88,11 +88,16 @@ class ElementEditor extends PureComponent {
       type: 'elementEditor/submit',
     });
   };
+  goBack = () => {
+    this.props.dispatch({
+      type: 'elementEditor/goBack',
+    });
+  }
   render() {
     return (
       <div className={styles.wrap}>
         {this.props.type ? <div className={styles.saveBtn}>
-          <Button>返回</Button>
+          <Button onClick={this.goBack}>返回</Button>
           <Button onClick={this.submit} type="primary" disabled={this.state.editing !== null}>
             保存
           </Button>

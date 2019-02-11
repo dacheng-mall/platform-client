@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import ptrx from 'path-to-regexp';
-import { addPage, updatePage, getPages, removePage, getPagesWithoutPage } from '../services';
 import { message } from 'antd';
+import router from 'umi/router'
+import { addPage, updatePage, getPages, removePage, getPagesWithoutPage } from '../services';
 
 const DEF_PAGINATION = {
   page: 1,
@@ -203,6 +204,21 @@ export default {
         }
       }
     },
+    *goBack(p, {put}){
+      yield put({
+        type: 'upstate',
+        payload: {
+          data: [],
+          pagination: {
+            ...DEF_PAGINATION,
+          },
+          editor: {
+            elements: [],
+          },
+        }
+      })
+      router.go(-1)
+    }
   },
   reducers: {
     upState(state, { payload }) {

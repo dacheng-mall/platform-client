@@ -1,4 +1,5 @@
 import ptrx from 'path-to-regexp';
+import router from 'umi/router';
 import _ from 'lodash';
 import { message } from 'antd';
 import { upload } from '../../../utils';
@@ -187,6 +188,19 @@ export default {
         id,
       });
     },
+    *goBack(p, {put}){
+      yield put({
+        type: 'upstate',
+        payload: {
+          data: [],
+          attributes: {},
+          name: '',
+          type: '',
+          count: 0,
+        }
+      })
+      router.go(-1)
+    }
   },
   reducers: {
     upState(state, { payload }) {

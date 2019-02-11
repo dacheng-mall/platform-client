@@ -107,7 +107,20 @@ class Categories extends PureComponent {
       payload: data,
     });
   };
-  remove = () => {};
+  
+  remove = (id, data, e) => {
+    e.preventDefault();
+    Modal.confirm({
+      title: '是否删除商品分类?',
+      content: `分类名称-${data.name}`,
+      onOk: () => {
+        this.props.dispatch({
+          type: 'categories/remove',
+          id,
+        });
+      },
+    });
+  };
   columns = [
     {
       key: 'name',

@@ -35,11 +35,16 @@ class Pages extends PureComponent {
       type: 'pages/submit'
     })
   };
+  goBack = () => {
+    this.props.dispatch({
+      type: 'pages/goBack',
+    });
+  }
   render() {
     return (
       <div className={styles.wrap}>
         <div className={styles.saveBtn}>
-          <Button>返回</Button>
+          <Button onClick={this.goBack}>返回</Button>
           <Button onClick={this.submit} type="primary">
             保存
           </Button>
