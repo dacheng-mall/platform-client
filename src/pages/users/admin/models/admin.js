@@ -18,7 +18,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/admin') {
-          dispatch({ type: 'init', payload: PAGE_DEF });
+          dispatch({ type: 'init', payload: {...PAGE_DEF, userType: 1} });
         }
       });
     },
@@ -32,7 +32,8 @@ export default {
       });
     },
     *fetch({ payload }, { put, call }) {
-      const { data } = yield call(getAdmins, payload || PAGE_DEF);
+      const { data } = yield call(getAdmins, payload);
+      console.log(data)
       yield put({
         type: 'upState',
         payload: data,
@@ -43,20 +44,26 @@ export default {
         message.warning('不能修改管理员的信息')
         return false;
       }
-      const { editor } = yield select(({ admin }) => admin);
+      const { editor, pagination } = yield select(({ admin }) => admin);
       let res;
       delete editor.createTime;
+
       const values = parseEditor(payload);
       if (editor.id) {
         const { data } = yield call(updateAdmin, { ...editor, ...values });
         res = data;
       } else {
+        editor.userType = 2
         const { data } = yield call(createAdmin, { ...editor, ...values });
         res = data;
       }
       if (res) {
         yield put({
           type: 'fetch',
+          payload: {
+            ...pagination,
+            userType: 1
+          }
         });
         yield put({
           type: 'upState',

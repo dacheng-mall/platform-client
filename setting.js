@@ -1,2 +1,3 @@
 const source = 'http://res.idacheng.cn/';
-export { source };
+const api = 'http://api.idacheng.cn/';
+export { source, api };

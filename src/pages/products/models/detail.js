@@ -100,7 +100,7 @@ export default {
             _.forEach(editor.images, (image) => {
               if (image.type === 'image') {
                 image.url = `${source}${image.name}`;
-                images[image.displayOrder] = image;
+                images[image.displayOrder || 0] = image;
               }
               if (image.type === 'video') {
                 if (image.name) {

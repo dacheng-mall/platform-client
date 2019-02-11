@@ -18,8 +18,8 @@ export default function Preview({ data }) {
         ) : (
           <Empty text="暂无价格" />
         )}
-        {attributes.length > 0 ? <Tags data={attributes} /> : <Empty text="暂无属性标签" />}
-        {information.length > 0 ? <Catrgories data={information} /> : <Empty text="暂无信息" />}
+        {attributes && attributes.length > 0 ? <Tags data={attributes} /> : <Empty text="暂无属性标签" />}
+        {information && information.length > 0 ? <Catrgories data={information} /> : <Empty text="暂无信息" />}
         <Content data={content} />
       </div>
     </div>

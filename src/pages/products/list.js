@@ -34,7 +34,7 @@ class List extends PureComponent {
       title: '单价(元)',
       dataIndex: 'price',
       align: 'center',
-      render: (t) => <div className={styles.price}>{t.toFixed(2)}</div>,
+      render: (t) => <div className={styles.price}>{t ? t.toFixed(2) : '未知'}</div>,
     },
     {
       key: 'status',

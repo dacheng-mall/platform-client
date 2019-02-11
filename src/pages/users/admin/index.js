@@ -126,10 +126,6 @@ class Admin extends PureComponent {
         });
       },
     });
-    // this.props.dispatch({
-    //   type: 'admin/remove',
-    //   id,
-    // });
   };
   showModal = (data) => {
     this.props.dispatch({

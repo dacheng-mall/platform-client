@@ -7,7 +7,6 @@ import Empty from "./noneData";
 export default function Swiper (props) {
   const {video, images = [], width = 400} = props;
   const children = [];
-
   if(video && video.name) {
     let url = video.url;
     if(typeof url === 'object') {
