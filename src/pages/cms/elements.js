@@ -14,12 +14,12 @@ class CmsElements extends PureComponent {
         if (t !== null && t !== undefined && t !== '') {
           return t;
         }
-        return '[[未定义元素名称]]';
+        return '[[未定义素材名称]]';
       },
     },
     {
       key: 'type',
-      title: '元素类型',
+      title: '素材类型',
       dataIndex: 'type',
       render: (t) => {
         const target = _.find(this.props.dict.elementsTypes, ['code', t]);
@@ -83,7 +83,7 @@ class CmsElements extends PureComponent {
   };
   remove = (id) => {
     Modal.confirm({
-      title: '删除此元素?',
+      title: '删除此素材?',
       onOk: () => {
         this.props.dispatch({
           type: 'elements/remove',
@@ -103,7 +103,7 @@ class CmsElements extends PureComponent {
     return (
       <div>
         <Button icon="plus" type="primary" onClick={this.edit.bind(null, null)}>
-          新建内容
+          新建素材
         </Button>
         <Table
           rowKey="id"

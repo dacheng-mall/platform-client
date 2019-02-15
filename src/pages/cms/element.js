@@ -71,7 +71,7 @@ class ElementEditor extends PureComponent {
       default: {
         return (
           <div className={styles.beforeNew}>
-            <h2>请选择要创建的元素类型</h2>
+            <h2>请选择要创建的素材类型</h2>
             <Radio.Group value={this.state.type} onChange={this.changeType} buttonStyle="solid">
               {_.map(this.props.elementsTypes, type => <Radio.Button key={type.id} value={type.code}>{type.name}</Radio.Button>)}
             </Radio.Group>
