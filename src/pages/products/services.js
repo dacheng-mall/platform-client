@@ -6,8 +6,8 @@ export const addProducts = (data) => {
 export const updateProducts = (data) => {
   return put('v1/api/sys/product', data);
 };
-export const getProducts = ({ page = 1, pageSize = 10 } = {}) => {
-  return get(`v1/api/sys/product/${page}/${pageSize}`);
+export const getProducts = ({ page = 1, pageSize = 10, ...query } = {}) => {
+  return get(`v1/api/sys/product/${page}/${pageSize}`, query);
 };
 export const getProductsWithoutPage = (data) => {
   return get(`v1/api/sys/product`, data);

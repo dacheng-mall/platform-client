@@ -108,6 +108,18 @@ class CmsHome extends PureComponent {
           columns={this.columns}
           dataSource={this.props.data}
           locale={{ emptyText: '暂无数据' }}
+          pagination={{
+            pageSize: this.props.pagination.pageSize,
+            total: this.props.pagination.total,
+            current: this.props.pagination.page,
+            onChange: (page, pageSize) => {
+              this.props.dispatch({
+                type: 'pages/fetch',
+                payload: {page, pageSize}
+              })
+            }
+          }}
+
         />
       </div>
     );

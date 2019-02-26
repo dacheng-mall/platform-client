@@ -1,14 +1,15 @@
 import _ from 'lodash';
 import { getCmsElements, updateCmsElement, removeCmsElement } from '../services';
 
+const DEFAULT_PAGE = {
+  page: 1,
+  pageSize: 10
+}
 export default {
   namespace: 'elements',
   state: {
     data: [],
-    pagination: {
-      page: 1,
-      pageSize: 10,
-    },
+    pagination: DEFAULT_PAGE
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -22,12 +23,16 @@ export default {
     },
   },
   effects: {
-    *init(p, { put, call, select }) {
-      const { pagination } = yield select(({ elements }) => elements);
-      const { data } = yield call(getCmsElements, pagination);
+    *init(p, { put }) {
+      yield put({
+        type: 'fetch',
+      });
+    },
+    *fetch({ payload = DEFAULT_PAGE }, { put, call }) {
+      const { data } = yield call(getCmsElements, payload);
       yield put({
         type: 'upState',
-        payload: { ...data },
+        payload: data,
       });
     },
     *remove({ id }, { call, select, put }) {

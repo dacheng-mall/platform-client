@@ -120,10 +120,8 @@ export default {
     },
     *remove({ id }, { call, put, select }) {
       yield call(removeCate, id);
-      
       const list = yield select(({ categories }) => categories.data);
       const newList = _.filter(list, ({ id:pid }) => id !== pid);
-      console.log('newList', newList)
       yield put({
         type: 'upState',
         payload: {

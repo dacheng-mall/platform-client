@@ -56,7 +56,7 @@ export default {
     },
   },
   effects: {
-    *init({ payload }, { call, put, select }) {
+    *init({ payload }, { put }) {
       yield put({
         type: 'fetch',
         payload,
@@ -67,7 +67,7 @@ export default {
       if (data) {
         yield put({
           type: 'upState',
-          payload: { ...data },
+          payload: data,
         });
       }
     },

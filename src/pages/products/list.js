@@ -102,11 +102,20 @@ class List extends PureComponent {
     });
   };
   render() {
+    const showAddBtn = ((type, institutionId) => {
+      if(type === 'self' && !institutionId) {
+        return true;
+      }
+      if(type === 'third' && institutionId) {
+        return true;
+      }
+      return false;
+    })(this.props.institutionId, this.props.user.institutionId)
     return (
       <div className={styles.wrap}>
-        <Button type="primary" onClick={this.edit.bind(null, false)} icon="plus">
+        {showAddBtn ?<Button type="primary" onClick={this.edit.bind(null, false)} icon="plus">
           添加商品
-        </Button>
+        </Button> : null}
         <Table
           rowKey="id"
           size="small"
@@ -118,7 +127,6 @@ class List extends PureComponent {
             total: this.props.pagination.total,
             current: this.props.pagination.page,
             onChange: (page, pageSize) => {
-              console.log(page, pageSize)
               this.props.dispatch({
                 type: 'products/fetch',
                 payload: {page, pageSize}
@@ -131,8 +139,8 @@ class List extends PureComponent {
   }
 }
 
-function mapStateToProps({ products }) {
-  return products;
+function mapStateToProps({ products, app }) {
+  return {...products, user: app.user};
 }
 
 export default connect(mapStateToProps)(List);

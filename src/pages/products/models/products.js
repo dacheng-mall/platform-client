@@ -3,7 +3,7 @@ import { getProducts, updateProducts, removeProduct } from '../services';
 
 const DEFAULT_PAGE = {
   page: 1,
-  pageSize: 10
+  pageSize: 8
 }
 
 export default {
@@ -18,11 +18,11 @@ export default {
       history.listen(({ pathname }) => {
         switch (pathname) {
           case '/products/self': {
-            dispatch({ type: 'fetch', paylaod: 'self' });
+            dispatch({ type: 'fetch', payload: {institutionId: 'self', ...DEFAULT_PAGE} });
             break;
           }
           case '/products/third': {
-            dispatch({ type: 'fetch', paylaod: 'third' });
+            dispatch({ type: 'fetch', payload: {institutionId: 'third', ...DEFAULT_PAGE} });
             break;
           }
           default: {
@@ -34,11 +34,11 @@ export default {
   },
 
   effects: {
-    *fetch({ payload = DEFAULT_PAGE }, { put, call, select }) {
+    *fetch({ payload }, { put, call }) {
       const { data } = yield call(getProducts, payload);
       yield put({
         type: 'upState',
-        payload: data,
+        payload: {...data, institutionId: payload.institutionId},
       });
     },
     *setStatus({ id, status }, { call, put, select }) {
