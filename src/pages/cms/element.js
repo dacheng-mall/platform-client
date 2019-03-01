@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import List from './components/List';
 import Swiper from './components/Swiper';
 import Grid from './components/Grid';
+import Article from './components/Article';
 import styles from './styles.less';
 
 const confirm = Modal.confirm;
@@ -28,6 +29,7 @@ class ElementEditor extends PureComponent {
     this.changeData(type, value, index);
   };
   changeData = (type, value, index) => {
+    console.log('-------', type, value, index);
     this.props.dispatch({
       type: 'elementEditor/change',
       payload: {
@@ -39,6 +41,7 @@ class ElementEditor extends PureComponent {
   };
 
   editing = (editing) => {
+    console.log(editing)
     this.setState({
       editing,
     });
@@ -52,10 +55,10 @@ class ElementEditor extends PureComponent {
     this.props.dispatch({
       type: 'elementEditor/upState',
       payload: {
-        type: this.state.type
-      }
-    })
-  }
+        type: this.state.type,
+      },
+    });
+  };
   renderCont = () => {
     const { type } = this.props;
     switch (type) {
@@ -68,15 +71,24 @@ class ElementEditor extends PureComponent {
       case 'grid': {
         return <Grid {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
+      case 'article': {
+        return <Article {...this.props} onEdit={this.edit} editing={this.editing} />;
+      }
       default: {
         return (
           <div className={styles.beforeNew}>
             <h2>请选择要创建的素材类型</h2>
             <Radio.Group value={this.state.type} onChange={this.changeType} buttonStyle="solid">
-              {_.map(this.props.elementsTypes, type => <Radio.Button key={type.id} value={type.code}>{type.name}</Radio.Button>)}
+              {_.map(this.props.elementsTypes, (type) => (
+                <Radio.Button key={type.id} value={type.code}>
+                  {type.name}
+                </Radio.Button>
+              ))}
             </Radio.Group>
             <div className={styles.nextbtn}>
-              <Button type="danger" disabled={!this.state.type} onClick={this.newElement}>下一步</Button>
+              <Button type="danger" disabled={!this.state.type} onClick={this.newElement}>
+                下一步
+              </Button>
             </div>
           </div>
         );
@@ -92,24 +104,31 @@ class ElementEditor extends PureComponent {
     this.props.dispatch({
       type: 'elementEditor/goBack',
     });
-  }
+  };
   render() {
     return (
       <div className={styles.wrap}>
-        {this.props.type ? <div className={styles.saveBtn}>
-          <Button onClick={this.goBack}>返回</Button>
-          <Button onClick={this.submit} type="primary" disabled={this.state.editing !== null}>
-            保存
-          </Button>
-        </div> : null}
+        {this.props.type ? (
+          <div className={styles.saveBtn}>
+            <Button onClick={this.goBack}>返回</Button>
+            <Button onClick={this.submit} type="primary" disabled={this.state.editing !== null}>
+              保存
+            </Button>
+          </div>
+        ) : null}
         {this.renderCont()}
       </div>
     );
   }
 }
 
-function mapStateToProps({ app: {dict: {elementsTypes}}, elementEditor }) {
-  return {...elementEditor, elementsTypes};
+function mapStateToProps({
+  app: {
+    dict: { elementsTypes },
+  },
+  elementEditor,
+}) {
+  return { ...elementEditor, elementsTypes };
 }
 
 export default connect(mapStateToProps)(ElementEditor);

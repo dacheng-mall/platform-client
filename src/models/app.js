@@ -28,9 +28,10 @@ export default {
     roles: [],
     dict: {
       elementsTypes: [
-        { id: 'elemType_0', code: 'list', name: '商品列表' },
+        { id: 'elemType_0', code: 'list', name: '列表' },
         { id: 'elemType_1', code: 'swiper', name: '滚动图' },
         { id: 'elemType_2', code: 'grid', name: '九宫格' },
+        { id: 'elemType_3', code: 'article', name: '图文' },
       ],
     },
     qiniu: {},

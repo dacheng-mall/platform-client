@@ -3,11 +3,17 @@ import router from 'umi/router';
 import _ from 'lodash';
 import { message } from 'antd';
 import { upload } from '../../../utils';
+import { fieldsChange } from '../../../utils/ui';
 import { addCmsElement, updateCmsElement, getCmsElementsWithoutPage } from '../services';
+const INIT_STATE = {
+  editor: {},
+  errors: {},
+};
 
 export default {
   namespace: 'elementEditor',
   state: {
+    ...INIT_STATE,
     data: [],
     attributes: {},
     name: '',
@@ -206,5 +212,6 @@ export default {
     upState(state, { payload }) {
       return { ...state, ...payload };
     },
+    fieldsChange
   },
 };

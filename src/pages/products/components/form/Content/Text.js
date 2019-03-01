@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Input, Menu, Dropdown, Button, Slider } from 'antd';
+import { BlockPicker } from 'react-color';
+import Block from './Block';
 
 const ButtonGroup = Button.Group;
 const { TextArea } = Input;
@@ -111,6 +113,23 @@ export default class Text extends PureComponent {
             <Button type="primary" icon="border">
               {' '}
               {padding}
+            </Button>
+          </Dropdown>
+          <Dropdown
+            overlay={
+              <div>
+                <BlockPicker />
+              </div>
+            }
+            placement="bottomCenter"
+            trigger={['click']}
+            overlayStyle={{
+              backgroundColor: '#ddd',
+            }}
+          >
+            <Button type="primary" icon="bg-colors">
+              {' '}
+              <div style={{float: 'right',width: '20px', height: '20px', backgroundColor: '#fff'}} />
             </Button>
           </Dropdown>
           <Button
