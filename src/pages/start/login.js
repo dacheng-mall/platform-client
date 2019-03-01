@@ -18,7 +18,7 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
     <div className={styles.login}>
       <div className={styles.formWrap}>
         <div className={styles.title}>
-          <img src={require('../../access/imgs/logo.png')} />
+          <img src={require('../../assets/imgs/logo.png')} alt="logo" />
           欢迎登录答橙管理端
         </div>
         <Form onSubmit={submit}>
