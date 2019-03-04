@@ -3,12 +3,11 @@ import React, { PureComponent } from 'react';
 import { Form, Input } from 'antd';
 import Editor from '../../products/components/form/Content';
 import EditorPreview from '../../products/components/preview/Content';
-import { onFieldsChange } from '../../../utils/ui';
+import { onFieldsChange, mapPropsToFields } from '../../../utils/ui';
 import styles from './styles.less';
 
 class Article extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
-    console.log(props, state);
     return state;
   };
   state = {};
@@ -76,4 +75,4 @@ class Article extends PureComponent {
     );
   }
 }
-export default Form.create({ onFieldsChange: onFieldsChange('elementEditor') })(Article);
+export default Form.create({ mapPropsToFields, onFieldsChange: onFieldsChange('elementEditor') })(Article);

@@ -1,13 +1,15 @@
 import React, { PureComponent } from 'react';
 import Uploader from '../../../../Components/Uploader';
+import {source} from '../../../../../../setting'
 
 // const 
 export default class Img extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
+    debugger
     if (props.value && props.value.value) {
       const fileList = (function(val){
         if(typeof val.value === 'string') {
-          return Uploader.initSingleFile(val.url)
+          return Uploader.initSingleFile(val.url || `${source}${val.value}`)
         }
         return [val.value]
       }(props.value))

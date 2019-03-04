@@ -29,7 +29,6 @@ class ElementEditor extends PureComponent {
     this.changeData(type, value, index);
   };
   changeData = (type, value, index) => {
-    console.log('-------', type, value, index);
     this.props.dispatch({
       type: 'elementEditor/change',
       payload: {
@@ -41,7 +40,6 @@ class ElementEditor extends PureComponent {
   };
 
   editing = (editing) => {
-    console.log(editing)
     this.setState({
       editing,
     });

@@ -45,18 +45,29 @@ export default {
         if (res.length > 0) {
           res[0].data = JSON.parse(res[0].data);
           res[0].attributes = res[0].attributes && JSON.parse(res[0].attributes);
-          if(res[0].type === 'grid') {
-            if(!res[0].attributes.cols) {
-              res[0].attributes.cols = 4
+          if (res[0].type === 'grid') {
+            if (!res[0].attributes.cols) {
+              res[0].attributes.cols = 4;
             }
-            if(!res[0].attributes.rows) {
-              res[0].attributes.rows = 2
+            if (!res[0].attributes.rows) {
+              res[0].attributes.rows = 2;
             }
           }
-          yield put({
-            type: 'upState',
-            payload: res[0],
-          });
+          if(res[0].type === 'article') {
+            const {data, ...other} = res[0]
+            yield put({
+              type: 'upState',
+              payload: {
+                ...other,
+                editor:{content: data}
+              },
+            });
+          } else {
+            yield put({
+              type: 'upState',
+              payload: res[0],
+            });
+          }
         }
       } else {
         yield put({
@@ -76,7 +87,9 @@ export default {
     },
     *change({ payload }, { put, select }) {
       const { value, index, type } = payload;
-      let { data, name, type: listType, attributes } = yield select(({ elementEditor }) => elementEditor);
+      let { data, name, type: listType, attributes } = yield select(
+        ({ elementEditor }) => elementEditor,
+      );
       switch (type) {
         case 'edit': {
           data[index] = value;
@@ -135,16 +148,72 @@ export default {
         },
       });
     },
+    *submitArticle({ payload }, { put, call, all }) {
+      const data = _.cloneDeep(payload);
+      const todos = {};
+      _.forEach(data.data, (val, i) => {
+        if (val.type === 'image') {
+          if (val.value.originFileObj) {
+            todos[i] = upload(val.value.originFileObj);
+          }
+        }
+      });
+      const ups = Object.values(todos);
+      const paths = Object.keys(todos);
+      if (ups.length > 0) {
+        const res = yield all(_.map(ups, (up) => up()));
+        _.forEach(paths, (path, i) => {
+          _.set(data.data, `${path}.value`, res[i].key);
+        });
+      }
+      let id;
+      data.data = JSON.stringify(data.data);
+      if (!data.id) {
+        delete data.id;
+        const { data: res } = yield call(addCmsElement, data);
+        message.success('添加素材操作成功');
+        id = res.id;
+      } else {
+        const { data: res } = yield call(updateCmsElement, data);
+        message.success('更新素材操作成功');
+        id = res.id;
+      }
+      yield put({
+        type: 'init',
+        id,
+      });
+    },
     *submit(p, { put, call, select, all }) {
       const elementEditor = yield select(({ elementEditor }) => elementEditor);
-      const listData = _.cloneDeep(elementEditor);
+      let listData = _.cloneDeep(elementEditor);
       _.remove(listData.data, (item) => {
         return !item || !item.id;
       });
-      if (!listData.data || listData.data.length < 1) {
+
+      if (listData.type !== 'article' && (!listData.data || listData.data.length < 1)) {
         message.error('没有可以提交的内容');
         return;
       }
+      if (listData.type === 'article' && listData.editor.content.length < 1) {
+        message.error('没有可以提交的内容');
+        return;
+      }
+      if (listData.type === 'article') {
+        yield put({
+          type: 'submitArticle',
+          payload: {
+            data: listData.editor.content,
+            id: elementEditor.id,
+            name: elementEditor.name,
+            type: 'article',
+            status: 1,
+            count: listData.editor.content.length
+          },
+        });
+        return;
+      }
+      delete listData.editor;
+      delete listData.errors;
       const todos = {};
       _.forEach(listData.data, (d, i) => {
         if (d.fileList) {
@@ -182,11 +251,11 @@ export default {
       if (!listData.id) {
         delete listData.id;
         const { data } = yield call(addCmsElement, listData);
-        message.success('添加素材操作成功')
+        message.success('添加素材操作成功');
         id = data.id;
       } else {
         const { data } = yield call(updateCmsElement, listData);
-        message.success('更新素材操作成功')
+        message.success('更新素材操作成功');
         id = data.id;
       }
       yield put({
@@ -194,7 +263,7 @@ export default {
         id,
       });
     },
-    *goBack(p, {put}){
+    *goBack(p, { put }) {
       yield put({
         type: 'upstate',
         payload: {
@@ -203,15 +272,15 @@ export default {
           name: '',
           type: '',
           count: 0,
-        }
-      })
-      router.go(-1)
-    }
+        },
+      });
+      router.go(-1);
+    },
   },
   reducers: {
     upState(state, { payload }) {
       return { ...state, ...payload };
     },
-    fieldsChange
+    fieldsChange,
   },
 };

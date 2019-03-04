@@ -24,12 +24,8 @@ export default function GridItem({ data = {}, index, size, onEdit, current }) {
     <div className={styles.gridItem}>
       {getImageUrl ? (
         <img src={getImageUrl} alt={data.name} />
-      ) : (
-        <div style={{ textAlign: 'center' }}>
-          暂无图片
-        </div>
-      )}
-      <div className={styles.name}>{data.displayName || data.name || null}</div>
+      ) : null}
+      <div className={styles.name}>{data.displayName}</div>
       {current !== null ? null : (
         <div className={styles.mask}>
           <Mask onPress={edit} data={data} />

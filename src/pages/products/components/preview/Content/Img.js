@@ -1,13 +1,14 @@
 import React from 'react';
+import { source } from "../../../../../../setting";
 
 export default function Img(props) {
-  const { value, url, name } = props.data;
+  const { value, name } = props.data;
   const src = (function(v) {
-    if (value && typeof v === 'string') {
-      return url;
+    if (v && typeof v === 'string') {
+      return `${source}${v}` ;
     }
-    if (value && typeof v === 'object') {
-      return value.url;
+    if (v && typeof v === 'object') {
+      return v.url;
     }
   })(value);
   return <img style={{ width: '100%', margin: '0.04rem 0 0' }} src={src} alt={name} />;

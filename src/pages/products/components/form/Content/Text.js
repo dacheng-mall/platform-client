@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Input, Menu, Dropdown, Button, Slider } from 'antd';
 import { BlockPicker } from 'react-color';
-import Block from './Block';
 
 const ButtonGroup = Button.Group;
 const { TextArea } = Input;
@@ -17,15 +16,15 @@ export default class Text extends PureComponent {
   };
   changeHandler = (type, value) => {
     const _value = (function(v) {
-      switch (typeof value) {
+      switch (typeof v) {
         case 'string':
         case 'number':
         case 'boolean': {
-          return value;
+          return v;
         }
         case 'object': {
-          if (value.target) {
-            return value.target.value;
+          if (v.target) {
+            return v.target.value;
           }
           return '';
         }
@@ -35,12 +34,22 @@ export default class Text extends PureComponent {
       }
     })(value);
     this.props.onChange(_value, `[${this.props.index}].${type}`);
-    if (type === 'align') {
-      this.changeVisible('');
+    switch(type){
+      case 'align':
+      case 'color': {
+        this.changeVisible(null);
+        break;
+      }
+      default:
+        break;
     }
   };
   changeVisible = (visible) => {
-    this.setState({ visible });
+    if(this.state.visible) {
+      this.setState({ visible: null });
+    } else {
+      this.setState({ visible });
+    }
   };
   menu = (
     <Menu>
@@ -55,8 +64,11 @@ export default class Text extends PureComponent {
       </MenuItem>
     </Menu>
   );
+  handleChangeComplete = (color) => {
+    this.changeHandler('color', color.hex)
+  };
   render() {
-    const { align, size, padding, italic, weight, value, underline, throughline } = this.state;
+    const { align, size, padding, italic, weight, value, underline, throughline, color } = this.state;
     return (
       <div>
         <ButtonGroup>
@@ -118,18 +130,25 @@ export default class Text extends PureComponent {
           <Dropdown
             overlay={
               <div>
-                <BlockPicker />
+                <BlockPicker color={color || '#333'} onChangeComplete={this.handleChangeComplete} />
               </div>
             }
             placement="bottomCenter"
             trigger={['click']}
             overlayStyle={{
-              backgroundColor: '#ddd',
+              backgroundColor: color,
             }}
+            visible={this.state.visible === 'color'}
           >
-            <Button type="primary" icon="bg-colors">
+            <Button
+              type="primary"
+              icon="bg-colors"
+              onClick={this.changeVisible.bind(null, 'color')}
+            >
               {' '}
-              <div style={{float: 'right',width: '20px', height: '20px', backgroundColor: '#fff'}} />
+              <div
+                style={{ float: 'right', width: '20px', height: '20px', backgroundColor: color || '#333' }}
+              />
             </Button>
           </Dropdown>
           <Button

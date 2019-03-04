@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function Text({ data }) {
-  const { align, size = 32, padding, italic, weight, underline, throughline, value } = data;
+  const { align, size = 32, padding, italic, weight, underline, throughline, value, color } = data;
   let textDecoration = '';
   if (underline) {
     textDecoration += ' underline';
@@ -16,6 +16,8 @@ export default function Text({ data }) {
         fontSize: `${size / 2}px`,
         padding: `${padding}px`,
         textDecoration,
+        color,
+        width: '100%',
         fontStyle: italic ? 'italic' : 'normal',
         fontWeight: weight ? 'bold' : 'normal',
       }}

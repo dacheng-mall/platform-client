@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { getAdmins, createAdmin, updateAdmin, removeAdmin } from '../services';
-import { parseEditor } from '../../../../utils/ui';
+import { getAdmins, updateAdmin, removeAdmin } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
 
@@ -33,7 +32,6 @@ export default {
     },
     *fetch({ payload }, { put, call }) {
       const { data } = yield call(getAdmins, payload);
-      console.log(data)
       yield put({
         type: 'upState',
         payload: data,

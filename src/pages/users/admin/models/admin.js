@@ -33,7 +33,6 @@ export default {
     },
     *fetch({ payload }, { put, call }) {
       const { data } = yield call(getAdmins, payload);
-      console.log(data)
       yield put({
         type: 'upState',
         payload: data,
