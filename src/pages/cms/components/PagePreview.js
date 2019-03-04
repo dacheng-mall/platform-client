@@ -2,16 +2,13 @@ import React from 'react';
 import _ from 'lodash';
 import { Carousel } from 'antd';
 import styles from './styles.less';
+import EditorPreview from '../../products/components/preview/Content';
 import { source } from '../../../../setting';
 
 function ListItem({ height, data }) {
   return (
     <div className={styles.listItem} style={{ width: data.size === 2 ? '100%' : '48%' }}>
-      <img
-        src={`${source}${data.image || data.productImage}`}
-        alt={data.name}
-        style={{ height }}
-      />
+      <img src={`${source}${data.image || data.productImage}`} alt={data.name} style={{ height }} />
       <div className={styles.name}>{data.displayName || data.name || '未命名'}</div>
       <div className={styles.price}>{data.price !== undefined ? `￥${data.price}` : '未定价'}</div>
     </div>
@@ -53,8 +50,12 @@ function Swiper(props) {
 function GridItem({ data }) {
   return (
     <div className={styles.gridItem}>
-      <img src={`${source}${data.image || data.productImage}`} alt={data.name} />
-      <div className={styles.name}>{data.displayName || data.name || null}</div>
+      {data.image ? (
+        <img src={`${source}${data.image || data.productImage}`} alt={data.name} />
+      ) : null}
+      {data.displayName ? (
+        <div className={styles.name}>{data.displayName || data.name || null}</div>
+      ) : null}
     </div>
   );
 }
@@ -70,17 +71,21 @@ function Grids(props) {
             key={`item_${i}`}
             style={{ width: `${size * 100}%`, height: props.width * size + 'px' }}
           >
-            <GridItem data={data[i]} />
+            {data[i] ? <GridItem data={data[i]} /> : null}
           </div>
         );
       })}
     </div>
   );
 }
+function Article(props) {
+  return <EditorPreview data={props.data} />;
+}
 
 export default function PagePreview(props) {
   const render = (elem) => {
     const { type, data, id, attributes } = elem;
+    debugger;
     switch (type) {
       case 'list': {
         return <List id={id} key={id} height={props.height} data={JSON.parse(data)} />;
@@ -106,6 +111,9 @@ export default function PagePreview(props) {
             attributes={JSON.parse(attributes || {})}
           />
         );
+      }
+      case 'article': {
+        return <Article id={id} key={id} data={JSON.parse(data)} />;
       }
       default: {
         return null;
