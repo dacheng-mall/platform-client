@@ -138,7 +138,7 @@ export default class GridEditor extends PureComponent {
       name: title,
       size: size,
       displayName: displayName,
-      image: image || productImage,
+      image: fileList.length === 0 ? '' : (image || productImage),
       type,
     };
     if (oriented.type === 'product') {
