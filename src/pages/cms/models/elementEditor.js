@@ -5,6 +5,7 @@ import { message } from 'antd';
 import { upload } from '../../../utils';
 import { fieldsChange } from '../../../utils/ui';
 import { addCmsElement, updateCmsElement, getCmsElementsWithoutPage } from '../services';
+import { getProductsList } from '../../products/services';
 const INIT_STATE = {
   editor: {},
   errors: {},
@@ -43,8 +44,31 @@ export default {
       if (id) {
         const { data: res } = yield call(getCmsElementsWithoutPage, { id });
         if (res.length > 0) {
-          res[0].data = JSON.parse(res[0].data);
           res[0].attributes = res[0].attributes && JSON.parse(res[0].attributes);
+          if (res[0].type !== 'products') {
+            res[0].data = JSON.parse(res[0].data);
+          } else {
+            const _query = {};
+            _.forEach(res[0].attributes, (v, k) => {
+              if (k === 'min') {
+                if (!_query.price) {
+                  _query.price = [];
+                }
+                _query.price[0] = v;
+              }
+              if (k === 'max') {
+                if (!_query.price) {
+                  _query.price = [];
+                }
+                _query.price[1] = v;
+              }
+              if (k === 'cateId') {
+                _query.cateId = v;
+              }
+            });
+            const { data: _list } = yield call(getProductsList, _query);
+            res[0].data = _list;
+          }
           if (res[0].type === 'grid') {
             if (!res[0].attributes.cols) {
               res[0].attributes.cols = 4;
@@ -53,13 +77,13 @@ export default {
               res[0].attributes.rows = 2;
             }
           }
-          if(res[0].type === 'article') {
-            const {data, ...other} = res[0]
+          if (res[0].type === 'article') {
+            const { data, ...other } = res[0];
             yield put({
               type: 'upState',
               payload: {
                 ...other,
-                editor:{content: data}
+                editor: { content: data },
               },
             });
           } else {
@@ -85,7 +109,7 @@ export default {
         });
       }
     },
-    *change({ payload }, { put, select }) {
+    *change({ payload }, { put, call, select }) {
       const { value, index, type } = payload;
       let { data, name, type: listType, attributes } = yield select(
         ({ elementEditor }) => elementEditor,
@@ -95,11 +119,54 @@ export default {
           data[index] = value;
           break;
         }
+        case 'submitQuery': {
+          const _query = {};
+          if (attributes.min > 0 && attributes.max > 0) {
+            if (attributes.min > attributes.max) {
+              _query.price = [attributes.max, attributes.min];
+              attributes.min = _query.price[0];
+              attributes.max = _query.price[1];
+              message.warning('上线值和下限值翻转');
+            } else {
+              _query.price = [attributes.min, attributes.max];
+            }
+          } else if (attributes.min > 0) {
+            attributes.max = attributes.min;
+            attributes.min = 0;
+            _query.price = [attributes.min, attributes.max];
+          } else if (attributes.max > 0) {
+            attributes.min = 0;
+            _query.price = [attributes.min, attributes.max];
+          }
+          if (attributes.id) {
+            _query.cateId = attributes.id;
+          }
+          if (!_query.cateId && !_query.price) {
+            message.error(`至少有一个筛选条件(分类或价格区间)`);
+            return;
+          }
+          const { data: _list } = yield call(getProductsList, _query);
+          if (_list.length === 0) {
+            message.warning(`根据筛选条件, 没有合适的商品`);
+          } else {
+            data = _list;
+          }
+          break;
+        }
         case 'add': {
           if (listType === 'list') {
             data.push({ size: 1 });
           } else {
             data.push({});
+          }
+          break;
+        }
+        case 'query': {
+          const { value: valueX, type: typeX } = value;
+          if(typeX === 'category') {
+            attributes = {...attributes, ...valueX}
+          } else {
+            attributes[typeX] = valueX;
           }
           break;
         }
@@ -189,7 +256,6 @@ export default {
       _.remove(listData.data, (item) => {
         return !item || !item.id;
       });
-
       if (listData.type !== 'article' && (!listData.data || listData.data.length < 1)) {
         message.error('没有可以提交的内容');
         return;
@@ -207,7 +273,7 @@ export default {
             name: elementEditor.name,
             type: 'article',
             status: 1,
-            count: listData.editor.content.length
+            count: listData.editor.content.length,
           },
         });
         return;
@@ -224,7 +290,6 @@ export default {
           delete d.fileList;
         }
       });
-
       const ups = Object.values(todos);
       const paths = Object.keys(todos);
       if (ups.length > 0) {
@@ -233,7 +298,6 @@ export default {
           _.set(listData.data, path, res[i].key);
         });
       }
-      listData.count = listData.data.length;
       _.forEach(listData.data, (d) => {
         _.forEach(d, (val, key) => {
           if (val === undefined) {
@@ -241,9 +305,14 @@ export default {
           }
         });
       });
-      listData.data = JSON.stringify(listData.data);
+      if (listData.type === 'products') {
+        listData.count = 0;
+        listData.data = '';
+      } else {
+        listData.count = listData.data.length;
+        listData.data = JSON.stringify(listData.data);
+      }
       listData.attributes = JSON.stringify(listData.attributes);
-
       delete listData.createTime;
       delete listData.lastModifyDate;
       delete listData.attr;
@@ -280,6 +349,16 @@ export default {
   reducers: {
     upState(state, { payload }) {
       return { ...state, ...payload };
+    },
+    clear() {
+      return {
+        ...INIT_STATE,
+        data: [],
+        attributes: {},
+        name: '',
+        type: '',
+        count: 0,
+      };
     },
     fieldsChange,
   },

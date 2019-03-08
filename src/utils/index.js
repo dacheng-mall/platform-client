@@ -138,3 +138,12 @@ export const upload = (file) =>
       });
     }
   };
+
+export const getQuery = (query = {}) => {
+  let _query = '';
+  _.forEach(query, (v, k) => {
+    _query += `${k}=${v}&`;
+  });
+  _query.replace(/\&$/, '');
+  return `?${_query}`;
+};

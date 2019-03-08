@@ -12,6 +12,9 @@ export const getProducts = ({ page = 1, pageSize = 10, ...query } = {}) => {
 export const getProductsWithoutPage = (data) => {
   return get(`v1/api/sys/product`, data);
 };
+export const getProductsList = (query) => {
+  return get(`v1/api/sys/product/mini`, query);
+};
 export const getProduct = (id) => {
   return get('v1/api/sys/product', { id });
 };

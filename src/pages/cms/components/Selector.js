@@ -19,6 +19,7 @@ const TYPES = [
     code: 'category',
   },
 ];
+const NONE_OPT = { id: 'clear', name: '清空选项', title: '清空选项' };
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -33,9 +34,9 @@ export default class Selector extends PureComponent {
   componentDidMount() {
     if (this.props.value) {
       const { title, id, image, type } = this.props.value;
-      const productOpts = [];
-      const pageOpts = [];
-      const categoryOpts = [];
+      const productOpts = [NONE_OPT];
+      const pageOpts = [NONE_OPT];
+      const categoryOpts = [NONE_OPT];
       const option = { title, id, image };
       switch (type) {
         case 'product': {
@@ -84,27 +85,30 @@ export default class Selector extends PureComponent {
         case 'product': {
           const { data } = await getProductsWithoutPage({ title });
           _this.setState({
-            productOpts: _.map(data, ({ id, title, mainImageUrl, price, institutionId }) => ({
-              id,
-              title,
-              price,
-              institutionId, // 判断是否自营, 如果是空字符串则为自营
-              productImage: mainImageUrl,
-            })),
+            productOpts: _.map(
+              [NONE_OPT, ...data],
+              ({ id, title, mainImageUrl, price, institutionId, name }) => ({
+                id,
+                title,
+                price,
+                institutionId, // 判断是否自营, 如果是空字符串则为自营
+                productImage: mainImageUrl,
+              }),
+            ),
           });
           break;
         }
         case 'page': {
           const { data } = await getPagesWithoutPage({ name: title });
           _this.setState({
-            pageOpts: _.map(data, ({ id, name: title }) => ({ id, title })),
+            pageOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
           });
           break;
         }
         case 'category': {
           const { data } = await getCate({ name: title });
           _this.setState({
-            categoryOpts: _.map(data, ({ id, name: title }) => ({ id, title })),
+            categoryOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
           });
           break;
         }
@@ -188,14 +192,16 @@ export default class Selector extends PureComponent {
     const { itemType } = this.state;
     return (
       <Fragment>
-        <RadioGroup onChange={this.typeChange} value={itemType} buttonStyle="solid">
-          {_.map(TYPES, ({ code, label, disabled }, i) => (
-            <RadioButton disabled={disabled} key={`${code}_${i}`} value={code}>
-              {label}
-            </RadioButton>
-          ))}
-        </RadioGroup>
-        {this.renderLink(this.state.itemType)}
+        {!this.props.staticType ? (
+          <RadioGroup onChange={this.typeChange} value={itemType} buttonStyle="solid">
+            {_.map(TYPES, ({ code, label, disabled }, i) => (
+              <RadioButton disabled={disabled} key={`${code}_${i}`} value={code}>
+                {label}
+              </RadioButton>
+            ))}
+          </RadioGroup>
+        ) : null}
+        {this.renderLink(this.props.staticType || this.state.itemType)}
       </Fragment>
     );
   }

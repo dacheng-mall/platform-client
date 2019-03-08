@@ -5,7 +5,6 @@ import {source} from '../../../../../../setting'
 // const 
 export default class Img extends PureComponent {
   static getDerivedStateFromProps = (props, state) => {
-    debugger
     if (props.value && props.value.value) {
       const fileList = (function(val){
         if(typeof val.value === 'string') {

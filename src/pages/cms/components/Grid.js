@@ -190,7 +190,11 @@ export default class GridEditor extends PureComponent {
     if (!this.state.editor.type) {
       update.editor = { ...this.state.editor, ...detail };
     }
-    this.setState(update);
+    if(update.oriented.id === 'clear') {
+      this.setState({oriented: {}, editor: {}, fileList: []});
+    } else {
+      this.setState(update);
+    }
   };
   changeType = (value) => {
     if (this.state.editor.type === value) {

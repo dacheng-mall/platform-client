@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Button, Modal, Radio } from 'antd';
 import { connect } from 'dva';
 import List from './components/List';
+import Products from './components/ProductsList';
 import Swiper from './components/Swiper';
 import Grid from './components/Grid';
 import Article from './components/Article';
@@ -13,6 +14,11 @@ class ElementEditor extends PureComponent {
   state = {
     editing: null,
     type: '',
+  };
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'elementEditor/clear'
+    })
   };
   edit = (type, value, index) => {
     if (type === 'del') {
@@ -29,14 +35,25 @@ class ElementEditor extends PureComponent {
     this.changeData(type, value, index);
   };
   changeData = (type, value, index) => {
-    this.props.dispatch({
-      type: 'elementEditor/change',
-      payload: {
-        type,
-        value,
-        index,
-      },
-    });
+    if (value && (value.value && value.value.id === 'clear')) {
+      this.props.dispatch({
+        type: 'elementEditor/change',
+        payload: {
+          type,
+          value: {...value, value: null},
+          index,
+        },
+      });
+    } else {
+      this.props.dispatch({
+        type: 'elementEditor/change',
+        payload: {
+          type,
+          value,
+          index,
+        },
+      });
+    }
   };
 
   editing = (editing) => {
@@ -62,6 +79,9 @@ class ElementEditor extends PureComponent {
     switch (type) {
       case 'list': {
         return <List {...this.props} onEdit={this.edit} editing={this.editing} />;
+      }
+      case 'products': {
+        return <Products {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       case 'swiper': {
         return <Swiper {...this.props} onEdit={this.edit} editing={this.editing} />;

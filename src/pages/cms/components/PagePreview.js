@@ -85,7 +85,6 @@ function Article(props) {
 export default function PagePreview(props) {
   const render = (elem) => {
     const { type, data, id, attributes } = elem;
-    debugger;
     switch (type) {
       case 'list': {
         return <List id={id} key={id} height={props.height} data={JSON.parse(data)} />;

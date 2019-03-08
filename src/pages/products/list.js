@@ -113,7 +113,7 @@ class List extends PureComponent {
     })(this.props.institutionId, this.props.user.institutionId)
     return (
       <div className={styles.wrap}>
-        {showAddBtn ?<Button type="primary" onClick={this.edit.bind(null, false)} icon="plus">
+        {showAddBtn ? <Button type="primary" onClick={this.edit.bind(null, false)} icon="plus">
           添加商品
         </Button> : null}
         <Table

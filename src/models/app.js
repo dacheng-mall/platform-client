@@ -27,12 +27,13 @@ export default {
     user: {},
     roles: [],
     dict: {
-      elementsTypes: [
-        { id: 'elemType_0', code: 'list', name: '列表' },
-        { id: 'elemType_1', code: 'swiper', name: '滚动图' },
-        { id: 'elemType_2', code: 'grid', name: '九宫格' },
-        { id: 'elemType_3', code: 'article', name: '图文' },
-      ],
+      elementsTypes: _.map([
+        { code: 'list', name: '列表' },
+        { code: 'products', name: '商品' },
+        { code: 'swiper', name: '滚动图' },
+        { code: 'grid', name: '九宫格' },
+        { code: 'article', name: '图文' },
+      ], (type, i) => {type.id = `elemType_${i}`; return type})
     },
     qiniu: {},
   },

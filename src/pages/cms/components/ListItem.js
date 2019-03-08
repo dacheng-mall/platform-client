@@ -3,7 +3,17 @@ import Mask from './Mask';
 import styles from './styles.less';
 import { source } from '../../../../setting';
 
-export default function ListItem({ data, index, size, onEdit, height, current, isHead, isTail }) {
+export default function ListItem({
+  disabled,
+  data,
+  index,
+  size,
+  onEdit,
+  height,
+  current,
+  isHead,
+  isTail,
+}) {
   const edit = (type, value) => {
     // 点击编辑按钮后,初始化待编辑的元素数据
     onEdit(type, value, index);
@@ -19,7 +29,17 @@ export default function ListItem({ data, index, size, onEdit, height, current, i
     }
     return file.url;
   })(data.fileList && data.fileList[0], data);
-
+  // 商品列表的展现
+  if (disabled) {
+    return (
+      <div className={styles.listItem} style={{backgroundColor: '#fff'}}>
+        <img src={`${source}${data.mainImageUrl}`} alt={data.title} style={{ height }} />
+        <div className={styles.name}>{data.title}</div>
+        <div className={styles.price}>{data.price !== undefined ? `￥${data.price}` : null}</div>
+      </div>
+    );
+  }
+  // 元素列表的展现
   return (
     <div className={styles.listItem} style={{ width: size === 2 ? '100%' : '48%' }}>
       {getImageUrl ? (
