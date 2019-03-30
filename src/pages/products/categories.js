@@ -203,6 +203,7 @@ class Categories extends PureComponent {
                   placeholder="请选择父分类"
                   filterOption={false}
                   onSearch={this.fetch}
+                  allowClear
                 >
                   {this.props.parentCategories.length > 0
                     ? _.map(this.props.parentCategories, (cate, index) => {
