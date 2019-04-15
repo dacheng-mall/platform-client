@@ -1,13 +1,13 @@
 export function getAuthority() {
   const authority = sessionStorage.getItem('authority');
   if (authority !== 'undefined') {
-    return JSON.parse(authority);
+    return authority;
   }
   return null
 }
 
 export function setAuthority(authority) {
-  return sessionStorage.setItem('authority', JSON.stringify(authority));
+  return sessionStorage.setItem('authority', authority);
 }
 export function checkAuthority(limitAuthorityArr, reverse, allM) {
   if (reverse) {

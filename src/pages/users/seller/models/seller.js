@@ -17,7 +17,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/seller') {
-          dispatch({ type: 'init', payload: {...PAGE_DEF, userType: 2} });
+          dispatch({ type: 'init', payload: {...PAGE_DEF, userType: 4} });
         }
       });
     },

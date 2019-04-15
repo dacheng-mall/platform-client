@@ -1,18 +1,54 @@
 import { getAuthority, checkAuthority } from '../../utils/authority';
+import { allSettled } from 'rsvp';
 
-const _checkAuthority = limitRoles => checkAuthority(limitRoles)(getAuthority());
+const _checkAuthority = (limitRoles) => checkAuthority(limitRoles)(getAuthority());
 
+const admin = _checkAuthority([1]);
+const instAdmin = _checkAuthority([3]);
+const all = _checkAuthority([1,4]);
+/* 
+roles编码
+平台管理员:   1
+普通客户:    2
+业务员:     3
+机构管理员:   4
+*/
 export const menu = () => {
-  const admin = _checkAuthority(['admin']);
   return [
     {
-      name: '概览',
-      path: 'overview',
-      authority: admin,
-      icon: 'iconfont icon-global',
+      name: '人员管理',
+      authority: instAdmin,
+      icon: 'iconfont icon-user',
+      path: 'instUser',
+      children: [
+        {
+          name: '业务员管理',
+          icon: 'iconfont icon-user',
+          path: 'salesperson',
+          authority: instAdmin,
+        },
+        {
+          name: '机构管理员',
+          icon: 'iconfont icon-user',
+          path: 'instAdmin',
+          authority: instAdmin,
+        },
+      ]
     },
     {
-      name: '用户管理',
+      name: '活动管理',
+      authority: instAdmin,
+      icon: 'iconfont icon-user',
+      path: 'instActivity'
+    },
+    {
+      name: '订单管理',
+      authority: instAdmin,
+      icon: 'iconfont icon-user',
+      path: 'instOrder'
+    },
+    {
+      name: '人员管理',
       authority: admin,
       path: 'users',
       children: [
@@ -22,13 +58,13 @@ export const menu = () => {
           authority: admin,
         },
         {
-          name: '机构',
-          path: 'institution',
+          name: '业务员',
+          path: 'seller',
           authority: admin,
         },
         {
-          name: '业务员',
-          path: 'seller',
+          name: '客户',
+          path: 'customer',
           authority: admin,
         },
       ],
@@ -73,14 +109,46 @@ export const menu = () => {
       ],
     },
     {
-      name: '厂商管理',
-      path: '',
+      name: '机构管理',
+      path: 'institution',
+      authority: admin,
+      children: [
+        {
+          name: '机构',
+          path: 'list',
+          authority: admin,
+        },
+        {
+          name: '职级',
+          path: 'grade',
+          authority: admin,
+        },
+        {
+          name: '管理员',
+          path: 'instAdmin',
+          authority: admin,
+        },
+      ]
+    },
+    {
+      name: '活动管理',
+      path: 'activity',
       authority: admin,
     },
     {
-      name: '基础数据',
-      path: 'dict',
-      authority: admin, // todo 以上都是平台管理员的权限
+      name: '订单管理',
+      path: 'order',
+      authority: admin,
     },
+    // {
+    //   name: '厂商管理',
+    //   path: 'factory',
+    //   authority: admin,
+    // },
+    // {
+    //   name: '基础数据',
+    //   path: 'dict',
+    //   authority: admin, // todo 以上都是平台管理员的权限
+    // },
   ];
 };

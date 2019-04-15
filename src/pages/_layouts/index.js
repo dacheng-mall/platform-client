@@ -4,6 +4,7 @@ import withRouter from 'umi/withRouter';
 import { Layout, Breadcrumb, Button } from 'antd';
 import Menu from './Components/Menu';
 import styles from './index.less';
+import { setApiPrefix } from '../../utils/request';
 
 const { Sider, Header, Content } = Layout;
 

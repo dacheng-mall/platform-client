@@ -133,7 +133,6 @@ export default class ProductsList extends PureComponent {
   }
   // most be the same, 也可以全部一样, 只是swiper组建中的商品数据会有些冗余
   submit = () => {
-    // console.log('wokao')
     this.props.onEdit('submitQuery');
   };
   changeQuery = (type, value) => {

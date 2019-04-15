@@ -46,7 +46,7 @@ class Admin extends PureComponent {
         key: 'status',
         title: '状态',
         dataIndex: 'status',
-        render: (t, {id, username}) => {
+        render: (t, { id, username }) => {
           const change = (checked) => {
             this.props.dispatch({
               type: 'admin/changeStatus',
@@ -181,9 +181,9 @@ class Admin extends PureComponent {
             onChange: (page, pageSize) => {
               this.props.dispatch({
                 type: 'admin/fetch',
-                payload: {page, pageSize, userType: 1}
-              })
-            }
+                payload: { page, pageSize, userType: 1 },
+              });
+            },
           }}
         />
         <Modal

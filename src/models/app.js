@@ -7,10 +7,10 @@ import { menu } from '../pages/_layouts/menuData';
 import { setToken } from '../utils/request';
 
 const redirect = (menu) => {
-  const allow = _.find(menu, ({ authority }) => authority);
+  const allow = _.find(menu, ({ authority }) => authority || undefined);
   const makePath = (item, prefix = '/') => {
     if (item.children && item.children.length > 0) {
-      return makePath(item.children[0], `/${item.path}`);
+      return makePath(item.children[0], `${item.path}/`);
     }
     return `${prefix}${item.path}`;
   };
@@ -83,7 +83,7 @@ export default {
         yield jump(redirect(_menu));
         sessionStorage.setItem('user', JSON.stringify(data.user));
         sessionStorage.setItem('token', data.token);
-        setAuthority(data.roles);
+        setAuthority(data.user.userType);
       }
     },
     *getQiniuToken(p, { call, put, select }) {

@@ -18,7 +18,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/admin') {
-          dispatch({ type: 'init', payload: {...PAGE_DEF, userType: 1} });
+          dispatch({ type: 'init', payload: { ...PAGE_DEF, userType: 1 } });
         }
       });
     },
@@ -40,7 +40,7 @@ export default {
     },
     *editUser({ payload }, { call, select, put }) {
       if (payload.username === 'adm') {
-        message.warning('不能修改管理员的信息')
+        message.warning('不能修改管理员的信息');
         return false;
       }
       const { editor, pagination } = yield select(({ admin }) => admin);
@@ -52,7 +52,7 @@ export default {
         const { data } = yield call(updateAdmin, { ...editor, ...values });
         res = data;
       } else {
-        editor.userType = 2
+        editor.userType = 2;
         const { data } = yield call(createAdmin, { ...editor, ...values });
         res = data;
       }
@@ -61,8 +61,8 @@ export default {
           type: 'fetch',
           payload: {
             ...pagination,
-            userType: 1
-          }
+            userType: 1,
+          },
         });
         yield put({
           type: 'upState',
@@ -85,12 +85,8 @@ export default {
         });
       }
     },
-    *resetPW(
-      {
-        payload: { id, username },
-      },
-      { call, put, select },
-    ) {
+    *resetPW({ payload }, { call }) {
+      const { id, username } = payload;
       yield call(updateAdmin, { id, username, password: '111111' });
     },
     *changeStatus({ payload }, { call, put, select }) {

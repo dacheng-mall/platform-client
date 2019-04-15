@@ -12,6 +12,23 @@ export const DEFAULT_FORM_COL = {
   },
 };
 
+export const checkIdcard = (rule, value, callback) => {
+  const reg = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}$)/;
+  if (value && !reg.test(value)) {
+    callback('请输入正确格式的身份证号, 15或18位');
+  } else {
+    callback();
+  }
+};
+export const checkMobile = (rule, value, callback) => {
+  const reg = /^1(3|4|5|7|8)\d{9}$/;
+  if (value && !reg.test(value)) {
+    callback('请输入正确格式的手机号');
+  } else {
+    callback();
+  }
+};
+
 export const FormItem = (props) => {
   return <Form.Item {...props} {...DEFAULT_FORM_COL} />;
 };
@@ -22,10 +39,11 @@ const ERROR = 'errors';
 export const mapPropsToFields = (props) => {
   const res = {};
   _.forEach(props[EDITOR], (value, key) => {
+    
     switch (key) {
       case 'status': {
         res[key] = createFormField({
-          value: value === 1 ? true : false,
+          value: value === 1 || value ? true : false,
         });
         break;
       }
@@ -46,25 +64,27 @@ export const mapPropsToFields = (props) => {
   return res;
 };
 export const onFieldsChange = (ns) => (props, field, fields) => {
-  const [key, val] = Object.entries(field)[0];
-  switch (key) {
-    case 'status': {
-      field[key].value = val.value ? '1' : '0';
-      break;
-    }
-    case 'roles': {
-      field[key].value = typeof val.value === 'object' ? val.value.join(',') : val.value;
-      break;
-    }
-    default: {
-      break;
-    }
-  }
+  // debugger
+  // const [key, val] = Object.entries(field)[0];
+  // switch (key) {
+  //   case 'status': {
+  //     field[key].value = val.value ? '1' : '0';
+  //     break;
+  //   }
+  //   case 'roles': {
+  //     field[key].value = typeof val.value === 'object' ? val.value.join(',') : val.value;
+  //     break;
+  //   }
+  //   default: {
+  //     break;
+  //   }
+  // }
   props.dispatch({
     type: `${ns}/fieldsChange`,
-    payload: { field, fields },
+    payload: { fields },
   });
 };
+// 这个再model里使用, 维护store里的表单数据
 export const fieldsChange = (state, { payload }) => {
   _.forEach(payload.fields, ({ name, dirty, value, errors }) => {
     if (!name) {

@@ -1,14 +1,14 @@
 import fetch from 'dva/fetch';
 import _ from 'lodash';
 import uri from 'url';
-import { api } from "../../setting";
+// import { api } from "../../setting";
 
 // const credentials = 'include'; //include same-origin
 const CONTENT_TYPE = 'Content-Type';
 const JSON_TYPE = 'application/json';
 
 // 后台API URI前端
-let apiPrefix = api;
+let apiPrefix = window.config.api;
 // token获取方法
 let getToken;
 
