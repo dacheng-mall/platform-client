@@ -113,7 +113,7 @@ class Institution extends PureComponent {
       id,
       name,
       description,
-      regionId: regionId.split(','),
+      regionId: regionId && regionId.split(',') || [],
       regionName,
       address,
       master,
