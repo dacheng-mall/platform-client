@@ -3,8 +3,9 @@ import _ from 'lodash';
 import { getProduct, addProducts, updateProducts, getCate } from '../services';
 import { fieldsChange } from '../../../utils/ui';
 import { upload } from '../../../utils';
-import { source } from '../../../../setting';
 import { message } from 'antd';
+
+const source = window.config.source;
 
 const INIT_STATE = {
   editor: {},

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import Uploader from '../../../../Components/Uploader';
-import {source} from '../../../../../../setting'
+
+const source = window.config.source;
 
 // const 
 export default class Img extends PureComponent {

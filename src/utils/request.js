@@ -8,7 +8,13 @@ const CONTENT_TYPE = 'Content-Type';
 const JSON_TYPE = 'application/json';
 
 // 后台API URI前端
-let apiPrefix = window.config.api;
+let apiPrefix = '';
+const NODE_EVN = process.env.NODE_EVN;
+if(NODE_EVN === 'production') {
+  apiPrefix = window.config.api_prod;
+} else {
+  apiPrefix = window.config.api_dev
+}
 // token获取方法
 let getToken;
 

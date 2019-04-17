@@ -3,7 +3,8 @@ import _ from 'lodash';
 import { Carousel } from 'antd';
 import styles from './styles.less';
 import EditorPreview from '../../products/components/preview/Content';
-import { source } from '../../../../setting';
+
+const source = window.config.source
 
 function ListItem({ height, data }) {
   return (

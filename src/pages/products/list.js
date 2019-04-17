@@ -4,7 +4,7 @@ import { Table, Switch, Button, Divider, Modal } from 'antd';
 import { jump } from '../../utils';
 import styles from './list.less';
 
-const { source } = require('../../../setting');
+const source = window.config.source;
 
 class List extends PureComponent {
   columns = [

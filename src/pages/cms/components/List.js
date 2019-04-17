@@ -3,10 +3,10 @@ import _ from 'lodash';
 import { Input, Form, Radio, Button, Row, Col, message } from 'antd';
 import ListItem from './ListItem';
 import styles from './styles.less';
-import { source } from '../../../../setting';
 import SelecterX from './Selector';
 import ImagePicker from './ImagePicker';
 
+const source = window.config.source
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 export default class ListEditor extends PureComponent {

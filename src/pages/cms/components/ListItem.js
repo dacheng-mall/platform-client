@@ -1,7 +1,8 @@
 import React from 'react';
 import Mask from './Mask';
 import styles from './styles.less';
-import { source } from '../../../../setting';
+
+const source = window.config.source
 
 export default function ListItem({
   disabled,

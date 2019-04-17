@@ -3,8 +3,9 @@ import _ from 'lodash';
 import { Input, Form, Button, Row, Col, message, InputNumber } from 'antd';
 import ListItem from './ListItem';
 import styles from './styles.less';
-import { source } from '../../../../setting';
 import SelecterX from './Selector';
+
+const source = window.config.source;
 
 export default class ProductsList extends PureComponent {
   state = {

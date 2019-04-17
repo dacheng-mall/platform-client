@@ -1,5 +1,6 @@
 import React from 'react';
-import { source } from "../../../../../../setting";
+
+const source = window.config.source;
 
 export default function Img(props) {
   const { value, name } = props.data;

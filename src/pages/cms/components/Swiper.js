@@ -4,8 +4,9 @@ import { Input, Form, Button, Row, Col, message, InputNumber } from 'antd';
 import SwiperItem from './SwiperItem';
 import styles from './styles.less';
 import ImagePicker from './ImagePicker';
-import { source } from '../../../../setting';
 import SelecterX from './Selector';
+
+const source = window.config.source;
 
 export default class SwiperEditor extends PureComponent {
   state = {
