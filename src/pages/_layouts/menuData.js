@@ -1,17 +1,16 @@
 import { getAuthority, checkAuthority } from '../../utils/authority';
-import { allSettled } from 'rsvp';
 
 const _checkAuthority = (limitRoles) => checkAuthority(limitRoles)(getAuthority());
 
 const admin = _checkAuthority([1]);
 const instAdmin = _checkAuthority([3]);
-const all = _checkAuthority([1,4]);
+// const all = _checkAuthority([1,4]);
 /* 
 roles编码
 平台管理员:   1
 普通客户:    2
-业务员:     3
-机构管理员:   4
+机构管理员:   3
+业务员:     4
 */
 export const menu = () => {
   return [

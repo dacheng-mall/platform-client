@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
 import { Table, Button, Switch, Modal, Icon, Input, Divider } from 'antd';
@@ -175,7 +175,7 @@ class Institution extends PureComponent {
   }
   render() {
     return (
-      <div>
+      <Fragment>
         <div className={styles.tableToolBar}>
           <Button onClick={this.showModal.bind(null, {})} type="primary">
             <Icon type="plus" />
@@ -210,7 +210,7 @@ class Institution extends PureComponent {
           }}
         />
         <Editor editor={this.props.editor} />
-      </div>
+      </Fragment>
     );
   }
 }

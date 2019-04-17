@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { getAdmins, updateAdmin, removeAdmin } from '../services';
+import { getAdmins, updateAdmin, removeAdmin, getInstWithoutPage } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
 
@@ -11,13 +11,14 @@ export default {
     pagination: PAGE_DEF,
     editor: null,
     errors: {},
+    inst: []
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/seller') {
-          dispatch({ type: 'init', payload: {...PAGE_DEF, userType: 4} });
+          dispatch({ type: 'init', payload: { ...PAGE_DEF, userType: 4 } });
         }
       });
     },
@@ -31,7 +32,7 @@ export default {
       });
     },
     *fetch({ payload }, { put, call }) {
-      const { data } = yield call(getAdmins, payload);
+      const { data } = yield call(getAdmins, {...PAGE_DEF, ...payload});
       yield put({
         type: 'upState',
         payload: data,
@@ -68,6 +69,26 @@ export default {
           },
         });
       }
+    },
+    *searchByKeywords({ payload }, { call, put }) {
+      yield put({
+        type: 'upState',
+        payload: {
+          keywords: payload,
+        },
+      });
+      yield put({
+        type: 'fetch',
+      });
+    },
+    *searchInst({ payload }, { call, put }) {
+      const { data } = yield call(getInstWithoutPage, { name: payload });
+      yield put({
+        type: 'upState',
+        payload: {
+          inst: data,
+        },
+      });
     },
   },
   reducers: {

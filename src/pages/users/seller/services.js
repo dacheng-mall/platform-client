@@ -15,3 +15,6 @@ export const updateAdmin = (data) => {
 export const removeAdmin = (id) => {
   return del(`v1/api/sys/user/${id}`);
 };
+export const getInstWithoutPage = (query) => {
+  return get(`v1/api/sys/institution`, query);
+};

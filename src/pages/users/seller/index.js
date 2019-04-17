@@ -1,20 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Table,
-  Button,
-  Icon,
-  Switch,
-  Modal,
-  Form,
-  Input,
-  Radio,
-  Checkbox,
-  Divider,
-} from 'antd';
-import { FormItem, mapPropsToFields } from '../../../utils/ui';
+import _ from 'lodash';
+import { Table, Button, Switch, Modal } from 'antd';
 class Seller extends PureComponent {
   state = {
     show: false,
@@ -26,9 +13,9 @@ class Seller extends PureComponent {
         key: 'avatar',
         title: '头像',
         dataIndex: 'avatar',
-        render: (t) => {
-          return <img style={{width: '48px'}} src={t} />
-        }
+        render: (t, r) => {
+          return <img style={{ width: '48px' }} src={t} alt={r.name} />;
+        },
       },
       {
         key: 'name',
@@ -36,10 +23,28 @@ class Seller extends PureComponent {
         dataIndex: 'name',
       },
       {
+        key: 'institution',
+        title: '机构',
+        dataIndex: 'institution',
+        render(t) {
+          return <div>{t.name}</div>;
+        },
+      },
+      {
+        key: 'grade',
+        title: '职级',
+        dataIndex: 'gradeName',
+      },
+      {
+        key: 'mobile',
+        title: '手机号',
+        dataIndex: 'mobile',
+      },
+      {
         key: 'status',
         title: '状态',
         dataIndex: 'status',
-        render: (t, {id, username}) => {
+        render: (t, { id, username }) => {
           const change = (checked) => {
             this.props.dispatch({
               type: 'admin/changeStatus',
@@ -83,9 +88,39 @@ class Seller extends PureComponent {
       },
     });
   };
+  search = (value) => {
+    this.props.dispatch({
+      type: 'seller/searchByKeywords',
+      payload: value,
+    });
+  };
+  reset = () => {
+    this.props.dispatch({
+      type: 'seller/searchByKeywords',
+      payload: '',
+    });
+  };
+  change = (e) => {
+    this.props.dispatch({
+      type: 'seller/upState',
+      payload: {
+        keywords: _.trim(e.target.value),
+      },
+    });
+  };
   render() {
     return (
-      <div>
+      <Fragment>
+        {/* <div>
+          <Input.Search
+            style={{ width: 320 }}
+            onSearch={this.search}
+            placeholder="请输入机构名称关键字查询"
+            onChange={this.change}
+            value={this.props.keywords}
+          />
+          <Button onClick={this.reset}>重置</Button>
+        </div> */}
         <Table
           rowKey="id"
           columns={this.columns()}
@@ -98,12 +133,12 @@ class Seller extends PureComponent {
             onChange: (page, pageSize) => {
               this.props.dispatch({
                 type: 'seller/fetch',
-                payload: {page, pageSize, userType: 2}
-              })
-            }
+                payload: { page, pageSize, userType: 2 },
+              });
+            },
           }}
         />
-      </div>
+      </Fragment>
     );
   }
 }
