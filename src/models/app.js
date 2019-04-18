@@ -74,6 +74,9 @@ export default {
     *login({ payload }, { call, put, all }) {
       const { data } = yield call(login, payload);
       if (data) {
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+        sessionStorage.setItem('token', data.token);
+        setAuthority(data.user.userType);
         const _menu = menu();
         yield put({
           type: 'upState',
@@ -81,9 +84,6 @@ export default {
         });
         yield setToken(() => `Bearer ${data.token}`);
         yield jump(redirect(_menu));
-        sessionStorage.setItem('user', JSON.stringify(data.user));
-        sessionStorage.setItem('token', data.token);
-        setAuthority(data.user.userType);
       }
     },
     *getQiniuToken(p, { call, put, select }) {
