@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import withRouter from 'umi/withRouter';
-import { Layout, Breadcrumb, Button } from 'antd';
+import { Layout, Breadcrumb, Button, LocaleProvider } from 'antd';
 import Menu from './Components/Menu';
 import styles from './index.less';
-import { setApiPrefix } from '../../utils/request';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 
 const { Sider, Header, Content } = Layout;
 
@@ -38,7 +38,12 @@ class BasicLayout extends PureComponent {
           </Sider>
           <Content className={styles.contentWrap}>
             <Breadcrumb />
-            <div className={styles.content}>{this.props.children}</div>
+            <div className={styles.content}>
+            <LocaleProvider locale={zhCN}>
+
+              {this.props.children}
+            </LocaleProvider>
+            </div>
           </Content>
         </Layout>
       </Layout>
