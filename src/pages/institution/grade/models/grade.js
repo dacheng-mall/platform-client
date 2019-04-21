@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { message } from 'antd';
 import { fetch as get, remove, update, create, find, findInst } from '../services';
+import {fieldsChange} from '../../../../utils/ui'
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 const INIT_EDITOR = {
@@ -135,14 +136,15 @@ export default {
     upState(state, { payload }) {
       return { ...state, ...payload };
     },
-    upEditors(state, { payload }) {
-      const error = { ...state.error };
-      _.each(payload, (v, k) => {
-        const { value, errors } = v;
-        _.set(state, `editor.${k}`, value);
-        error[k] = errors;
-      });
-      return { ...state, error };
-    },
+    // upEditors(state, { payload }) {
+    //   const error = { ...state.error };
+    //   _.each(payload, (v, k) => {
+    //     const { value, errors } = v;
+    //     _.set(state, `editor.${k}`, value);
+    //     error[k] = errors;
+    //   });
+    //   return { ...state, error };
+    // },
+    fieldsChange
   },
 };

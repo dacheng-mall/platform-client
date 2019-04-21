@@ -20,7 +20,10 @@ class Grade extends PureComponent {
       {
         key: 'institution',
         title: '所属机构',
-        dataIndex: 'institutionName',
+        render: function(t, r){
+          const {institution: {name}} = r;
+          return name
+        }
       },
       {
         key: 'code',

@@ -10,91 +10,89 @@ class Institution extends PureComponent {
     show: false,
     shwoPassword: false,
   };
-  columns = () => {
-    return [
-      {
-        key: 'name',
-        title: '机构名称',
-        dataIndex: 'name',
+  columns = [
+    {
+      key: 'name',
+      title: '机构名称',
+      dataIndex: 'name',
+    },
+    {
+      key: 'master',
+      title: '联系人',
+      dataIndex: 'master',
+    },
+    {
+      key: 'masterPhone',
+      title: '联系电话',
+      dataIndex: 'masterPhone',
+    },
+    {
+      key: 'address',
+      title: '地址',
+      render: (t, { address, regionName }) => {
+        return (
+          <div>
+            {regionName}
+            <br />
+            {address}
+          </div>
+        );
       },
-      {
-        key: 'master',
-        title: '联系人',
-        dataIndex: 'master',
+    },
+    {
+      key: 'parent',
+      title: '上级机构',
+      dataIndex: 'pInstitution',
+      render: (t) => {
+        if (t.id) {
+          return <div>{t.name}</div>;
+        }
+        return '无';
       },
-      {
-        key: 'masterPhone',
-        title: '联系电话',
-        dataIndex: 'masterPhone',
+    },
+    {
+      key: 'status',
+      title: '状态',
+      dataIndex: 'status',
+      render: (t, { id, username }) => {
+        const change = (checked) => {
+          this.props.dispatch({
+            type: 'institution/changeStatus',
+            payload: { id, username, status: checked ? 1 : 0 },
+          });
+        };
+        return <Switch size="small" checked={t === 1} onChange={change} />;
       },
-      {
-        key: 'address',
-        title: '地址',
-        render: (t, { address, regionName }) => {
-          return (
-            <div>
-              {regionName}
-              <br />
-              {address}
-            </div>
-          );
-        },
+      align: 'center',
+    },
+    {
+      key: 'operator',
+      title: '操作',
+      dataIndex: 'id',
+      render: (t, r) => {
+        return (
+          <div>
+            <Button
+              onClick={this.update.bind(null, r)}
+              size="small"
+              shape="circle"
+              type="primary"
+              icon="edit"
+            />
+            <Divider type="vertical" />
+            <Button
+              onClick={this.remove.bind(null, t, r)}
+              size="small"
+              shape="circle"
+              type="danger"
+              icon="delete"
+            />
+          </div>
+        );
       },
-      {
-        key: 'parent',
-        title: '上级机构',
-        dataIndex: 'pInstitution',
-        render: (t) => {
-          if (t.id) {
-            return <div>{t.name}</div>;
-          }
-          return '无';
-        },
-      },
-      {
-        key: 'status',
-        title: '状态',
-        dataIndex: 'status',
-        render: (t, { id, username }) => {
-          const change = (checked) => {
-            this.props.dispatch({
-              type: 'institution/changeStatus',
-              payload: { id, username, status: checked ? 1 : 0 },
-            });
-          };
-          return <Switch size="small" checked={t === 1} onChange={change} />;
-        },
-        align: 'center',
-      },
-      {
-        key: 'operator',
-        title: '操作',
-        dataIndex: 'id',
-        render: (t, r) => {
-          return (
-            <div>
-              <Button
-                onClick={this.update.bind(null, r)}
-                size="small"
-                shape="circle"
-                type="primary"
-                icon="edit"
-              />
-              <Divider type="vertical" />
-              <Button
-                onClick={this.remove.bind(null, t, r)}
-                size="small"
-                shape="circle"
-                type="danger"
-                icon="delete"
-              />
-            </div>
-          );
-        },
-        align: 'right',
-      },
-    ];
-  };
+      align: 'right',
+    },
+  ];
   update = (r) => {
     const {
       id,
@@ -113,7 +111,7 @@ class Institution extends PureComponent {
       id,
       name,
       description,
-      regionId: regionId && regionId.split(',') || [],
+      regionId: (regionId && regionId.split(',')) || [],
       regionName,
       address,
       master,
@@ -164,15 +162,15 @@ class Institution extends PureComponent {
       type: 'institution/searchByKeywords',
       payload: '',
     });
-  }
+  };
   change = (e) => {
     this.props.dispatch({
       type: 'institution/upState',
       payload: {
-        keywords: _.trim(e.target.value)
-      }
-    })
-  }
+        keywords: _.trim(e.target.value),
+      },
+    });
+  };
   render() {
     return (
       <Fragment>
@@ -194,7 +192,7 @@ class Institution extends PureComponent {
         </div>
         <Table
           rowKey="id"
-          columns={this.columns()}
+          columns={this.columns}
           dataSource={this.props.data || []}
           locale={{ emptyText: '暂无数据' }}
           pagination={{
