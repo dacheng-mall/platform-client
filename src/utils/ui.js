@@ -11,6 +11,18 @@ export const DEFAULT_FORM_COL = {
     sm: { span: 16 },
   },
 };
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 6,
+      offset: 6,
+    },
+    sm: {
+      span: 16,
+      offset: 6,
+    },
+  },
+};
 
 export const checkIdcard = (rule, value, callback) => {
   const reg = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}$)/;
@@ -30,6 +42,9 @@ export const checkMobile = (rule, value, callback) => {
 };
 
 export const FormItem = (props) => {
+  if(props.isTail) {
+    return <Form.Item {...props} {...tailFormItemLayout} />;
+  }
   return <Form.Item {...props} {...DEFAULT_FORM_COL} />;
 };
 
@@ -39,7 +54,6 @@ const ERROR = 'errors';
 export const mapPropsToFields = (props) => {
   const res = {};
   _.forEach(props[EDITOR], (value, key) => {
-    
     switch (key) {
       case 'status': {
         res[key] = createFormField({
@@ -64,7 +78,7 @@ export const mapPropsToFields = (props) => {
   return res;
 };
 export const onFieldsChange = (ns) => (props, field, fields) => {
-  // debugger
+
   // const [key, val] = Object.entries(field)[0];
   // switch (key) {
   //   case 'status': {
@@ -81,22 +95,20 @@ export const onFieldsChange = (ns) => (props, field, fields) => {
   // }
   props.dispatch({
     type: `${ns}/fieldsChange`,
-    payload: { fields },
+    payload: { fields, field },
   });
 };
 // 这个再model里使用, 维护store里的表单数据
 export const fieldsChange = (state, { payload }) => {
-  _.forEach(payload.fields, ({ name, dirty, value, errors }) => {
-    if (!name) {
+  _.forEach(payload.fields, ({ value, errors }, key) => {
+    if (!key) {
       return;
     }
-    if (!dirty) {
-      _.set(state[EDITOR], name, value);
-    }
     if (errors) {
-      _.set(state[ERROR], name, errors);
+      _.set(state[ERROR], key, errors);
     } else {
-      delete state[ERROR][name];
+      _.set(state[EDITOR], key, value);
+      delete state[ERROR][key];
     }
   });
   return { ...state };

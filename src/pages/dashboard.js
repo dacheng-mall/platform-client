@@ -6,5 +6,6 @@ module.exports = {
     ...require('./users'),
     ...require('./products'),
     ...require('./cms'),
+    ...require('./activity'),
   ],
 };

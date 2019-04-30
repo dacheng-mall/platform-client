@@ -2,8 +2,6 @@ import { getAuthority, checkAuthority } from '../../utils/authority';
 
 const _checkAuthority = (limitRoles) => checkAuthority(limitRoles)(getAuthority());
 
-const admin = _checkAuthority([1]);
-const instAdmin = _checkAuthority([3]);
 // const all = _checkAuthority([1,4]);
 /* 
 roles编码
@@ -13,6 +11,8 @@ roles编码
 业务员:     4
 */
 export const menu = () => {
+  const admin = _checkAuthority([1]);
+  const instAdmin = _checkAuthority([3]);
   return [
     {
       name: '人员管理',
@@ -131,7 +131,7 @@ export const menu = () => {
     },
     {
       name: '活动管理',
-      path: 'activity',
+      path: 'activities',
       authority: admin,
     },
     {
