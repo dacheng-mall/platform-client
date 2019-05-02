@@ -5,6 +5,7 @@ import { Form, Input, Select, Checkbox, DatePicker, Button, InputNumber } from '
 import { FormItem, mapPropsToFields, onFieldsChange } from '../../utils/ui';
 import Images from '../products/components/form/Images';
 import LinkProducts from './components/LinkProducts';
+import RichText from '../Components/RichText'
 import styles from './styles.less';
 
 const RangePicker = DatePicker.RangePicker;
@@ -33,8 +34,8 @@ function ActivityDetail(props) {
         if (!err) {
           props.dispatch({
             type: 'activity/submit',
-            values: val
-          })
+            values: val,
+          });
         }
       });
     } catch (e) {}
@@ -51,7 +52,7 @@ function ActivityDetail(props) {
         <FormItem label="活动名称">
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '必填项' }],
-          })(<Input placeholder="请输入活动名称" />)}
+          })(<Input placeholder="请输入活动名称" style={{width: '350px'}} />)}
         </FormItem>
         <FormItem label="所属机构">
           {getFieldDecorator('institutionId', {
@@ -65,6 +66,7 @@ function ActivityDetail(props) {
               filterOption={false}
               onSearch={handleSearch}
               allowClear
+              style={{width: '350px'}}
             >
               {renderOpts(props.inst)}
             </Select>,
@@ -90,15 +92,20 @@ function ActivityDetail(props) {
             rules: [{ type: 'array', required: true, message: '请设置活动周期' }],
           })(<RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />)}
         </FormItem>
-        <FormItem label="描述">
+        {/* <FormItem label="描述">
           {getFieldDecorator('description', {
             rules: [{ required: true, message: '请设输入活动描述' }],
           })(<TextArea rows={6} placeholder="请输入活动描述" />)}
+        </FormItem> */}
+        <FormItem label="描述">
+          {getFieldDecorator('description', {
+            rules: [{ required: true, message: '请设输入活动描述' }],
+          })(<RichText placeholder="请输入活动描述" />)}
         </FormItem>
         <FormItem
           label="图片"
           validateStatus={props.errors.images ? 'error' : ''}
-          help={parseErrorMessage(props.errors.images)}
+          help="图片的宽高比为4:3时效果最佳"
         >
           {getFieldDecorator('images', {
             rules: [{ required: false, message: '必填项' }],
@@ -118,7 +125,7 @@ function ActivityDetail(props) {
             <InputNumber
               disabled={!props.editor.products || props.editor.products.length < 1}
               min={1}
-              max={props.editor.products && props.editor.products.length || 1}
+              max={(props.editor.products && props.editor.products.length) || 1}
             />,
           )}
         </FormItem>
