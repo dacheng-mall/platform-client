@@ -111,7 +111,7 @@ function Editor(props) {
               )}
             </FormItem>
             <FormItem label="手机号">
-              {getFieldDecorator('moblie', {
+              {getFieldDecorator('mobile', {
                 rules: [{ validator: checkMobile }],
               })(<Input placeholder="请输入手机号" />)}
             </FormItem>
