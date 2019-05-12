@@ -9,8 +9,8 @@ const JSON_TYPE = 'application/json';
 
 // 后台API URI前端
 let apiPrefix = '';
-const NODE_EVN = process.env.NODE_EVN;
-if(NODE_EVN === 'production') {
+const NODE_ENV = process.env.NODE_ENV;
+if(NODE_ENV === 'production') {
   apiPrefix = window.config.api_prod;
 } else {
   apiPrefix = window.config.api_dev

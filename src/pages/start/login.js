@@ -72,7 +72,7 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
           </Form>
         </div>
         <div style={{ position: 'absolute', bottom: '10px', fontSize: '14px', textAlign: 'center' }}>
-          <div style={{color: '#fff'}}>河南洋白菜商贸有限公司</div>
+          <div style={{color: '#fff'}}>河南洋白菜电子商务有限公司</div>
           <a style={{color: '#fff'}} href="http://www.beian.miit.gov.cn" target="_blank">
             豫ICP备18044641号
           </a>
