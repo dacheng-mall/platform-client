@@ -36,7 +36,6 @@ export default function ProductSelector(props) {
           title,
           img
         }));
-        console.log(res);
         setOpts(res);
       });
       clearTimeout(timer);

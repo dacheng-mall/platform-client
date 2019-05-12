@@ -17,11 +17,9 @@ const source = window.config.source;
  */
 export default function Products(props) {
   const remove = (index) => {
-    console.log(index);
     props.onChange(null, 'remove', index);
   };
   const move = (index, type, ...other) => {
-    console.log('other', other);
     props.onChange(null, type, index);
   };
   return (

@@ -4,6 +4,10 @@ module.exports = [
     component: 'activity/list',
   },
   {
+    path: '/instActivity',
+    component: 'activity/list',
+  },
+  {
     path: '/activity/:id',
     component: 'activity/detail',
   },
@@ -14,5 +18,17 @@ module.exports = [
   {
     path: '/activity/user/:id',
     component: 'activity/contestants',
+  },
+  {
+    path: '/activity/user/:id',
+    component: 'activity/contestants',
+  },
+  {
+    path: '/activity/:id/team',
+    component: 'activity/team',
+  },
+  {
+    path: '/activity/:id/gift',
+    component: 'activity/gift',
   },
 ];

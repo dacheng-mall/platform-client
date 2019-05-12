@@ -17,7 +17,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/customer') {
-          dispatch({ type: 'init', payload: {...PAGE_DEF, userType: 2} });
+          dispatch({ type: 'init', payload: PAGE_DEF });
         }
       });
     },
@@ -31,7 +31,7 @@ export default {
       });
     },
     *fetch({ payload }, { put, call }) {
-      const { data } = yield call(getUsers, payload);
+      const { data } = yield call(getUsers, {...PAGE_DEF, ...payload, userType: 2});
       yield put({
         type: 'upState',
         payload: data,
