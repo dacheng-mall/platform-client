@@ -1,5 +1,9 @@
 .tableToolBar {
   display: flex;
+  justify-content: space-between;
+}
+.tableToolBar2 {
+  display: flex;
   justify-content: flex-end;
 }
 .formTitle {
@@ -9,6 +13,22 @@
 .form {
   margin: 0;
   width: auto;
+  overflow-y: auto;
+  flex: 1
+}
+.title {
+  font-size: 20px;
+}
+.filter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end
+}
+.btnWrap {
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  padding: 10px 0;
+  text-align: center
 }
 .defaultAvatar {
   height: 48px;

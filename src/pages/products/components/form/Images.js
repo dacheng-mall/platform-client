@@ -11,11 +11,15 @@ export default class ImageEditor extends PureComponent {
         return data;
       }
       // 这是本来就有的
-      return {
+      const old = {
         uid: `old_${i}`,
         name: data.name,
         url: data.url,
-      };
+      }
+      if(data._url) {
+        old._url = data._url
+      }
+      return old;
     });
     return { ...state, fileList };
   };

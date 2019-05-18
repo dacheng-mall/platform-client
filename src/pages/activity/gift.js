@@ -127,29 +127,32 @@ function Gift(props) {
   return (
     <Fragment>
       <div className={styles.tableToolBar}>
-        <Select
-          showSearch
-          value={props.institutionId}
-          placeholder="请输入机构名称关键字查询"
-          style={{ width: 240, marginRight: '10px' }}
-          defaultActiveFirstOption={false}
-          filterOption={false}
-          onSearch={search}
-          onChange={changeInst}
-          notFoundContent={null}
-        >
-          {_.map(props.inst, (inst) => {
-            return (
-              <Select.Option key={inst.id} value={inst.id}>
-                {inst.name}
-              </Select.Option>
-            );
-          })}
-        </Select>
-        <Button onClick={reFetch} type="primary" style={{ marginRight: '10px' }}>
-          查询
-        </Button>
-        <Button onClick={reset}>重置</Button>
+        <div className={styles.title}>客户领取记录</div>
+        <div className={styles.filter}>
+          <Select
+            showSearch
+            value={props.institutionId}
+            placeholder="请输入机构名称关键字查询"
+            style={{ width: 240, marginRight: '10px' }}
+            defaultActiveFirstOption={false}
+            filterOption={false}
+            onSearch={search}
+            onChange={changeInst}
+            notFoundContent={null}
+          >
+            {_.map(props.inst, (inst) => {
+              return (
+                <Select.Option key={inst.id} value={inst.id}>
+                  {inst.name}
+                </Select.Option>
+              );
+            })}
+          </Select>
+          <Button onClick={reFetch} type="primary" style={{ marginRight: '10px' }}>
+            查询
+          </Button>
+          <Button onClick={reset}>重置</Button>
+        </div>
       </div>
       <Table
         rowKey="id"

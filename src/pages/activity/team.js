@@ -106,50 +106,53 @@ class Team extends PureComponent {
     return (
       <Fragment>
         <div className={styles.tableToolBar}>
-          <Select
-            value={this.props.gradeId}
-            placeholder="请选择职级"
-            style={{ width: 180, marginRight: '10px' }}
-            onChange={this.changeGrade}
-            notFoundContent={null}
-          >
-            {_.map(this.props.grades, (grade) => {
-              return (
-                <Select.Option key={grade.id} value={grade.id}>
-                  {grade.name}
-                </Select.Option>
-              );
-            })}
-          </Select>
-          <Select
-            showSearch
-            value={this.props.institutionId}
-            placeholder="请输入机构名称关键字查询"
-            style={{ width: 240, marginRight: '10px' }}
-            defaultActiveFirstOption={false}
-            filterOption={false}
-            onSearch={this.search}
-            onChange={this.changeInst}
-            notFoundContent={null}
-          >
-            {_.map(this.props.inst, (inst) => {
-              return (
-                <Select.Option key={inst.id} value={inst.id}>
-                  {inst.name}
-                </Select.Option>
-              );
-            })}
-          </Select>
-          <Input
-            style={{ width: 240, marginRight: '10px' }}
-            placeholder="请输入业务员姓名关键字查询"
-            onChange={this.change}
-            value={this.props.keywords}
-          />
-          <Button onClick={this.reFetch} type="primary" style={{ marginRight: '10px' }}>
-            查询
-          </Button>
-          <Button onClick={this.reset}>重置</Button>
+          <div className={styles.title}>报名人员列表</div>
+          <div className={styles.filter}>
+            <Select
+              value={this.props.gradeId}
+              placeholder="请选择职级"
+              formTitle    style={{ width: 180, marginRight: '10px' }}
+              onChange={this.changeGrade}
+              notFoundContent={null}
+            >
+              {_.map(this.props.grades, (grade) => {
+                return (
+                  <Select.Option key={grade.id} value={grade.id}>
+                    {grade.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+            <Select
+              showSearch
+              value={this.props.institutionId}
+              placeholder="请输入机构名称关键字查询"
+              style={{ width: 240, marginRight: '10px' }}
+              defaultActiveFirstOption={false}
+              filterOption={false}
+              onSearch={this.search}
+              onChange={this.changeInst}
+              notFoundContent={null}
+            >
+              {_.map(this.props.inst, (inst) => {
+                return (
+                  <Select.Option key={inst.id} value={inst.id}>
+                    {inst.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+            <Input
+              style={{ width: 240, marginRight: '10px' }}
+              placeholder="请输入业务员姓名关键字查询"
+              onChange={this.change}
+              value={this.props.keywords}
+            />
+            <Button onClick={this.reFetch} type="primary" style={{ marginRight: '10px' }}>
+              查询
+            </Button>
+            <Button onClick={this.reset}>重置</Button>
+          </div>
         </div>
         <Table
           rowKey="id"

@@ -41,12 +41,6 @@ export const menu = () => {
       path: 'instActivity'
     },
     {
-      name: '订单管理',
-      authority: instAdmin,
-      icon: 'iconfont icon-user',
-      path: 'instOrder'
-    },
-    {
       name: '人员管理',
       authority: admin,
       path: 'users',

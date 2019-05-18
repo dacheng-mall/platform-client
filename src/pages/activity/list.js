@@ -93,20 +93,18 @@ function ActivityList(props) {
             <Button
               onClick={team.bind(null, t)}
               size="small"
-              shape="circle"
               icon="team"
               title="参与人员"
               key="btn0"
-            />,
+            >报名人员</Button>,
             <Divider type="vertical" key="btn1" />,
             <Button
               onClick={gift.bind(null, t, r)}
               size="small"
-              shape="circle"
               icon="gift"
               title="领取记录"
               key="btn2"
-            />,
+            >领取记录</Button>,
           ];
 
           if (!props.isInstitutionAdmin) {
@@ -115,20 +113,18 @@ function ActivityList(props) {
               <Button
                 onClick={edit.bind(null, t)}
                 size="small"
-                shape="circle"
                 type="primary"
                 icon="edit"
                 key="btn4"
-              />,
+              >编辑</Button>,
               <Divider type="vertical" key="btn5" />,
               <Button
                 onClick={remove.bind(null, t, r)}
                 size="small"
-                shape="circle"
                 type="danger"
                 icon="delete"
                 key="btn6"
-              />,
+              >删除</Button>,
             );
           }
           return btns;
@@ -140,21 +136,25 @@ function ActivityList(props) {
   return (
     <Fragment>
       <div className={styles.tableToolBar}>
-        {props.isInstitutionAdmin ? null : (
+        {props.isInstitutionAdmin ? (
+          <div className={styles.title}>活动列表</div>
+        ) : (
           <Button onClick={edit.bind(null, '')} type="primary">
             <Icon type="plus" />
             添加活动
           </Button>
         )}
-        <div className={styles.tableToolBar}>
-          <Input.Search
-            style={{ width: 320 }}
-            onSearch={search}
-            onChange={change}
-            placeholder="请输入活动名称关键字查询"
-            value={props.keywords}
-          />
-          <Button onClick={reset}>重置</Button>
+        <div className={styles.filter}>
+          <div className={styles.tableToolBar}>
+            <Input.Search
+              style={{ width: 320 }}
+              onSearch={search}
+              onChange={change}
+              placeholder="请输入活动名称关键字查询"
+              value={props.keywords}
+            />
+            <Button onClick={reset}>重置</Button>
+          </div>
         </div>
       </div>
       <Table

@@ -3,9 +3,10 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { Form, Input, Select, Checkbox, DatePicker, Button, InputNumber } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange } from '../../utils/ui';
+import { goBack } from '../../utils';
 import Images from '../products/components/form/Images';
 import LinkProducts from './components/LinkProducts';
-import RichText from '../Components/RichText'
+import RichText from '../Components/RichText';
 import styles from './styles.less';
 
 const RangePicker = DatePicker.RangePicker;
@@ -46,13 +47,19 @@ function ActivityDetail(props) {
     }
     return null;
   };
+  const back = () => {
+    goBack();
+    props.dispatch({
+      type: 'activity/newActivity',
+    });
+  };
   return (
     <Fragment>
       <Form className={styles.form}>
         <FormItem label="活动名称">
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '必填项' }],
-          })(<Input placeholder="请输入活动名称" style={{width: '350px'}} />)}
+          })(<Input placeholder="请输入活动名称" style={{ width: '350px' }} />)}
         </FormItem>
         <FormItem label="所属机构">
           {getFieldDecorator('institutionId', {
@@ -66,7 +73,7 @@ function ActivityDetail(props) {
               filterOption={false}
               onSearch={handleSearch}
               allowClear
-              style={{width: '350px'}}
+              style={{ width: '350px' }}
             >
               {renderOpts(props.inst)}
             </Select>,
@@ -92,11 +99,6 @@ function ActivityDetail(props) {
             rules: [{ type: 'array', required: true, message: '请设置活动周期' }],
           })(<RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />)}
         </FormItem>
-        {/* <FormItem label="描述">
-          {getFieldDecorator('description', {
-            rules: [{ required: true, message: '请设输入活动描述' }],
-          })(<TextArea rows={6} placeholder="请输入活动描述" />)}
-        </FormItem> */}
         <FormItem label="描述">
           {getFieldDecorator('description', {
             rules: [{ required: true, message: '请设输入活动描述' }],
@@ -129,12 +131,15 @@ function ActivityDetail(props) {
             />,
           )}
         </FormItem>
-        <FormItem isTail>
-          <Button type="primary" size="large" onClick={submit}>
-            {props.id ? '编辑活动' : '新建活动'}
-          </Button>
-        </FormItem>
       </Form>
+      <div className={styles.btnWrap}>
+        <Button type="primary" size="large" onClick={submit}>
+          {props.editor.id ? '编辑活动' : '新建活动'}
+        </Button>
+        <Button style={{ marginLeft: '10px' }} onClick={back} size="large">
+          取消
+        </Button>
+      </div>
     </Fragment>
   );
 }
