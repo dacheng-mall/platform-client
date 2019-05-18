@@ -17,7 +17,12 @@ function ActivityList(props) {
   const search = () => {};
   const change = () => {};
   const remove = () => {};
-
+  const team = (id) => {
+    jump(`/activity/${id}/team`);
+  };
+  const gift = (id) => {
+    jump(`/activity/${id}/gift`);
+  };
   const columns = () => {
     return [
       {
@@ -28,30 +33,33 @@ function ActivityList(props) {
       {
         key: 'institution',
         title: '所属机构',
-        render: function(t, r){
-          const {institution: {name}} = r;
-          return name
-        }
+        render: function(t, r) {
+          const {
+            institution: { name },
+          } = r;
+          return name;
+        },
       },
       {
         key: 'range',
         title: '周期',
-        render: function(t, {dateStart, dateEnd}){
+        render: function(t, { dateStart, dateEnd }) {
           return (
             <div>
-              开始: {moment(dateStart).format('YYYY-MM-DD HH:mm:ss')}<br />
+              开始: {moment(dateStart).format('YYYY-MM-DD HH:mm:ss')}
+              <br />
               结束: {moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}
             </div>
-          )
-        }
+          );
+        },
       },
       {
         key: 'createTime',
         title: '创建时间',
         dataIndex: 'createTime',
-        render: function(t){
-          return moment(t).format('YYYY-MM-DD HH:mm:ss')
-        }
+        render: function(t) {
+          return moment(t).format('YYYY-MM-DD HH:mm:ss');
+        },
       },
       {
         key: 'totalCount',
@@ -69,6 +77,9 @@ function ActivityList(props) {
               payload: { id, username, status: checked ? 1 : 0 },
             });
           };
+          if (props.isInstitutionAdmin) {
+            return t === 1 ? '正常' : '失效';
+          }
           return <Switch size="small" checked={t === 1} onChange={change} />;
         },
         align: 'center',
@@ -78,25 +89,49 @@ function ActivityList(props) {
         title: '操作',
         dataIndex: 'id',
         render: (t, r) => {
-          return (
-            <div>
+          const btns = [
+            <Button
+              onClick={team.bind(null, t)}
+              size="small"
+              shape="circle"
+              icon="team"
+              title="参与人员"
+              key="btn0"
+            />,
+            <Divider type="vertical" key="btn1" />,
+            <Button
+              onClick={gift.bind(null, t, r)}
+              size="small"
+              shape="circle"
+              icon="gift"
+              title="领取记录"
+              key="btn2"
+            />,
+          ];
+
+          if (!props.isInstitutionAdmin) {
+            btns.push(
+              <Divider type="vertical" key="btn3" />,
               <Button
                 onClick={edit.bind(null, t)}
                 size="small"
                 shape="circle"
                 type="primary"
                 icon="edit"
-              />
-              <Divider type="vertical" />
+                key="btn4"
+              />,
+              <Divider type="vertical" key="btn5" />,
               <Button
                 onClick={remove.bind(null, t, r)}
                 size="small"
                 shape="circle"
                 type="danger"
                 icon="delete"
-              />
-            </div>
-          );
+                key="btn6"
+              />,
+            );
+          }
+          return btns;
         },
         align: 'right',
       },
@@ -105,10 +140,12 @@ function ActivityList(props) {
   return (
     <Fragment>
       <div className={styles.tableToolBar}>
-        <Button onClick={edit.bind(null, '')} type="primary">
-          <Icon type="plus" />
-          添加活动
-        </Button>
+        {props.isInstitutionAdmin ? null : (
+          <Button onClick={edit.bind(null, '')} type="primary">
+            <Icon type="plus" />
+            添加活动
+          </Button>
+        )}
         <div className={styles.tableToolBar}>
           <Input.Search
             style={{ width: 320 }}
@@ -121,22 +158,22 @@ function ActivityList(props) {
         </div>
       </div>
       <Table
-          rowKey="id"
-          columns={columns()}
-          dataSource={props.data || []}
-          locale={{ emptyText: '暂无数据' }}
-          pagination={{
-            pageSize: props.pagination.pageSize,
-            total: props.pagination.total,
-            current: props.pagination.page,
-            onChange: (page, pageSize) => {
-              props.dispatch({
-                type: 'activities/fetch',
-                payload: { page, pageSize },
-              });
-            },
-          }}
-        />
+        rowKey="id"
+        columns={columns()}
+        dataSource={props.data || []}
+        locale={{ emptyText: '暂无数据' }}
+        pagination={{
+          pageSize: props.pagination.pageSize,
+          total: props.pagination.total,
+          current: props.pagination.page,
+          onChange: (page, pageSize) => {
+            props.dispatch({
+              type: 'activities/fetch',
+              payload: { page, pageSize },
+            });
+          },
+        }}
+      />
     </Fragment>
   );
 }

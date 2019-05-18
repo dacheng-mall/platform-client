@@ -2,7 +2,9 @@
 export default {
   ...require('./src/pages'),
   history: 'hash',
+  hash: true,
   publicPath: './',
+  theme: {"primary-color": "#00b2b3",},
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     [

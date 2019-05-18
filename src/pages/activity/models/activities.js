@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { fetch as get, update, find } from '../services';
+import { fetch as get, update, find } from '../services/activity';
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
 
@@ -16,6 +16,9 @@ export default {
         if (pathname === '/activities') {
           dispatch({ type: 'init', payload: { ...PAGE_DEF } });
         }
+        if (pathname === '/instActivity') {
+          dispatch({ type: 'initWithInstitution', payload: { ...PAGE_DEF } });
+        }
       });
     },
   },
@@ -26,15 +29,25 @@ export default {
         payload,
       });
     },
-    *fetch({ payload }, { put, call, select }) {
-      const { keywords } = yield select(({ activities }) => activities);
-      const { data } = yield call(get, { ...PAGE_DEF, ...payload, name: keywords});
+    *initWithInstitution({ payload }, { put }) {
       yield put({
-        type: 'upState',
-        payload: data,
+        type: 'fetch',
+        payload,
+        isInstitutionAdmin: true,
       });
     },
-
+    *fetch({ payload, isInstitutionAdmin }, { put, call, select }) {
+      const { keywords } = yield select(({ activities }) => activities);
+      const params = { ...PAGE_DEF, ...payload, name: keywords };
+      // if(isInstitutionAdmin) {
+      //   const { user } = yield select(({ app }) => app);
+      // }
+      const { data } = yield call(get, params);
+      yield put({
+        type: 'upState',
+        payload: { ...data, isInstitutionAdmin },
+      });
+    },
   },
   reducers: {
     upState(state, { payload }) {

@@ -23,7 +23,7 @@ export const menu = () => {
         {
           name: '业务员管理',
           icon: 'iconfont icon-user',
-          path: 'salesperson',
+          path: 'salesmans',
           authority: instAdmin,
         },
         {

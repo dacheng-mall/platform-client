@@ -1,6 +1,6 @@
 import ptrx from 'path-to-regexp';
 import _ from 'lodash';
-import { findInst, createActivity, findGradesByInsId, find, update } from '../services';
+import { findInst, createActivity, findGradesByInsId, find, update } from '../services/activity';
 import { fieldsChange } from '../../../utils/ui';
 import { upload } from '../../../utils';
 
@@ -28,7 +28,6 @@ export default {
             type: 'fetch',
             id: pn[1],
           });
-          // console.log('edit activity', pn[1]);
         }
       });
     },
@@ -109,8 +108,6 @@ export default {
         delete product.title;
       });
       const { data } = yield call(createActivity, values);
-
-      console.log(values, data);
     },
   },
   reducers: {

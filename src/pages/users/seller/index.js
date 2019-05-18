@@ -133,7 +133,7 @@ class Seller extends PureComponent {
             onChange: (page, pageSize) => {
               this.props.dispatch({
                 type: 'seller/fetch',
-                payload: { page, pageSize, userType: 2 },
+                payload: { page, pageSize },
               });
             },
           }}

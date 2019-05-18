@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { message } from 'antd';
 import { getAdmins, updateAdmin, removeAdmin, getInstWithoutPage } from '../services';
 
-const PAGE_DEF = { page: 1, pageSize: 10 };
+const PAGE_DEF = { page: 1, pageSize: 8 };
 
 export default {
   namespace: 'seller',
@@ -11,14 +11,14 @@ export default {
     pagination: PAGE_DEF,
     editor: null,
     errors: {},
-    inst: []
+    inst: [],
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/seller') {
-          dispatch({ type: 'init', payload: { ...PAGE_DEF, userType: 4 } });
+          dispatch({ type: 'init', payload: PAGE_DEF });
         }
       });
     },
@@ -32,7 +32,7 @@ export default {
       });
     },
     *fetch({ payload }, { put, call }) {
-      const { data } = yield call(getAdmins, {...PAGE_DEF, ...payload});
+      const { data } = yield call(getAdmins, { ...PAGE_DEF, ...payload, userType: 4 });
       yield put({
         type: 'upState',
         payload: data,

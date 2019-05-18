@@ -18,7 +18,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         if (pathname === '/users/admin') {
-          dispatch({ type: 'init', payload: { ...PAGE_DEF, userType: 1 } });
+          dispatch({ type: 'init', payload: { ...PAGE_DEF } });
         }
       });
     },
@@ -32,7 +32,7 @@ export default {
       });
     },
     *fetch({ payload }, { put, call }) {
-      const { data } = yield call(getAdmins, payload);
+      const { data } = yield call(getAdmins, { ...PAGE_DEF, ...payload, userType: 1});
       yield put({
         type: 'upState',
         payload: data,

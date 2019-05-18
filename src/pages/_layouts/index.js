@@ -25,7 +25,7 @@ class BasicLayout extends PureComponent {
       <Layout className={styles.layout}>
         <Header className={styles.header}>
           <div>
-            <img alt="logo" src={require('../../assets/imgs/logo.png')} style={{width: '44px', borderRadius: '50%', marginRight: '10px'}} />答橙 · 平台管理
+            <img alt="logo" src={require('../../assets/imgs/logo.png')} style={{width: '44px', borderRadius: '50%', marginRight: '10px'}} />礼全有 · 平台管理
           </div>
           {this.props.user ? <div>
             {this.props.user.name}

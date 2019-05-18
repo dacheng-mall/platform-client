@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { InputNumber, Switch, Modal, Select, Row, Col, Form, Input, Cascader } from 'antd';
+import { InputNumber, Switch, Modal, Select, Row, Col, Form, Input } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange } from '../../../utils/ui';
 
 function Editor(props) {
