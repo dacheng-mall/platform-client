@@ -25,3 +25,6 @@ export const getInstWithoutPage = (query) => {
 export const findGradesByInsId = (insId) => {
   return get(`v1/api/sys/grade/findGradesByInsId`, { insId });
 };
+export const exportCSVInstitutionSalesman = (params) => {
+  return get(`v1/api/sys/user/salesmenCsv`, params);
+}

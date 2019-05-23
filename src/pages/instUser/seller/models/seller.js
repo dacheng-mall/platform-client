@@ -6,6 +6,7 @@ import {
   removeSeller,
   getInstWithoutPage,
   findGradesByInsId,
+  exportCSVInstitutionSalesman,
 } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
@@ -63,7 +64,9 @@ export default {
       // const {
       //   user: { institutionId },
       // } = yield select(({ app }) => app);
-      const { institutionId, gradeId, keywords: name } = yield select(({ instSeller }) => instSeller);
+      const { institutionId, gradeId, keywords: name } = yield select(
+        ({ instSeller }) => instSeller,
+      );
       const params = {
         ...PAGE_DEF,
         name,
@@ -99,22 +102,22 @@ export default {
       yield put({
         type: 'fetch',
       });
-      // if (data) {
-      //   const list = yield select(({ admin }) => admin.data);
-      //   const newList = _.filter(list, ({ id }) => id !== data);
-      //   yield put({
-      //     type: 'upState',
-      //     payload: {
-      //       data: [...newList],
-      //     },
-      //   });
-      // }
+      if (data) {
+        const list = yield select(({ instSeller }) => instSeller.data);
+        const newList = _.filter(list, ({ id }) => id !== data);
+        yield put({
+          type: 'upState',
+          payload: {
+            data: [...newList],
+          },
+        });
+      }
     },
     *changeStatus({ payload }, { call, put, select }) {
       const { data } = yield call(updateSeller, payload);
       if (data) {
         message.success('状态更新成功');
-        const list = yield select(({ admin }) => admin.data);
+        const list = yield select(({ instSeller }) => instSeller.data);
         const newList = _.map(list, (item) => {
           if (item.id === data.id) {
             item.status = payload.status;
@@ -148,6 +151,28 @@ export default {
           inst: data,
         },
       });
+    },
+    *exportCSV(p, { call, put, select }) {
+      const { institutionId, gradeId, keywords: name } = yield select(
+        ({ instSeller }) => instSeller,
+      );
+      const params = { name };
+      if (institutionId) {
+        params.institutionId = institutionId;
+      }
+      if (gradeId) {
+        params.institutionId = gradeId;
+      }
+      const { data } = yield call(exportCSVInstitutionSalesman, params);
+      yield put({
+        type: 'fetch'
+      })
+      if (data && data.url) {
+        message.success('导出成功');
+        window.location.href = `${window.config.api_prod}${data.url}`;
+      } else {
+        message.warning(`导出失败-${data}`);
+      }
     },
   },
   reducers: {

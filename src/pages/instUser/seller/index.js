@@ -145,6 +145,11 @@ class Seller extends PureComponent {
       },
     });
   };
+  exportCSV = () => {
+    this.props.dispatch({
+      type: 'instSeller/exportCSV',
+    });
+  };
   render() {
     return (
       <Fragment>
@@ -191,6 +196,14 @@ class Seller extends PureComponent {
           />
           <Button onClick={this.reFetch} type="primary" style={{ marginRight: '10px' }}>
             查询
+          </Button>
+          <Button
+            onClick={this.exportCSV}
+            icon="save"
+            type="danger"
+            style={{ marginRight: '10px' }}
+          >
+            导出数据
           </Button>
           <Button onClick={this.reset}>重置</Button>
         </div>

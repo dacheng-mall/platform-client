@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import ptrx from 'path-to-regexp';
-import { fetch as get } from '../services/team';
+import { message } from 'antd';
+import { fetch as get, exportCSVActivitySalesman } from '../services/team';
 import { findGradesByInsId, getInstWithoutPage } from '../services/activity';
 const PAGE_DEF = { page: 1, pageSize: 8 };
 
@@ -16,6 +17,7 @@ export default {
       history.listen(({ pathname }) => {
         const pn = ptrx('/activity/:id/team').exec(pathname);
         if (pn && pn[1]) {
+          console.log('pn[1]', pn[1]);
           dispatch({ type: 'init', payload: { ...PAGE_DEF, activityId: pn[1] } });
         }
       });
@@ -25,7 +27,7 @@ export default {
     *init({ payload }, { put }) {
       yield put({
         type: 'upState',
-        activityId: payload.activityId,
+        payload: { activityId: payload.activityId },
       });
       yield [
         put({
@@ -106,6 +108,28 @@ export default {
           inst: data,
         },
       });
+    },
+    *exportCSV(p, { call, put, select }) {
+      const { institutionId, gradeId, activityId } = yield select(
+        ({ activityTeam }) => activityTeam,
+      );
+      const params = { activityId };
+      if (institutionId) {
+        params.institutionId = institutionId;
+      }
+      if (gradeId) {
+        params.institutionId = gradeId;
+      }
+      const { data } = yield call(exportCSVActivitySalesman, params);
+      yield put({
+        type: 'fetch',
+      });
+      if (data && data.url) {
+        message.success('导出成功');
+        window.location.href = `${window.config.api_prod}${data.url}`;
+      } else {
+        message.warning(`导出失败-${data}`);
+      }
     },
   },
   reducers: {

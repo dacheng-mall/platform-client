@@ -102,6 +102,11 @@ class Team extends PureComponent {
       },
     });
   };
+  exportCSV = () => {
+    this.props.dispatch({
+      type: 'activityTeam/exportCSV',
+    });
+  };
   render() {
     return (
       <Fragment>
@@ -150,6 +155,9 @@ class Team extends PureComponent {
             />
             <Button onClick={this.reFetch} type="primary" style={{ marginRight: '10px' }}>
               查询
+            </Button>
+            <Button onClick={this.exportCSV} type="danger" style={{ marginRight: '10px' }}>
+              导出数据
             </Button>
             <Button onClick={this.reset}>重置</Button>
           </div>

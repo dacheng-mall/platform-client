@@ -17,3 +17,6 @@ export const fetch = ({ page, pageSize, total, pageCount, ...other }) => {
 export const find = (query) => {
   return get(`v1/api/sys/activity`, query);
 };
+export const exportCSVActivityGift = (params) => {
+  return get(`v1/api/sys/giftNew/giftCsv`, params);
+}

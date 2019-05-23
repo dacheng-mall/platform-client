@@ -124,6 +124,11 @@ function Gift(props) {
       payload: {},
     });
   };
+  const exportCSV = () => {
+    props.dispatch({
+      type: 'activityGift/exportCSV',
+    });
+  };
   return (
     <Fragment>
       <div className={styles.tableToolBar}>
@@ -151,6 +156,9 @@ function Gift(props) {
           <Button onClick={reFetch} type="primary" style={{ marginRight: '10px' }}>
             查询
           </Button>
+            <Button onClick={exportCSV} type="danger" style={{ marginRight: '10px' }}>
+              导出数据
+            </Button>
           <Button onClick={reset}>重置</Button>
         </div>
       </div>

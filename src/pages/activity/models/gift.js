@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import ptrx from 'path-to-regexp';
-import { fetch as get } from '../services/gift';
+import { message } from "antd";
+import { fetch as get, exportCSVActivityGift } from '../services/gift';
 import { getInstWithoutPage } from '../services/activity';
 const PAGE_DEF = { page: 1, pageSize: 7 };
 
@@ -70,6 +71,25 @@ export default {
       yield put({
         type: 'fetch',
       });
+    },
+    *exportCSV(p, { call, put, select }) {
+      const { institutionId, activityId } = yield select(
+        ({ activityGift }) => activityGift,
+      );
+      const params = { activityId };
+      if (institutionId) {
+        params.institutionId = institutionId;
+      }
+      const { data } = yield call(exportCSVActivityGift, params);
+      yield put({
+        type: 'fetch',
+      });
+      if (data && data.url) {
+        message.success('导出成功');
+        window.location.href = `${window.config.api_prod}${data.url}`;
+      } else {
+        message.warning(`导出失败-${data}`);
+      }
     },
   },
   reducers: {

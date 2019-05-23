@@ -8,7 +8,14 @@ export default class RichText extends PureComponent {
   };
 
   render() {
-    return <BraftEditor style={{border: '1px solid #ddd'}} placeholder={this.props.placeholder || '请输入'} value={this.state.editorState} onChange={this.handleChange} />;
+    return (
+      <BraftEditor
+        style={{ border: '1px solid #ddd' }}
+        placeholder={this.props.placeholder || '请输入'}
+        value={this.state.editorState}
+        onChange={this.handleChange}
+      />
+    );
   }
 
   handleChange = (editorState) => {
