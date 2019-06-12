@@ -13,6 +13,7 @@ roles编码
 export const menu = () => {
   const admin = _checkAuthority([1]);
   const instAdmin = _checkAuthority([3]);
+  const all = _checkAuthority([1,3]);
   return [
     {
       name: '人员管理',
@@ -129,10 +130,28 @@ export const menu = () => {
       authority: admin,
     },
     {
-      name: '订单管理',
-      path: 'order',
-      authority: admin,
+      name: '二维码管理',
+      path: 'qr',
+      authority: all,
+      children: [
+        {
+          name: '码类型管理',
+          path: 'type',
+          authority: admin,
+        },
+        {
+          name: '码批次管理',
+          path: 'batch',
+          authority: all,
+        },
+      ]
     },
+
+    // {
+    //   name: '订单管理',
+    //   path: 'order',
+    //   authority: admin,
+    // },
     // {
     //   name: '厂商管理',
     //   path: 'factory',

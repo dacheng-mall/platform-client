@@ -8,5 +8,6 @@ module.exports = {
     ...require('./cms'),
     ...require('./activity'),
     ...require('./instUser'),
+    ...require('./qr'),
   ],
 };

@@ -15,9 +15,9 @@ export default class ImageEditor extends PureComponent {
         uid: `old_${i}`,
         name: data.name,
         url: data.url,
-      }
-      if(data._url) {
-        old._url = data._url
+      };
+      if (data._url) {
+        old._url = data._url;
       }
       return old;
     });
@@ -30,6 +30,13 @@ export default class ImageEditor extends PureComponent {
     this.props.onChange(fileList);
   };
   render() {
-    return <Uploader multiple max={5} onChange={this.onChange} fileList={this.state.fileList} />;
+    return (
+      <Uploader
+        multiple={this.props.max > 1}
+        max={this.props.max || 5}
+        onChange={this.onChange}
+        fileList={this.state.fileList}
+      />
+    );
   }
 }
