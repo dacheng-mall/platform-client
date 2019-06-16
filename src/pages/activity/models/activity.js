@@ -5,7 +5,6 @@ import { message } from 'antd';
 import { findInst, createActivity, findGradesByInsId, find, update } from '../services/activity';
 import { fieldsChange } from '../../../utils/ui';
 import { upload } from '../../../utils';
-import { from } from 'rxjs';
 
 const source = window.config.source;
 
@@ -51,6 +50,7 @@ export default {
       const {
         data: [data],
       } = yield call(find, { id });
+      console.log('data', data)
       if (data) {
         const { institution, production, ...editor } = data;
         // 回填职级
@@ -71,7 +71,6 @@ export default {
         if (editor.products) {
           const products = [];
           _.forEach(editor.products, (product) => {
-            console.log('product', product);
             product.img = `${product.mainImageUrl}`;
             product.productId = product.id;
             products.push(product);

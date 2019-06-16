@@ -14,6 +14,7 @@ import {
   Popconfirm,
 } from 'antd';
 import Editor from './editor';
+import { jump } from "../../../utils";
 import styles from '../index.less';
 
 class QrBatch extends PureComponent {
@@ -26,6 +27,9 @@ class QrBatch extends PureComponent {
       key: 'name',
       title: '批次名称',
       dataIndex: 'name',
+      render: (t, r) => {
+        return <a onClick={this.qrList.bind(null, r.id)}>{t}</a>
+      }
     },
     {
       key: 'type',
@@ -159,6 +163,10 @@ class QrBatch extends PureComponent {
       },
     });
   };
+  qrList = (id) => {
+    console.log(id);
+    jump(`/qr/list/${id}`)
+  }
   update = (r) => {
     this.showModal(r);
   };
