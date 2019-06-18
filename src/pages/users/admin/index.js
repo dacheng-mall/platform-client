@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
+import _ from 'lodash';
 import { connect } from 'dva';
 import {
   Row,
@@ -128,10 +129,17 @@ class Admin extends PureComponent {
     });
   };
   showModal = (data) => {
+    let _data = data
+    if(data && !_.isEmpty(data)) {
+      _data = _.cloneDeep(_data);
+      console.log(data);
+      delete _data.createTime;
+      delete _data.institution;
+    }
     this.props.dispatch({
       type: 'admin/upState',
       payload: {
-        editor: data,
+        editor: _data,
       },
     });
   };

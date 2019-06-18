@@ -45,14 +45,15 @@ export default {
       }
       const { editor, pagination } = yield select(({ admin }) => admin);
       let res;
-      delete editor.createTime;
 
       const values = parseEditor(payload);
+      console.log(values, payload)
+      // return;
       if (editor.id) {
         const { data } = yield call(updateAdmin, { ...editor, ...values });
         res = data;
       } else {
-        editor.userType = 2;
+        editor.userType = 1;
         const { data } = yield call(createAdmin, { ...editor, ...values });
         res = data;
       }

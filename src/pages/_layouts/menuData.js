@@ -132,7 +132,7 @@ export const menu = () => {
     {
       name: '二维码管理',
       path: 'qr',
-      authority: all,
+      authority: admin,
       children: [
         {
           name: '码类型管理',
@@ -142,7 +142,7 @@ export const menu = () => {
         {
           name: '码批次管理',
           path: 'batch',
-          authority: all,
+          authority: admin,
         },
       ]
     },
