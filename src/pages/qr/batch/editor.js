@@ -79,9 +79,6 @@ function Editor(props) {
                 <Input.TextArea placeholder="请输入描述信息" rows={4} />,
               )}
             </FormItem>
-            <FormItem label="状态">
-              {getFieldDecorator('status', { valuePropName: 'checked' })(<Switch />)}
-            </FormItem>
           </Col>
           <Col span={14}>
             <FormItem

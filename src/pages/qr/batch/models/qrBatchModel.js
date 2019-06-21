@@ -70,16 +70,22 @@ export default {
         });
       }
     },
-    *generate({ payload }, { call, select, put }) {
+    *generate({ payload }, { call, put }) {
       const { data } = yield call(generate, payload);
-      if(data){
+      if (data.status === 1) {
+        message.success('开始生成二维码图片, 请稍候刷新页面', 5);
         yield put({
-          type: 'fetch'
-        })
+          type: 'fetch',
+        });
+      } else if (data.status === 2) {
+        message.error('生成图片失败, 请重新生成', 5);
+        yield put({
+          type: 'fetch',
+        });
       }
     },
-    *download({ payload }, { call, select, put }) {
-      const { data } = yield call(download, payload);      // console.log(data)
+    *download({ payload }, { call }) {
+      const { data } = yield call(download, payload); // console.log(data)
       if (data.zip) {
         window.location.href = `${getApiPreFix()}${data.zip}`;
       }
@@ -204,7 +210,7 @@ export default {
         body.id = editor.id;
         yield call(updateBatch, body);
       } else {
-        body.status = 1;
+        body.status = 0;
         yield call(createBatch, body);
       }
       console.log(body);

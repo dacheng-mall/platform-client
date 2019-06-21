@@ -19,7 +19,10 @@ class QrBatch extends PureComponent {
       title: '批次名称',
       dataIndex: 'name',
       render: (t, r) => {
-        return <a onClick={this.qrList.bind(null, r.id)}>{t}</a>;
+        if (r.status !== 0) {
+          return <a onClick={this.qrList.bind(null, r.id)}>{t}</a>;
+        }
+        return t;
       },
     },
     {
@@ -72,6 +75,7 @@ class QrBatch extends PureComponent {
             </div>
           ));
         }
+        return '未关联实体';
       },
     },
     {
@@ -143,8 +147,9 @@ class QrBatch extends PureComponent {
                     size="small"
                     type="default"
                     icon="download"
+                    shape="circle"
                     onClick={this.showDownload.bind(null, r)}
-                  >下载压缩包</Button>,
+                  />,
                 ]
               : null}
           </div>

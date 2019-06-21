@@ -113,7 +113,6 @@ export default class LinkOther extends PureComponent {
     });
   };
   render() {
-    debugger;
     return (
       <Fragment>
         <div className={styles.wrap}>
