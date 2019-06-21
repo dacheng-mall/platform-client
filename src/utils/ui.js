@@ -133,20 +133,22 @@ export const initEditor = (values) => {
   return values;
 };
 export const parseEditor = (values) => {
+  const _values = {}
   _.forEach(values, (value, key) => {
     switch (key) {
       case 'status': {
-        values[key] = value ? '1' : '0';
+        _values[key] = value ? '1' : '0';
         break;
       }
       case 'roles': {
-        values[key] = value && value.join(',');
+        _values[key] = value && value.join(',');
         break;
       }
       default: {
+        _values[key] = value
         break;
       }
     }
   });
-  return values;
+  return _values;
 };

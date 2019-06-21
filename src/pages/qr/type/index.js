@@ -22,11 +22,14 @@ class QrType extends PureComponent {
       title: '采集信息',
       dataIndex: 'fields',
       render: (t, { id }) => {
-        return _.map(t, (item, i) => (
-          <div key={`${id}_${item.code}`}>
-            {item.label}-{item.help}-{item.required ? '必填' : '选填'}
-          </div>
-        ));
+        if(t){
+          return _.map(JSON.parse(t), (item, i) => (
+            <div key={`${id}_${item.code}`}>
+              {item.label}-{item.help}-{item.required ? '必填' : '选填'}
+            </div>
+          ));
+        }
+        return '--'
       },
     },
     {
@@ -93,14 +96,15 @@ class QrType extends PureComponent {
     });
   };
   update = (r) => {
-    const { id, name, description, fields, status, editable } = r;
+    const { id, name, description, fields, status, editable, template } = r;
     this.showModal({
       id,
       name,
       description,
-      fields,
+      fields: fields ? JSON.parse(fields) : [],
       status,
       editable,
+      template
     });
   };
   render() {

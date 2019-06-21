@@ -88,7 +88,7 @@ function Editor(props) {
               label="图片"
               validateStatus={props.errors.images ? 'error' : ''}
             >
-              {getFieldDecorator('imageUrl')(<Images max={1} />)}
+              {getFieldDecorator('images')(<Images max={1} />)}
             </FormItem>
             <FormItem label="关联实体">
               {props.editor ? getFieldDecorator('linked')(<LinkOther />) : null}

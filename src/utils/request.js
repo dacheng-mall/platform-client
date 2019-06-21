@@ -15,6 +15,9 @@ if(NODE_ENV === 'production') {
 } else {
   apiPrefix = window.config.api_dev
 }
+export function getApiPreFix(){
+  return apiPrefix
+}
 // token获取方法
 let getToken;
 

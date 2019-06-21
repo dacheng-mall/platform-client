@@ -1,7 +1,18 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { getBatches, updateBatch, createBatch, getTypesWhitoutPage } from '../services';
+import {
+  getBatches,
+  updateBatch,
+  createBatch,
+  getTypesWhitoutPage,
+  generate,
+  download,
+} from '../services';
 import { fieldsChange } from '../../../../utils/ui';
+import { upload } from '../../../../utils';
+import { getApiPreFix } from '../../../../utils/request';
+
+const source = window.config.source;
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
 const INIT_EDITOR = {
@@ -37,49 +48,11 @@ export default {
       });
     },
     *fetch({ payload }, { put, call, select }) {
-      const { keywords } = yield select(({ institution }) => institution);
-      // const { data } = yield call(getBatchs, { ...PAGE_DEF, ...payload, name: keywords });
+      const { keywords } = yield select(({ qrBatch }) => qrBatch);
+      const { data } = yield call(getBatches, { ...PAGE_DEF, ...payload, name: keywords });
       yield put({
         type: 'upState',
-        // payload: data,
-        payload: {
-          pagination: {
-            page: 1,
-            pageSize: 10,
-            total: 1,
-            pageCount: 1,
-          },
-          data: [
-            {
-              id: '000',
-              name: '生命保险扫码挪车第一批',
-              description: '富德生命赠送挪车码活动',
-              typeId: '000',
-              typeName: '挪车码',
-              total: 50000,
-              orderId: '',
-              activityId: 'aaa',
-              activityName: '感恩十年, 感谢有你',
-              institutionId: 'ppp',
-              institutionName: '天安人寿河南分公司',
-              productId: '2e3493b37c0b488ca20cebeb00b1a02b',
-              productName: '超级折叠背包',
-              imageUrl: [
-                {
-                  url:
-                    'http://res.idacheng.cn/20190129105915_5004__O1CN01YVRLC922gHy9R9H8Q-1809177149.jpg',
-                  name: '20190129105915_5004__O1CN01YVRLC922gHy9R9H8Q-1809177149.jpg',
-                },
-              ],
-              description: '描述在这里',
-              status: 1,
-              zip: '',
-              createTime: '',
-              lastModifyTime: '',
-              generated: 0
-            },
-          ],
-        },
+        payload: data,
       });
     },
     *fetchTypes({ payload }, { call, put, select }) {
@@ -87,26 +60,29 @@ export default {
       if (types) {
         return;
       }
-      // const data = yield call(getTypesWhitoutPage, payload);
-      // if (data) {
-      yield new Promise((res) => {
-        setTimeout(() => {
-          res();
-        }, 1000);
-      });
-      yield put({
-        type: 'upState',
-        payload: {
-          // types: data,
-          types: [
-            {
-              id: '000',
-              name: '挪车码',
-            },
-          ],
-        },
-      });
-      // }
+      const { data } = yield call(getTypesWhitoutPage, payload);
+      if (data) {
+        yield put({
+          type: 'upState',
+          payload: {
+            types: _.map(data, ({ name, id }) => ({ name, id })),
+          },
+        });
+      }
+    },
+    *generate({ payload }, { call, select, put }) {
+      const { data } = yield call(generate, payload);
+      if(data){
+        yield put({
+          type: 'fetch'
+        })
+      }
+    },
+    *download({ payload }, { call, select, put }) {
+      const { data } = yield call(download, payload);      // console.log(data)
+      if (data.zip) {
+        window.location.href = `${getApiPreFix()}${data.zip}`;
+      }
     },
     *initEditor({ payload }, { put }) {
       const {
@@ -116,13 +92,14 @@ export default {
         activityName,
         institutionName,
         institutionId,
+        imageUrl,
         ...editor
       } = payload;
       editor.linked = [];
       if (productId) {
         editor.linked.push({
           id: productId,
-          name: productName,
+          name: editor.product.title,
           type: 'product',
           typeName: '商品',
         });
@@ -130,7 +107,7 @@ export default {
       if (activityId) {
         editor.linked.push({
           id: activityId,
-          name: activityName,
+          name: editor.activity.name,
           type: 'activity',
           typeName: '活动',
         });
@@ -138,10 +115,21 @@ export default {
       if (institutionId) {
         editor.linked.push({
           id: institutionId,
-          name: institutionName,
+          name: editor.institution.name,
           type: 'institution',
           typeName: '机构',
         });
+      }
+      // 回填图片
+      if (imageUrl) {
+        const images = [
+          {
+            _url: imageUrl,
+            url: `${source}${imageUrl}`,
+            displayOrder: 0,
+          },
+        ];
+        editor.images = images;
       }
       yield [
         put({
@@ -155,30 +143,72 @@ export default {
         }),
       ];
     },
-    *edit({ payload }, { call, put, select }) {
-      const { editor } = yield select(({ institution }) => institution);
+    *edit({ payload }, { call, all, put, select }) {
+      const { editor } = yield select(({ qrBatch }) => qrBatch);
       const body = _.cloneDeep(payload);
       if (body.status) {
         body.status = 1;
       } else {
         body.status = 0;
       }
-      if (body.editable) {
-        body.editable = 1;
+      // 处理图片
+      const todos = {};
+      let hasModifyImage = false;
+      if (body.images && body.images.length < 1) {
+        body.imageUrl = null;
       } else {
-        body.editable = 0;
+        _.forEach(body.images, (img, i) => {
+          if (img && img.originFileObj) {
+            todos[`images[${i}].url`] = upload(img.originFileObj);
+            body.images[i] = {
+              url: '',
+            };
+            hasModifyImage = true;
+          } else {
+            body.images[i].url = body.images[i]._url;
+            delete body.images[i]._url;
+            delete body.images[i].uid;
+          }
+        });
+        if (hasModifyImage) {
+          const ups = Object.values(todos);
+          const paths = Object.keys(todos);
+          if (ups.length > 0) {
+            const res = yield all(_.map(ups, (up) => up()));
+            _.forEach(paths, (path, i) => {
+              _.set(body, path, res[i].key);
+            });
+            body.imageUrl = body.images[0].url;
+          }
+        } else {
+          delete body.imageUrl;
+        }
       }
-      if (body.fields.length > 0) {
-        body.fieldsd = JSON.stringify(body.fields);
+      delete body.images;
+      // 图片处理完毕
+      // 处理关联实体, 先清掉, 再赋值
+      body.productId = null;
+      body.activityId = null;
+      body.orderId = null;
+      body.institutionId = null;
+
+      if (body.linked.length > 0) {
+        _.forEach(body.linked, ({ type, id }) => {
+          body[`${type}Id`] = id;
+        });
       }
+      console.log(body.linked);
+      debugger;
+      delete body.linked;
       if (editor.id) {
         body.id = editor.id;
-        // yield call(updateType, body);
+        yield call(updateBatch, body);
       } else {
         body.status = 1;
-        // yield call(createType, body);
+        yield call(createBatch, body);
       }
-      const { pagination } = yield select(({ institution }) => institution);
+      console.log(body);
+      const { pagination } = yield select(({ qrBatch }) => qrBatch);
       yield put({
         type: 'fetch',
         payload: pagination,

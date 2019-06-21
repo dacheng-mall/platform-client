@@ -36,47 +36,21 @@ export default {
       });
     },
     *fetch({ payload }, { put, call, select }) {
-      const { keywords } = yield select(({ institution }) => institution);
-      // const { data } = yield call(getTypes, { ...PAGE_DEF, ...payload, name: keywords });
+      const { keywords } = yield select(({ qrType }) => qrType);
+      const { data } = yield call(getTypes, { ...PAGE_DEF, ...payload, name: keywords });
       yield put({
         type: 'upState',
-        // payload: data,
-        payload: {
-          pagination: {},
-          data: [
-            {
-              id: '000',
-              name: '挪车码',
-              description: '用于扫码挪车, 记录用户电话号和车牌号',
-              status: 1,
-              editable: 1,
-              fields: [
-                {
-                  code: 'numberPlate',
-                  label: '车牌号',
-                  help: "例如'京A88888'",
-                  required: false,
-                },
-                {
-                  code: 'mobile',
-                  label: '手机号',
-                  help: "例如'13213199999'",
-                  required: true,
-                },
-                {
-                  code: 'name',
-                  label: '称呼',
-                  help: "例如'王先生'",
-                  required: false,
-                },
-              ],
-            },
-          ],
-        },
+        payload: data,
+        
       });
     },
+    /* 
+    <ul style="margin:0; padding:0">
+<li style="position:relative;padding-left:64px"><span style="width:64px">车牌号: </span>{{license}}</li>
+<li style="position:relative;padding-left:64px"><span style="width:64px">称呼: </span>{{name}}</li>
+</ul>__|||__call */
     *edit({ payload }, { call, put, select }) {
-      const { editor } = yield select(({ institution }) => institution);
+      const { editor } = yield select(({ qrType }) => qrType);
       const body = _.cloneDeep(payload);
       if (body.status) {
         body.status = 1;
@@ -89,16 +63,16 @@ export default {
         body.editable = 0;
       }
       if (body.fields.length > 0) {
-        body.fieldsd = JSON.stringify(body.fields);
+        body.fields = JSON.stringify(body.fields);
       }
       if (editor.id) {
         body.id = editor.id;
-        // yield call(updateType, body);
+        yield call(updateType, body);
       } else {
         body.status = 1;
-        // yield call(createType, body);
+        yield call(createType, body);
       }
-      const { pagination } = yield select(({ institution }) => institution);
+      const { pagination } = yield select(({ qrType }) => qrType);
       yield put({
         type: 'fetch',
         payload: pagination,
@@ -141,23 +115,23 @@ export default {
       });
     },
     *changeStatus({ payload }, { call, put, select }) {
-      // const { data } = yield call(updateInst, payload);
-      // if (data) {
-      //   message.success('状态更新成功');
-      //   const list = yield select(({ institution }) => institution.data);
-      //   const newList = _.map(list, (item) => {
-      //     if (item.id === data.id) {
-      //       item.status = payload.status;
-      //     }
-      //     return item;
-      //   });
-      //   yield put({
-      //     type: 'upState',
-      //     payload: {
-      //       data: newList,
-      //     },
-      //   });
-      // }
+      const { data } = yield call(updateType, payload);
+      if (data) {
+        message.success('状态更新成功');
+        const list = yield select(({ qrType }) => qrType.data);
+        const newList = _.map(list, (item) => {
+          if (item.id === data.id) {
+            item.status = payload.status;
+          }
+          return item;
+        });
+        yield put({
+          type: 'upState',
+          payload: {
+            data: newList,
+          },
+        });
+      }
     },
   },
   reducers: {

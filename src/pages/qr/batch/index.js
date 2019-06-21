@@ -1,26 +1,17 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import {
-  Table,
-  Button,
-  Switch,
-  Modal,
-  Icon,
-  Input,
-  Divider,
-  InputNumber,
-  message,
-  Popconfirm,
-} from 'antd';
+import { Table, Button, Modal, Icon, Input, Divider, InputNumber, message, Popconfirm } from 'antd';
 import Editor from './editor';
-import { jump } from "../../../utils";
+import { jump } from '../../../utils';
 import styles from '../index.less';
 
 class QrBatch extends PureComponent {
   state = {
     plus: '',
     plusNumber: 1,
+    downloadRange: [],
+    download: '',
   };
   columns = [
     {
@@ -28,24 +19,28 @@ class QrBatch extends PureComponent {
       title: '批次名称',
       dataIndex: 'name',
       render: (t, r) => {
-        return <a onClick={this.qrList.bind(null, r.id)}>{t}</a>
-      }
+        return <a onClick={this.qrList.bind(null, r.id)}>{t}</a>;
+      },
     },
     {
       key: 'type',
       title: '码类型',
-      dataIndex: 'typeName',
+      dataIndex: 'qrType',
+      render: (t) => t.name,
     },
     {
       key: 'total',
       title: '数量',
       dataIndex: 'total',
       render: (t, r) => {
+        if (r.status < 2) {
+          return t;
+        }
         return (
           <div>
             {t}{' '}
             <Button
-              onClick={this.showPlus.bind(null, r.id)}
+              onClick={this.showPlus.bind(null, r)}
               title="追加"
               size="small"
               shape="circle"
@@ -61,19 +56,19 @@ class QrBatch extends PureComponent {
       title: '关联实体',
       render: (t, r) => {
         const res = [];
-        if (r.institutionId && r.institutionName) {
-          res.push({ label: '机构', name: r.institutionName });
+        if (r.institutionId && r.institution) {
+          res.push({ label: '机构', name: r.institution.name });
         }
-        if (r.productId && r.productName) {
-          res.push({ label: '商品', name: r.productName });
+        if (r.productId && r.product) {
+          res.push({ label: '商品', name: r.product.title });
         }
-        if (r.activityId && r.activityName) {
-          res.push({ label: '活动', name: r.activityName });
+        if (r.activityId && r.activity) {
+          res.push({ label: '活动', name: r.activity.name });
         }
         if (res.length > 0) {
           return _.map(res, (item, i) => (
             <div key={`${item.label}_${r.id}`}>
-              [{item.label}]{item.name}
+              [{item.label}] {item.name}
             </div>
           ));
         }
@@ -81,16 +76,20 @@ class QrBatch extends PureComponent {
     },
     {
       key: 'status',
-      title: '状态',
+      title: '制码状态',
       dataIndex: 'status',
-      render: (t, { id }) => {
-        const change = (checked) => {
-          this.props.dispatch({
-            type: 'qrBatch/changeStatus',
-            payload: { id, status: checked ? 1 : 0 },
-          });
-        };
-        return <Switch size="small" checked={t === 1} onChange={change} />;
+      render: (t) => {
+        switch (t) {
+          case 0: {
+            return '未制作';
+          }
+          case 1: {
+            return '制作中...';
+          }
+          default: {
+            return '空闲';
+          }
+        }
       },
       align: 'center',
     },
@@ -108,29 +107,46 @@ class QrBatch extends PureComponent {
               type="primary"
               icon="edit"
             />
-            <Divider type="vertical" />
-            <Button
-              onClick={this.generator.bind(null, t)}
-              size="small"
-              shape="circle"
-              type="default"
-              icon="qrcode"
-            />
-            <Divider type="vertical" />
-            <Popconfirm
-              okText="删除"
-              okType="danger"
-              icon={<Icon type="delete" />}
-              title="是否删除批次数据?"
-              onConfirm={this.remove.bind(null, t)}
-            >
-              <Button
-                size="small"
-                shape="circle"
-                type="danger"
-                icon="delete"
-              />
-            </Popconfirm>
+            {r.status !== 1
+              ? [
+                  <Divider key="generator_line" type="vertical" />,
+                  <Button
+                    key="generator_btn"
+                    onClick={this.generator.bind(null, t, r.total)}
+                    size="small"
+                    shape="circle"
+                    type="default"
+                    icon="qrcode"
+                  />,
+                ]
+              : null}
+            {r.status === 0
+              ? [
+                  <Divider type="vertical" key="delete_line" />,
+                  <Popconfirm
+                    key="delete_btn"
+                    okText="删除"
+                    okType="danger"
+                    icon={<Icon type="delete" />}
+                    title="是否删除批次数据?"
+                    onConfirm={this.remove.bind(null, t)}
+                  >
+                    <Button size="small" shape="circle" type="danger" icon="delete" />
+                  </Popconfirm>,
+                ]
+              : null}
+            {r.status > 1 && r.imgCount > 0
+              ? [
+                  <Divider type="vertical" key="download_line" />,
+                  <Button
+                    key="download_btn"
+                    size="small"
+                    type="default"
+                    icon="download"
+                    onClick={this.showDownload.bind(null, r)}
+                  >下载压缩包</Button>,
+                ]
+              : null}
           </div>
         );
       },
@@ -165,25 +181,67 @@ class QrBatch extends PureComponent {
   };
   qrList = (id) => {
     console.log(id);
-    jump(`/qr/list/${id}`)
-  }
+    jump(`/qr/list/${id}`);
+  };
   update = (r) => {
     this.showModal(r);
   };
   remove = (t) => {
     message.error('调删除接口', 3);
   };
-  showPlus = (t) => {
-    console.log(t);
+  showPlus = ({ id }) => {
     this.setState({
-      plus: t,
+      plus: id,
+    });
+  };
+  hidePlus = () => {
+    this.setState({
+      plus: '',
+      plusNumber: 1,
     });
   };
   plus = () => {
-    console.log(this.state);
+    const { plusNumber, plus } = this.state;
+    const target = _.find(this.props.data, ['id', plus]);
+    if (target) {
+      const { imgCount } = target;
+      this.props.dispatch({
+        type: 'qrBatch/generate',
+        payload: { id: plus, from: imgCount, total: plusNumber },
+      });
+    }
+    this.hidePlus();
   };
-  generator = (id) => {
-    message.success('调预生成二维码的接口, 改编该批次的生成状态', 10);
+  generator = (id, total) => {
+    // message.success('调预生成二维码的接口, 改编该批次的生成状态', 10);
+    this.props.dispatch({
+      type: 'qrBatch/generate',
+      payload: { id, from: 1, total },
+    });
+  };
+  showDownload = (data) => {
+    this.setState({
+      download: data.id,
+      downloadRange: [1, data.total],
+    });
+  };
+  hideDownload = () => {
+    this.setState({
+      download: '',
+      downloadRange: '',
+    });
+  };
+  download = () => {
+    const { download, downloadRange } = this.state;
+    const target = _.find(this.props.data, ['id', download]);
+    const [from, to] = downloadRange;
+    if (target) {
+      this.props.dispatch({
+        type: 'qrBatch/download',
+        payload: { id: download, from, to },
+      });
+    }
+    this.hideDownload();
   };
   render() {
     const initNewItem = {
@@ -229,7 +287,7 @@ class QrBatch extends PureComponent {
         <Editor editor={this.props.editor} />
         <Modal
           visible={!!this.state.plus}
-          onCancel={() => this.setState({ plus: '', plusNumber: 1 })}
+          onCancel={this.hidePlus}
           onOk={this.plus}
           title="追加批次码数量"
         >
@@ -239,6 +297,35 @@ class QrBatch extends PureComponent {
               value={this.state.plusNumber}
               min={1}
               onChange={(plusNumber) => this.setState({ plusNumber })}
+            />
+          </div>
+        </Modal>
+        <Modal
+          visible={!!this.state.download}
+          onCancel={this.hideDownload}
+          onOk={this.download}
+          okText="下载"
+          title="批量下载二维码"
+        >
+          <div>
+            <div>请输入要下载的序号区间</div>
+            从
+            <InputNumber
+              value={this.state.downloadRange[0]}
+              min={1}
+              max={this.state.downloadRange[1]}
+              onChange={(number) =>
+                this.setState({ downloadRange: [number, this.state.downloadRange[1]] })
+              }
+            />
+            到
+            <InputNumber
+              value={this.state.downloadRange[1]}
+              min={1}
+              max={this.state.downloadRange[1]}
+              onChange={(number) =>
+                this.setState({ downloadRange: [this.state.downloadRange[0]], number })
+              }
             />
           </div>
         </Modal>

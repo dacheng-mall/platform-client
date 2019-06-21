@@ -29,9 +29,21 @@ export default class LinkOther extends PureComponent {
       options: [],
       currentType: undefined,
       currentTarget: undefined,
-      plusVisable: false
+      plusVisable: false,
     };
   }
+
+  static getDerivedStateFromProps = (props, state) => {
+    if(props.value) {
+      return {...state, linked: [...props.value]}
+    }
+    return state;
+  };
+  changeHandler = (data) => {
+    if (this.props.onChange instanceof Function) {
+      this.props.onChange(data);
+    }
+  };
   add = () => {
     const { currentTarget, currentType, options, linked } = this.state;
     if (currentTarget && currentType) {
@@ -43,8 +55,8 @@ export default class LinkOther extends PureComponent {
         type: currentType,
         typeName: type.name,
       });
+      this.changeHandler(linked);
       this.setState({
-        linked: [...linked],
         currentType: undefined,
         currentTarget: undefined,
         options: [],
@@ -52,11 +64,12 @@ export default class LinkOther extends PureComponent {
     }
   };
   remove = (i) => {
-    const linked = [...this.state.linked];
+    const linked = _.cloneDeep(this.state.linked);
     linked.splice(i, 1);
-    this.setState({
-      linked,
-    });
+    this.changeHandler(linked);
+    // this.setState({
+    //   linked,
+    // });
   };
   searchTarget = (name) => {
     if (timer) {
@@ -100,6 +113,7 @@ export default class LinkOther extends PureComponent {
     });
   };
   render() {
+    debugger;
     return (
       <Fragment>
         <div className={styles.wrap}>
