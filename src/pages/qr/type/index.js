@@ -96,14 +96,14 @@ class QrType extends PureComponent {
     });
   };
   update = (r) => {
-    const { id, name, description, fields, status, editable, template } = r;
+    const { id, name, description, fields, status, bindSalesman, template } = r;
     this.showModal({
       id,
       name,
       description,
       fields: fields ? JSON.parse(fields) : [],
       status,
-      editable,
+      bindSalesman,
       template
     });
   };

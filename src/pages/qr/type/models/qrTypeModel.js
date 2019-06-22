@@ -57,10 +57,10 @@ export default {
       } else {
         body.status = 0;
       }
-      if (body.editable) {
-        body.editable = 1;
+      if (body.bindSalesman) {
+        body.bindSalesman = 1;
       } else {
-        body.editable = 0;
+        body.bindSalesman = 0;
       }
       if (body.fields.length > 0) {
         body.fields = JSON.stringify(body.fields);

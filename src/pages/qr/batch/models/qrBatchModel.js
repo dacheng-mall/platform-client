@@ -203,17 +203,15 @@ export default {
           body[`${type}Id`] = id;
         });
       }
-      console.log(body.linked);
-      debugger;
       delete body.linked;
       if (editor.id) {
         body.id = editor.id;
         yield call(updateBatch, body);
       } else {
         body.status = 0;
+        body.from = 1;
         yield call(createBatch, body);
       }
-      console.log(body);
       const { pagination } = yield select(({ qrBatch }) => qrBatch);
       yield put({
         type: 'fetch',
@@ -223,7 +221,7 @@ export default {
         type: 'closeEditor',
       });
     },
-    *searchByKeywords({ payload }, { call, put }) {
+    *searchByKeywords({ payload }, { put }) {
       yield put({
         type: 'upState',
         payload: {

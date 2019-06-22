@@ -47,6 +47,7 @@ export default {
           type: 'upState',
           payload: {
             imgPrefix: getApiPreFix(),
+            payload: { batchId: id },
           },
         }),
         put({
@@ -55,6 +56,7 @@ export default {
         }),
         put({
           type: 'fetch',
+          payload: { batchId: id },
         }),
       ]);
     },
@@ -75,6 +77,7 @@ export default {
       }
     },
     *fetch({ payload }, { put, call, select }) {
+      console.log(payload);
       const { from, to, bindStatus } = yield select(({ qrList }) => qrList);
       const params = {};
       if (from) {
@@ -83,29 +86,29 @@ export default {
       if (to) {
         params.to = to;
       }
-      if(bindStatus) {
-        switch(bindStatus) {
+      if (bindStatus) {
+        switch (bindStatus) {
           case 'salesman': {
-            params.hasSalesman = true
+            params.hasSalesman = true;
             break;
           }
           case 'user': {
-            params.hasCustom = true
+            params.hasCustom = true;
             break;
           }
           case 'both': {
-            params.hasCustom = true
-            params.hasSalesman = true
+            params.hasCustom = true;
+            params.hasSalesman = true;
             break;
           }
           default: {
-            delete params.hasCustom
-            delete params.hasSalesman
-            return
+            delete params.hasCustom;
+            delete params.hasSalesman;
+            return;
           }
         }
       }
-      const { data } = yield call(getQrs, { ...PAGE_DEF, ...params , ...payload});
+      const { data } = yield call(getQrs, { ...PAGE_DEF, ...params, ...payload });
       yield put({
         type: 'upState',
         payload: data,

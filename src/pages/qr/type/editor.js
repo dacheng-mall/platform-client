@@ -53,8 +53,8 @@ function Editor(props) {
             <FormItem label="状态">
               {getFieldDecorator('status', { valuePropName: 'checked' })(<Switch />)}
             </FormItem>
-            <FormItem label="可编辑">
-              {getFieldDecorator('editable', { valuePropName: 'checked' })(<Switch />)}
+            <FormItem label="强绑业务员">
+              {getFieldDecorator('bindSalesman', { valuePropName: 'checked' })(<Switch />)}
             </FormItem>
           </Col>
           <Col span={16}>

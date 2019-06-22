@@ -56,7 +56,7 @@ export const mapPropsToFields = (props) => {
   _.forEach(props[EDITOR], (value, key) => {
     switch (key) {
       case 'status': 
-      case 'editable': {
+      case 'bindSalesman': {
         res[key] = createFormField({
           value: value === 1 || value ? true : false,
         });
