@@ -152,11 +152,6 @@ export default {
     *edit({ payload }, { call, all, put, select }) {
       const { editor } = yield select(({ qrBatch }) => qrBatch);
       const body = _.cloneDeep(payload);
-      if (body.status) {
-        body.status = 1;
-      } else {
-        body.status = 0;
-      }
       // 处理图片
       const todos = {};
       let hasModifyImage = false;
@@ -237,25 +232,6 @@ export default {
         type: 'upState',
         payload: INIT_EDITOR,
       });
-    },
-    *changeStatus({ payload }, { call, put, select }) {
-      // const { data } = yield call(updateInst, payload);
-      // if (data) {
-      //   message.success('状态更新成功');
-      //   const list = yield select(({ institution }) => institution.data);
-      //   const newList = _.map(list, (item) => {
-      //     if (item.id === data.id) {
-      //       item.status = payload.status;
-      //     }
-      //     return item;
-      //   });
-      //   yield put({
-      //     type: 'upState',
-      //     payload: {
-      //       data: newList,
-      //     },
-      //   });
-      // }
     },
   },
   reducers: {
