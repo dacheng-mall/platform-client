@@ -64,6 +64,8 @@ export default {
       }
       if (body.fields.length > 0) {
         body.fields = JSON.stringify(body.fields);
+      } else {
+        body.fields = ''
       }
       if (editor.id) {
         body.id = editor.id;
