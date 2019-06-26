@@ -48,6 +48,22 @@ export default {
         payload: { ...data, isInstitutionAdmin },
       });
     },
+    *changeStatus({ payload }, { call, put, select }) {
+      const { data: list } = yield select(({ activities }) => activities);
+      const { data } = yield call(update, payload);
+      if(data.id) {
+        const target = _.find(list, ['id', data.id])
+        if(target) {
+          target.status = data.status;
+          yield put({
+            type: 'upState',
+            payload: {
+              data: [...list]
+            }
+          })
+        }
+      }
+    },
   },
   reducers: {
     upState(state, { payload }) {

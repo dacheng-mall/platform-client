@@ -70,11 +70,11 @@ function ActivityList(props) {
         key: 'status',
         title: '状态',
         dataIndex: 'status',
-        render: (t, { id, username }) => {
+        render: (t, { id }) => {
           const change = (checked) => {
-            this.props.dispatch({
+            props.dispatch({
               type: 'activities/changeStatus',
-              payload: { id, username, status: checked ? 1 : 0 },
+              payload: { id, status: checked ? 1 : 0 },
             });
           };
           if (props.isInstitutionAdmin) {
