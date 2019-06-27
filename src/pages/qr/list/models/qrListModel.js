@@ -77,9 +77,11 @@ export default {
       }
     },
     *fetch({ payload }, { put, call, select }) {
-      console.log(payload);
-      const { from, to, bindStatus } = yield select(({ qrList }) => qrList);
+      const { from, to, bindStatus, batchId } = yield select(({ qrList }) => qrList);
       const params = {};
+      if(batchId) {
+        params.batchId = batchId
+      }
       if (from) {
         params.from = from;
       }
