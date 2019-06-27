@@ -5,6 +5,7 @@ import { Table, Button, Modal, Icon, Input, Divider, InputNumber, message, Popco
 import Editor from './editor';
 import { jump } from '../../../utils';
 import styles from '../index.less';
+import { getApiPreFix } from '../../../utils/request';
 
 class QrBatch extends PureComponent {
   state = {
@@ -98,6 +99,32 @@ class QrBatch extends PureComponent {
       align: 'center',
     },
     {
+      key: 'zipStatus',
+      title: '压缩包',
+      dataIndex: 'zipStatus',
+      render: (t, r) => {
+        switch (t) {
+          case 0: {
+            return '没有压缩包';
+          }
+          case 1: {
+            return '压缩中...';
+          }
+          case 2: {
+            return '压缩失败, 再来一次';
+          }
+          default: {
+            return (
+              <a href={`${getApiPreFix()}wxaCodeDir/${r.autoId}/${r.autoId}.zip`} target="_blank">
+                下载压缩包
+              </a>
+            );
+          }
+        }
+      },
+      align: 'center',
+    },
+    {
       key: 'operator',
       title: '操作',
       dataIndex: 'id',
@@ -110,6 +137,7 @@ class QrBatch extends PureComponent {
               shape="circle"
               type="primary"
               icon="edit"
+              title="编辑"
             />
             {r.status !== 1
               ? [
@@ -121,6 +149,7 @@ class QrBatch extends PureComponent {
                     shape="circle"
                     type="default"
                     icon="qrcode"
+                    title="生成二维码数据"
                   />,
                 ]
               : null}
@@ -146,8 +175,11 @@ class QrBatch extends PureComponent {
                     key="download_btn"
                     size="small"
                     type="default"
-                    icon="download"
+                    icon="file-zip"
                     shape="circle"
+                    disabled={r.zipStatus === 1}
+                    type="danger"
+                    title="生成压缩包"
                     onClick={this.showDownload.bind(null, r)}
                   />,
                 ]

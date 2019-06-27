@@ -10,7 +10,6 @@ import {
 } from '../services';
 import { fieldsChange } from '../../../../utils/ui';
 import { upload } from '../../../../utils';
-import { getApiPreFix } from '../../../../utils/request';
 
 const source = window.config.source;
 
@@ -84,10 +83,21 @@ export default {
         });
       }
     },
-    *download({ payload }, { call }) {
+    *download({ payload }, { call, select, put }) {
       const { data } = yield call(download, payload); // console.log(data)
-      if (data.zip) {
-        window.location.href = `${getApiPreFix()}${data.zip}`;
+      if (data.id && data.autoId) {
+        message.success('正在压缩, 稍后请刷新页面查看最新的压缩状态')
+        const { data: list } = yield select(({ qrBatch }) => qrBatch);
+        const target = _.find(list, ['id', data.id]);
+        if(target) {
+          target.zipStatus = 1;
+          yield put({
+            type: 'upState',
+            payload: {
+              data: [...list]
+            }
+          })
+        }
       }
     },
     *initEditor({ payload }, { put }) {
