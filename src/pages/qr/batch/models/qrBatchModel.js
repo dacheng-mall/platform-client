@@ -7,6 +7,7 @@ import {
   getTypesWhitoutPage,
   generate,
   download,
+  supply,
 } from '../services';
 import { fieldsChange } from '../../../../utils/ui';
 import { upload } from '../../../../utils';
@@ -91,6 +92,23 @@ export default {
         const target = _.find(list, ['id', data.id]);
         if(target) {
           target.zipStatus = 1;
+          yield put({
+            type: 'upState',
+            payload: {
+              data: [...list]
+            }
+          })
+        }
+      }
+    },
+    *check({ payload }, { call, select, put }) {
+      const { data } = yield call(supply, payload);
+      if (data.id) {
+        message.success('正在检查, 稍后请刷新页面查看最新的检查状态')
+        const { data: list } = yield select(({ qrBatch }) => qrBatch);
+        const target = _.find(list, ['id', payload.id]);
+        if(target) {
+          target.checkQRStatus = 1;
           yield put({
             type: 'upState',
             payload: {

@@ -13,6 +13,8 @@ class QrBatch extends PureComponent {
     plusNumber: 1,
     downloadRange: [],
     download: '',
+    checkRange: [],
+    check: '',
   };
   columns = [
     {
@@ -99,6 +101,56 @@ class QrBatch extends PureComponent {
       align: 'center',
     },
     {
+      key: 'checkQRStatus',
+      title: '制码状态',
+      dataIndex: 'checkQRStatus',
+      render: (t, r) => {
+        let text = '';
+        switch (t) {
+          case 0: {
+            text = '未校验';
+            break;
+          }
+          case 1: {
+            text = '正在校验...';
+            break;
+          }
+          case 2: {
+            text = '有异常, 重新校验';
+            break;
+          }
+          case 3: {
+            text = '图片集完整';
+            break;
+          }
+          default: {
+            text = '未知状态';
+          }
+        }
+        if (true) {
+          const checkStatus = () => {
+            this.showCheckImages(r);
+          };
+          return (
+            <div>
+              {text}{' '}
+              <Button
+                shape="circle"
+                type="danger"
+                onClick={checkStatus}
+                icon="file-protect"
+                size="small"
+                title="校验图片文件完整性"
+              />
+            </div>
+          );
+        } else {
+          return text;
+        }
+      },
+      align: 'center',
+    },
+    {
       key: 'zipStatus',
       title: '压缩包',
       dataIndex: 'zipStatus',
@@ -115,9 +167,7 @@ class QrBatch extends PureComponent {
           }
           default: {
             return (
-              <a href={`${getApiPreFix()}wxaCodeDir/${r.autoId}/${r.autoId}.zip`} target="_blank">
-                下载压缩包
-              </a>
+              <a href={`${getApiPreFix()}wxaCodeDir/${r.autoId}/${r.autoId}.zip`}>下载压缩包</a>
             );
           }
         }
@@ -253,7 +303,7 @@ class QrBatch extends PureComponent {
     // message.success('调预生成二维码的接口, 改编该批次的生成状态', 10);
     this.props.dispatch({
       type: 'qrBatch/generate',
-      payload: { id, from: 1, total },
+      payload: { id, from: 0, total },
     });
   };
   showDownload = (data) => {
@@ -279,6 +329,36 @@ class QrBatch extends PureComponent {
       });
     }
     this.hideDownload();
+  };
+  showCheckImages = (data) => {
+    this.setState({
+      check: data.id,
+      checkRange: [1, data.total],
+    });
+  };
+  hideCheckImages = () => {
+    this.setState({
+      check: '',
+      checkRange: '',
+    });
+  };
+  checkImages = () => {
+    const { check, checkRange } = this.state;
+    const target = _.find(this.props.data, ['id', check]);
+    const [from, to] = checkRange;
+    if (target) {
+      this.props.dispatch({
+        type: 'qrBatch/check',
+        payload: { id: check, from, to },
+      });
+    }
+    this.hideCheckImages();
+  };
+  showCheckImages = (data) => {
+    this.setState({
+      check: data.id,
+      checkRange: [1, data.total],
+    });
   };
   render() {
     const initNewItem = {
@@ -362,6 +442,35 @@ class QrBatch extends PureComponent {
               max={this.state.downloadRange[1]}
               onChange={(number) =>
                 this.setState({ downloadRange: [this.state.downloadRange[0]], number })
+              }
+            />
+          </div>
+        </Modal>
+        <Modal
+          visible={!!this.state.check}
+          onCancel={this.hideCheckImages}
+          onOk={this.checkImages}
+          okText="开始检查"
+          title="检查图片集是否完整"
+        >
+          <div>
+            <div>请输入要检查的序号区间</div>
+            从
+            <InputNumber
+              value={this.state.checkRange[0]}
+              min={1}
+              max={this.state.checkRange[1]}
+              onChange={(number) =>
+                this.setState({ checkRange: [number, this.state.checkRange[1]] })
+              }
+            />
+            到
+            <InputNumber
+              value={this.state.checkRange[1]}
+              min={1}
+              max={this.state.checkRange[1]}
+              onChange={(number) =>
+                this.setState({ checkRange: [this.state.checkRange[0]], number })
               }
             />
           </div>

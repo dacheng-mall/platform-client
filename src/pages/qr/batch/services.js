@@ -20,3 +20,6 @@ export const generate = (parmas) => {
 export const download = (parmas) => {
   return post(`v1/api/sys/qrBatch/zip`, parmas);
 };
+export const supply = (parmas) => {
+  return post(`v1/api/sys/qrBatch/supply`, parmas);
+};
