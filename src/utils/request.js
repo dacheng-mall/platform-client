@@ -9,14 +9,20 @@ const JSON_TYPE = 'application/json';
 
 // 后台API URI前端
 let apiPrefix = '';
+let rootPrefix = '';
 const NODE_ENV = process.env.NODE_ENV;
-if(NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
   apiPrefix = window.config.api_prod;
+  rootPrefix = window.config.qr_prod;
 } else {
-  apiPrefix = window.config.api_dev
+  apiPrefix = window.config.api_dev;
+  rootPrefix = window.config.qr_dev;
 }
-export function getApiPreFix(){
-  return apiPrefix
+export function getApiPreFix() {
+  return apiPrefix;
+}
+export function getRootPreFix() {
+  return apiPrefix;
 }
 // token获取方法
 let getToken;
@@ -53,7 +59,7 @@ export function setToken(tokenGetter) {
  */
 const DefaultOptions = {
   headers: {
-    [CONTENT_TYPE]: JSON_TYPE
+    [CONTENT_TYPE]: JSON_TYPE,
   },
   // credentials,
 };
@@ -92,6 +98,19 @@ export function isText(res, type) {
   }
 }
 
+export function isBlob(res, type) {
+  type = type || getType(res);
+  console.log(type);
+  if (
+    type &&
+    (type.indexOf('octet-stream') > -1 ||
+      type.indexOf('stream') > -1 ||
+      type.indexOf('vnd.ms-excel') > -1)
+  ) {
+    res.isBlob = true;
+    return true;
+  }
+}
 /**
  * 解析AJAX响应结果
  * @param res 响应结果
@@ -101,8 +120,33 @@ export function parseResponse(res) {
   if (res.status === 401) {
     localStorage.setItem('tokenExpired', true);
   }
-  const body = isJson(res) ? res.json() : res.text();
-  return body.then(data => ({ res, data }));
+
+  let body;
+  switch (true) {
+    case isJson(res):
+      body = res.json();
+      break;
+    case /api\/wx\/createWXAQRCode$/.test(res.url):
+      console.log(res)
+      // return res.blob(res.body).then((blob) => {
+      //   console.log('blob', blob)
+      //   return { blob, isBlob: true };
+
+    // });
+      body = res.blob();
+      // console.log('----', _blob)
+      // body = res.text();
+      break;
+    case isText(res):
+      body = res.text();
+      break;
+    default:
+      body = res.text();
+      break;
+  }
+  return body.then((data) => ({ res, data }));
+  // const body = isJson(res) ? res.json() : res.text();
+  // return body.then(data => ({ res, data }));
 }
 
 /**
@@ -152,8 +196,11 @@ function parseError(res) {
  * @param result 响应解析结果
  * @returns {res} 如不在[200,300]之间则抛出错误对象（{status,message}）
  */
-export const checkStatus = result => {
-  const { res, data } = result;
+export const checkStatus = (result) => {
+  const { res, data, isBlob } = result;
+  if (isBlob) {
+    return result.blob;
+  }
   if (res.ok) {
     return result;
   }
@@ -188,7 +235,7 @@ export default function request(url, { body, method, ...options }) {
     if (!options.headers) {
       options.headers = {};
     }
-    if(!options.headers.Authorization) {
+    if (!options.headers.Authorization) {
       options.headers.Authorization = token;
     }
   }
@@ -220,13 +267,22 @@ export default function request(url, { body, method, ...options }) {
   options.method = method;
   let _url = url;
   const VER = /^v\d\//;
-  if(VER.test(_url)) {
+  if (VER.test(_url)) {
     _url = apiPrefix + url.replace(VER, '');
   }
+  if (/api\/wx\/createWXAQRCode$/.test(_url)) {
+    options.responseType = 'arraybuffer'
+  }
+  // // 如果是生成二维码图片的需要改编请求头
+  // const getQrApi = /createWXAQRCode$/;
+  // if(getQrApi.test(_url)){
+  //   options.headers[CONTENT_TYPE] = 'application/octet-stream';
+  //   // options.Accept = 'image/webp,image/apng,image/*,*/*;q=0.8';
+  // }
   return fetch(_url, options)
     .then(parseResponse)
     .then(checkStatus)
-    .catch(err => Promise.reject(err.message));
+    .catch((err) => Promise.reject(err.message));
 }
 /* eslint-disable */
 const createMethod = (method, exts = {}) => (url, data, options) => {

@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
+import moment from 'moment';
 import { connect } from 'dva';
 import _ from 'lodash';
 import {
@@ -11,58 +12,17 @@ import {
   Divider,
   Popover,
   Popconfirm,
+  DatePicker,
+  Col,
+  Row,
 } from 'antd';
-import Editor from './editor';
 import { goBack } from '../../../utils';
-import styles from '../index.less';
+import { FormItem } from '../../../utils/ui';
+// import styles from '../index.less';
+import styles from './styles.less';
 import BatchInfo from './batchInfo';
+const { RangePicker } = DatePicker;
 
-/* 
-
-{
-  pagination: {
-    page,
-    pageSize,
-    total,
-    pageCount,
-  },
-  data: [
-    {
-      id,
-      sn,
-      autoId,
-      batchId,
-      typeId,     // 
-      type: { // 根据码类型id获取码类型数据
-        id,
-        name,
-        fields,
-        template,
-      },
-      user: {
-        id: '',
-        name: '',
-        avatarUrl: '',
-        bandTime: '',
-      },
-      salesman: {
-        id: '',
-        name: '',
-        institutionId: '',
-        institutionName: '',
-        gradeId: '',
-        gradeName: '',
-        bandTime: '', 
-      },
-      fields,
-      createTime,
-      lastmodifyTime,
-      url,
-      status
-    }
-  ]
-}
-*/
 class QrList extends PureComponent {
   columns = [
     {
@@ -80,7 +40,7 @@ class QrList extends PureComponent {
             <div>
               {t.name}
               <br />
-              {r.userBindTime}
+              {moment(r.userBindTime).format('YYYY-MM-DD HH:mm:ss')}
             </div>
           );
         }
@@ -106,11 +66,34 @@ class QrList extends PureComponent {
     },
     {
       key: 'fields',
-      title: '绑定信息',
+      title: '采集信息',
       dataIndex: 'fields',
       render: (t, r) => {
         if (t) {
-          return '--';
+          const res = JSON.parse(t);
+          let txt = [];
+          for (let key in res) {
+            const value = res[key];
+            switch (key) {
+              case 'name': {
+                txt.push(<div key={key}>姓名: {value}</div>);
+                break;
+              }
+              case 'mobile': {
+                txt.push(<div key={key}>手机: {value}</div>);
+                break;
+              }
+              default: {
+                txt.push(
+                  <div key={key}>
+                    {key}: {value}
+                  </div>,
+                );
+                break;
+              }
+            }
+          }
+          return txt;
         }
         return '未采集信息';
       },
@@ -147,18 +130,24 @@ class QrList extends PureComponent {
       align: 'right',
     },
   ];
+  exportCsv = () => {
+    this.props.dispatch({
+      type: 'qrList/fetch',
+      payload: 'exportCsv',
+    });
+  };
   search = () => {
     this.props.dispatch({
-      type: 'qrList/fetch'
+      type: 'qrList/fetch',
     });
   };
   reset = () => {
     this.props.dispatch({
-      type: 'qrList/reset'
+      type: 'qrList/reset',
     });
   };
   change = (type, number) => {
-    console.log(number, type)
+    console.log(number, type);
     this.props.dispatch({
       type: 'qrList/upState',
       payload: {
@@ -180,58 +169,172 @@ class QrList extends PureComponent {
       },
     });
   };
+  changeRange = (value) => {
+    this.props.dispatch({
+      type: 'qrList/upState',
+      payload: {
+        range: value,
+      },
+    });
+  };
+  typeChange = (value) => {
+    console.log(value);
+    this.props.dispatch({
+      type: 'qrList/upState',
+      payload: {
+        typeId: value,
+      },
+    });
+  };
+  fetchTimer = null;
+  fetchInst = (value) => {
+    console.log(value);
+    if (!_.trim(value)) {
+      return;
+    }
+    if (this.fetchTimer) {
+      clearTimeout(this.fetchTimer);
+    }
+    this.fetchTimer = setTimeout(() => {
+      this.props.dispatch({
+        type: 'qrList/fetchInst',
+        payload: { name: value },
+      });
+    }, 300);
+  };
+  instChange = (value) => {
+    this.props.dispatch({
+      type: 'qrList/upState',
+      payload: {
+        institutionId: value,
+      },
+    });
+  };
   render() {
     return (
       <Fragment>
-        <div className={styles.tableToolBar}>
-          <Button onClick={goBack} type="default">
-            <Icon type="arrow-left" />
-            返回
-          </Button>
-          <div className={styles.tableToolBar}>
-            <Select
-              style={{ width: '200px', marginRight: '10px' }}
-              placeholder="请选择绑定状态"
-              allowClear
-              onChange={this.changeBindStatus}
-              value={this.props.bindStatus}
+        <div className={styles.buttonWrap}>
+          <div>
+            {this.props.isRoot && this.props.batchId ? (
+              <Button onClick={goBack} type="default">
+                <Icon type="arrow-left" />
+                返回
+              </Button>
+            ) : null}
+          </div>
+          <div>
+            <Button
+              className={styles.moBtn}
+              onClick={this.exportCsv}
+              icon="download"
+              type="danger"
             >
-              <Select.Option key="none">未绑定任何数据</Select.Option>
-              <Select.Option key="salesman">已绑定业务员</Select.Option>
-              <Select.Option key="user">已绑定客户</Select.Option>
-              <Select.Option key="both">全部绑定</Select.Option>
-            </Select>
-
-            <InputNumber
-              style={{ width: 100 }}
-              placeholder="起始序号"
-              min={1}
-              max={this.props.batch && this.props.batch.total || 1}
-              onChange={this.change.bind(null, 'from')}
-              value={this.props.from}
-            />
-            <span>到</span>
-            <InputNumber
-              style={{ width: 100 }}
-              placeholder="结束序号"
-              min={this.props.from}
-              max={this.props.batch && this.props.batch.total || 1}
-              onChange={this.change.bind(null, 'to')}
-              value={this.props.to}
-            />
-            <Button onClick={this.search} icon="search" type="primary">
+              导出EXCEL
+            </Button>
+            <Button className={styles.moBtn} onClick={this.search} icon="search" type="primary">
               查询
             </Button>
-            <Button onClick={this.reset}>重置</Button>
+            <Button className={styles.moBtn} onClick={this.reset}>
+              重置
+            </Button>
           </div>
         </div>
-        <div style={{ marginTop: '10px' }}>
-          <Alert
-            message="批次信息"
-            description={<BatchInfo batch={this.props.batch} type={this.props.type} />}
-            type="success"
-          />
+        <div className={styles.tableToolBar}>
+          <Row gutter={24} style={{ width: '100%' }}>
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="生成时间段">
+                <RangePicker
+                  style={{ width: '260px' }}
+                  onChange={this.changeRange}
+                  value={this.props.range}
+                />
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="发放状态">
+                <Select
+                  style={{ width: '260px' }}
+                  placeholder="请选择绑定状态"
+                  allowClear
+                  onChange={this.changeBindStatus}
+                  value={this.props.bindStatus}
+                >
+                  <Select.Option key="salesman">已绑定业务员</Select.Option>
+                  <Select.Option key="user">客户已领取</Select.Option>
+                </Select>
+              </FormItem>
+            </Col>
+            {this.props.isRoot && this.props.batchId ? (
+              <Col span={8}>
+                <FormItem className={styles.formItem} label="序号区间">
+                  <InputNumber
+                    style={{ width: 100 }}
+                    placeholder="起始序号"
+                    min={1}
+                    max={(this.props.batch && this.props.batch.total) || 1}
+                    onChange={this.change.bind(null, 'from')}
+                    value={this.props.from}
+                  />
+                  <span>到</span>
+                  <InputNumber
+                    style={{ width: 100 }}
+                    placeholder="结束序号"
+                    min={this.props.from}
+                    max={(this.props.batch && this.props.batch.total) || 1}
+                    onChange={this.change.bind(null, 'to')}
+                    value={this.props.to}
+                  />
+                </FormItem>
+              </Col>
+            ) : null}
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="码类型">
+                <Select
+                  placeholder="请选择码类型"
+                  onChange={this.typeChange}
+                  allowClear
+                  style={{ width: '260px' }}
+                >
+                  {_.map(this.props.types, (type, i) => (
+                    <Select.Option value={type.id} key={type.id}>
+                      {type.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="机构">
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="请选择机构"
+                  style={{ width: '260px' }}
+                  value={this.props.institutionId}
+                  showArrow={false}
+                  filterOption={false}
+                  onSearch={this.fetchInst}
+                  onChange={this.instChange}
+                >
+                  {_.map(this.props.institutions, (inst, i) => (
+                    <Select.Option value={inst.id} key={inst.id}>
+                      {inst.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FormItem>
+            </Col>
+          </Row>
         </div>
+        {this.props.isRoot && this.props.batchId ? (
+          <div>
+            <Alert
+              message="批次信息"
+              description={<BatchInfo batch={this.props.batch} type={this.props.type} />}
+              type="success"
+            />
+          </div>
+        ) : null}
         <Table
           rowKey="id"
           columns={this.columns}

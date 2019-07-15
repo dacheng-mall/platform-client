@@ -11,4 +11,12 @@ module.exports = [
     path: '/qr/list/:batchId',
     component: 'qr/list',
   },
+  {
+    path: '/qr/listAll',
+    component: 'qr/list',
+  },
+  {
+    path: '/qr/create',
+    component: 'qr/create',
+  },
 ];

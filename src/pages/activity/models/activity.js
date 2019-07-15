@@ -175,6 +175,7 @@ export default {
         delete values.customCount;
         delete values.salesmanCount;
         delete values.displayOrder;
+        delete values.gifts;
         const { data } = yield call(update, values);
         message.success('修改成功');
         if (data) {

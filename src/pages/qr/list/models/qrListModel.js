@@ -1,32 +1,41 @@
 import ptrx from 'path-to-regexp';
 import _ from 'lodash';
+import moment from 'moment';
 import { message } from 'antd';
-import { getQrs, updateQr, getBatchesWhitoutPage, getTypesWhitoutPage } from '../services';
+import {
+  getQrs,
+  updateQr,
+  getBatchesWhitoutPage,
+  getTypesWhitoutPage,
+  getInstitutionsWhitoutPage,
+  getInstitutionsForInstAdminWhitoutPage,
+  exportCSV,
+} from '../services';
 import { fieldsChange } from '../../../../utils/ui';
-import { getApiPreFix } from '../../../../utils/request';
+import { getRootPreFix, getApiPreFix } from '../../../../utils/request';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
-const INIT_EDITOR = {
-  editor: null,
-  errors: {},
-};
+
 export default {
   namespace: 'qrList',
   state: {
     data: [],
     pagination: PAGE_DEF,
-    ...INIT_EDITOR,
     parents: [],
     keywords: '',
     types: null,
     from: undefined,
     to: undefined,
     bindStatus: undefined,
+    institutionId: undefined,
+    range: undefined,
+    typeId: undefined,
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
+        console.log('pathname', pathname);
         const pn = ptrx('/qr/list/:batchId').exec(pathname);
         let id;
         if (pn) {
@@ -35,6 +44,10 @@ export default {
             type: 'init',
             id,
           });
+        } else if (pathname === '/qr/listAll') {
+          dispatch({
+            type: 'init4son',
+          });
         }
       });
     },
@@ -42,14 +55,20 @@ export default {
 
   effects: {
     *init({ id }, { put, all }) {
+      yield put({
+        type: 'upState',
+        payload: {
+          from: undefined,
+          to: undefined,
+          institutionId: undefined,
+          bindStatus: undefined,
+          typeId: undefined,
+          imgPrefix: getApiPreFix(),
+          batchId: id,
+          range: undefined,
+        },
+      });
       yield all([
-        put({
-          type: 'upState',
-          payload: {
-            imgPrefix: getApiPreFix(),
-            payload: { batchId: id },
-          },
-        }),
         put({
           type: 'fetchInitData',
           batchId: id,
@@ -60,33 +79,90 @@ export default {
         }),
       ]);
     },
-    *fetchInitData({ batchId }, { call, put }) {
+    *init4son(p, { put, select }) {
+      const { user } = yield select(({ app }) => app);
+      yield put({
+        type: 'upState',
+        payload: {
+          institutionId: user.institutionId,
+          institutions: [user.institution],
+          from: undefined,
+          to: undefined,
+          bindStatus: undefined,
+          typeId: undefined,
+          imgPrefix: getApiPreFix(),
+          batchId: undefined,
+          range: undefined,
+        },
+      });
+      yield put({
+        type: 'fetch',
+      });
+    },
+    *fetchInitData({ batchId }, { call, put, select }) {
       const { data } = yield call(getBatchesWhitoutPage, { id: batchId });
       if (data.length > 0) {
         const typeId = data[0].typeId;
-        const { data: types } = yield call(getTypesWhitoutPage, { id: typeId });
+        const now = new Date().valueOf();
+        const { timestamp, types: _types, user } = yield select(({ qrList, app }) => ({
+          ...qrList,
+          user: app.user,
+        }));
+        let isRoot = false;
+        if (user.institutionId === data[0].institutionId || user.userType === 1) {
+          isRoot = true;
+        }
+        if (!_types || now - timestamp > 7200000) {
+          const { data: types } = yield call(getTypesWhitoutPage, { status: 1 });
+          const type = _.find(types, ['id', typeId]);
+
+          yield put({
+            type: 'upState',
+            payload: {
+              batch: data[0],
+              type,
+              types,
+              batchId,
+              typeId,
+              timestamp: now,
+              isRoot,
+            },
+          });
+          return;
+        }
+        const type = _.find(_types, ['id', typeId]);
         yield put({
           type: 'upState',
           payload: {
             batch: data[0],
-            type: types[0],
+            type,
             batchId,
             typeId,
+            isRoot,
           },
         });
       }
     },
     *fetch({ payload }, { put, call, select }) {
-      const { from, to, bindStatus, batchId } = yield select(({ qrList }) => qrList);
+      const { from, to, bindStatus, batchId, range, institutionId } = yield select(
+        ({ qrList }) => qrList,
+      );
       const params = {};
-      if(batchId) {
-        params.batchId = batchId
+      if (batchId) {
+        params.batchId = batchId;
       }
       if (from) {
         params.from = from;
       }
       if (to) {
         params.to = to;
+      }
+      if (institutionId) {
+        params.institutionId = institutionId;
+      }
+      if (range) {
+        params.fromTime = moment(range[0]).format('YYYY-MM-DD HH:mm:ss');
+        params.toTime = moment(range[1]).format('YYYY-MM-DD HH:mm:ss');
       }
       if (bindStatus) {
         switch (bindStatus) {
@@ -110,12 +186,39 @@ export default {
           }
         }
       }
-      const { data } = yield call(getQrs, { ...PAGE_DEF, ...params, ...payload });
+      if (payload === 'exportCsv') {
+        const { data } = yield call(exportCSV, params);
+        if (data && data.url) {
+          window.location.href = `${getApiPreFix()}${data.url}`;
+        }
+      } else {
+        const { data } = yield call(getQrs, { ...PAGE_DEF, ...params, ...payload });
+        yield put({
+          type: 'upState',
+          payload: data,
+        });
+      }
+    },
+    *fetchInst({ payload }, { put, select, call }) {
+      const { userType, institutionId: id } = yield select(({ app }) => app.user);
+      let data;
+      if (userType === 3) {
+        // 机构管理员查子机构
+        const res = yield call(getInstitutionsForInstAdminWhitoutPage, { ...payload, id });
+        data = res.data;
+      } else if (userType === 1) {
+        // 平台管理员查全部
+        const res = yield call(getInstitutionsWhitoutPage, payload);
+        data = res.data;
+      }
       yield put({
         type: 'upState',
-        payload: data,
+        payload: {
+          institutions: data,
+        },
       });
     },
+    *fetchChange({ payload }, { put }) {},
     *clearQr({ id }, { call, put, select }) {
       const params = {
         id,
@@ -130,7 +233,6 @@ export default {
         message.success('重置成功!');
         const list = yield select(({ qrList }) => _.cloneDeep(qrList.data));
         const target = _.find(list, ['id', data.id]);
-        console.log(target);
         target.custom = {};
         target.salesman = {};
         target.fields = null;
@@ -138,25 +240,25 @@ export default {
         target.salesmanId = null;
         target.userBindTime = null;
         target.userId = null;
-
         yield put({
           type: 'upState',
           payload: { data: list },
         });
       }
     },
-    *reset(p, { put }) {
-      yield put({
-        type: 'upState',
-        payload: {
-          from: undefined,
-          to: undefined,
-          bindStatus: undefined,
-        },
-      });
-      yield put({
-        type: 'fetch',
-      });
+    *reset(p, { put, select }) {
+      const { batchId } = yield select(({ qrList }) => qrList);
+      const { user } = yield select(({ app }) => app);
+      if (batchId) {
+        yield put({
+          type: 'fatch',
+          id: batchId,
+        });
+      } else {
+        yield put({
+          type: 'init4son',
+        });
+      }
     },
   },
   reducers: {

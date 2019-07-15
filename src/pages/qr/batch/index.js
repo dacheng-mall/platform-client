@@ -39,7 +39,9 @@ class QrBatch extends PureComponent {
       title: '数量',
       dataIndex: 'total',
       render: (t, r) => {
-        if (r.status < 2) {
+        const { userType } = this.props.user;
+        // 机构管理员不能追加码
+        if (r.status < 2 || userType === 3) {
           return t;
         }
         return (
@@ -366,6 +368,10 @@ class QrBatch extends PureComponent {
       description: '',
       status: 1,
     };
+    // 在这里判断用户身份, 决定显示什么表头
+    if(this.props.user.userType === 3) {
+      this.columns.splice(4, 4)
+    }
     return (
       <Fragment>
         <div className={styles.tableToolBar}>
@@ -479,7 +485,7 @@ class QrBatch extends PureComponent {
     );
   }
 }
-function mapStateToProps({ qrBatch }) {
-  return qrBatch;
+function mapStateToProps({ qrBatch, app: { user } }) {
+  return { ...qrBatch, user };
 }
 export default connect(mapStateToProps)(QrBatch);
