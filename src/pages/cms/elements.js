@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
-import { Table, Button, Switch, Divider, Modal } from 'antd';
+import { Button, Switch, Divider, Modal } from 'antd';
 import { connect } from 'dva';
 import { jump } from '../../utils';
+import { TableX } from '../../utils/ui';
 
 class CmsElements extends PureComponent {
   columns = [
@@ -105,7 +106,14 @@ class CmsElements extends PureComponent {
         <Button icon="plus" type="primary" onClick={this.edit.bind(null, null)}>
           新建素材
         </Button>
-        <Table
+        <TableX
+          columns={this.columns}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="elements/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           size="small"
           columns={this.columns}
@@ -122,7 +130,7 @@ class CmsElements extends PureComponent {
               })
             }
           }}
-        />
+        /> */}
       </div>
     );
   }

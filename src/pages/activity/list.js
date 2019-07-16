@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Table, Input, Button, Icon, Switch, Divider } from 'antd';
+import { Input, Button, Icon, Switch, Divider } from 'antd';
 import styles from './styles.less';
 import { jump } from '../../utils';
+import { TableX } from '../../utils/ui';
 
 function ActivityList(props) {
   const edit = (id) => {
@@ -157,7 +158,14 @@ function ActivityList(props) {
           </div>
         </div>
       </div>
-      <Table
+      <TableX
+        columns={columns()}
+        dataSource={props.data || []}
+        pagination={props.pagination}
+        fetchType="activities/fetch"
+        dispatch={props.dispatch}
+      />
+      {/* <Table
         rowKey="id"
         columns={columns()}
         dataSource={props.data || []}
@@ -173,7 +181,7 @@ function ActivityList(props) {
             });
           },
         }}
-      />
+      /> */}
     </Fragment>
   );
 }

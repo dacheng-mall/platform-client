@@ -1,7 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Table, Button, Select, Modal, Input, Form } from 'antd';
+import { Button, Select, Input, Form } from 'antd';
+import { TableX } from "../../utils/ui";
 import styles from './styles.less';
 
 class Team extends PureComponent {
@@ -15,8 +16,11 @@ class Team extends PureComponent {
         key: 'avatar',
         title: '头像',
         dataIndex: 'avatar',
-        render: (t, r) => {
-          return <img style={{ width: '48px' }} src={t} alt={r.name} />;
+        render: (t) => {
+          if (t) {
+            return <img style={{ width: '48px' }} src={t} />;
+          }
+          return <div className="nonAvatar" />;
         },
       },
       {
@@ -116,7 +120,8 @@ class Team extends PureComponent {
             <Select
               value={this.props.gradeId}
               placeholder="请选择职级"
-              formTitle    style={{ width: 180, marginRight: '10px' }}
+              formTitle
+              style={{ width: 180, marginRight: '10px' }}
               onChange={this.changeGrade}
               notFoundContent={null}
             >
@@ -162,7 +167,14 @@ class Team extends PureComponent {
             <Button onClick={this.reset}>重置</Button>
           </div>
         </div>
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="activityTeam/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -178,7 +190,7 @@ class Team extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
       </Fragment>
     );
   }

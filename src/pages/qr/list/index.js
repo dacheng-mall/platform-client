@@ -3,7 +3,6 @@ import moment from 'moment';
 import { connect } from 'dva';
 import _ from 'lodash';
 import {
-  Table,
   Button,
   Alert,
   Select,
@@ -17,7 +16,7 @@ import {
   Row,
 } from 'antd';
 import { goBack } from '../../../utils';
-import { FormItem } from '../../../utils/ui';
+import { FormItem, TableX } from '../../../utils/ui';
 // import styles from '../index.less';
 import styles from './styles.less';
 import BatchInfo from './batchInfo';
@@ -355,7 +354,14 @@ class QrList extends PureComponent {
             />
           </div>
         ) : null}
-        <Table
+        <TableX
+          columns={this.columns}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="qrList/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns}
           dataSource={this.props.data || []}
@@ -371,7 +377,7 @@ class QrList extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
       </Fragment>
     );
   }

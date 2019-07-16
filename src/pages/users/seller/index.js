@@ -1,7 +1,9 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
+import moment from "moment";
 import _ from 'lodash';
-import { Table, Button, Switch, Modal } from 'antd';
+import { Button, Switch, Modal } from 'antd';
+import { TableX } from '../../../utils/ui';
 class Seller extends PureComponent {
   state = {
     show: false,
@@ -13,14 +15,23 @@ class Seller extends PureComponent {
         key: 'avatar',
         title: '头像',
         dataIndex: 'avatar',
-        render: (t, r) => {
-          return <img style={{ width: '48px' }} src={t} alt={r.name} />;
+        render: (t) => {
+          if (t) {
+            return <img style={{ width: '48px' }} src={t} />;
+          }
+          return <div className="nonAvatar" />;
         },
       },
       {
         key: 'name',
         title: '姓名',
         dataIndex: 'name',
+      },
+      {
+        key: 'createTime',
+        title: '注册日期',
+        dataIndex: 'createTime',
+        render: (t) => moment(t).format('YYYY-MM-DD HH:mm:ss')
       },
       {
         key: 'institution',
@@ -121,7 +132,14 @@ class Seller extends PureComponent {
           />
           <Button onClick={this.reset}>重置</Button>
         </div> */}
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="seller/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -137,7 +155,7 @@ class Seller extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
       </Fragment>
     );
   }

@@ -1,4 +1,4 @@
-import { Form } from 'antd';
+import { Form, Table } from 'antd';
 import _ from 'lodash';
 const createFormField = Form.createFormField;
 export const DEFAULT_FORM_COL = {
@@ -42,7 +42,7 @@ export const checkMobile = (rule, value, callback) => {
 };
 
 export const FormItem = (props) => {
-  if(props.isTail) {
+  if (props.isTail) {
     return <Form.Item {...props} {...tailFormItemLayout} />;
   }
   return <Form.Item {...props} {...DEFAULT_FORM_COL} />;
@@ -55,7 +55,7 @@ export const mapPropsToFields = (props) => {
   const res = {};
   _.forEach(props[EDITOR], (value, key) => {
     switch (key) {
-      case 'status': 
+      case 'status':
       case 'bindSalesman': {
         res[key] = createFormField({
           value: value === 1 || value ? true : false,
@@ -79,7 +79,6 @@ export const mapPropsToFields = (props) => {
   return res;
 };
 export const onFieldsChange = (ns) => (props, field, fields) => {
-
   // const [key, val] = Object.entries(field)[0];
   // switch (key) {
   //   case 'status': {
@@ -133,7 +132,7 @@ export const initEditor = (values) => {
   return values;
 };
 export const parseEditor = (values) => {
-  const _values = {}
+  const _values = {};
   _.forEach(values, (value, key) => {
     switch (key) {
       case 'status': {
@@ -145,10 +144,41 @@ export const parseEditor = (values) => {
         break;
       }
       default: {
-        _values[key] = value
+        _values[key] = value;
         break;
       }
     }
   });
   return _values;
+};
+
+export const TableX = (props) => {
+  const originPageSize = props.pagination.pageSize;
+  return (
+    <Table
+      rowKey={props.rowKey || 'id'}
+      columns={props.columns}
+      dataSource={props.dataSource || []}
+      locale={{ emptyText: '暂无数据' }}
+      pagination={{
+        pageSize: props.pagination.pageSize,
+        total: props.pagination.total,
+        showTotal: (total, range) => `当前${range[0]}-${range[1]}, 共 ${total} 项`,
+        showSizeChanger: true,
+        onShowSizeChange: (page, pageSize) => {
+          props.dispatch({
+            type: props.fetchType,
+            payload: { page, pageSize },
+          });
+        },
+        current: props.pagination.page,
+        onChange: (page, pageSize) => {
+          props.dispatch({
+            type: props.fetchType,
+            payload: { page, pageSize },
+          });
+        },
+      }}
+    />
+  );
 };

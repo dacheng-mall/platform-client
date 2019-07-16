@@ -15,7 +15,8 @@ import {
   Checkbox,
   Divider,
 } from 'antd';
-import { FormItem, mapPropsToFields } from '../../../utils/ui';
+import { FormItem, mapPropsToFields, TableX } from '../../../utils/ui';
+
 class Admin extends PureComponent {
   state = {
     show: false,
@@ -129,8 +130,8 @@ class Admin extends PureComponent {
     });
   };
   showModal = (data) => {
-    let _data = data
-    if(data && !_.isEmpty(data)) {
+    let _data = data;
+    if (data && !_.isEmpty(data)) {
       _data = _.cloneDeep(_data);
       console.log(data);
       delete _data.createTime;
@@ -176,8 +177,14 @@ class Admin extends PureComponent {
           <Icon type="plus" />
           添加管理员
         </Button>
-        <br />
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="admin/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -193,7 +200,7 @@ class Admin extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
         <Modal
           visible={this.props.editor !== null}
           title={isNew ? '新建' : '编辑'}

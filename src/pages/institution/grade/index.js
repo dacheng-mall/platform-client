@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { Table, Button, Switch, Modal, Icon, Input, Divider } from 'antd';
 import Editor from './editor';
 import styles from './styles.less';
+import { TableX } from "../../../utils/ui";
 
 class Grade extends PureComponent {
   state = {
@@ -157,7 +158,14 @@ class Grade extends PureComponent {
             <Button onClick={this.reset}>重置</Button>
           </div>
         </div>
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="grade/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -173,7 +181,7 @@ class Grade extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
         <Editor editor={this.props.editor} />
       </div>
     );

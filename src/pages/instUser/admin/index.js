@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Switch, Input } from 'antd';
+import { Button, Input } from 'antd';
 import styles from './styles.less';
+import { TableX } from '../../../utils/ui';
+
 class InstAdmin extends PureComponent {
   state = {
     show: false,
@@ -81,7 +83,14 @@ class InstAdmin extends PureComponent {
           />
           <Button onClick={this.reset}>重置</Button>
         </div>
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="admin/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -97,7 +106,7 @@ class InstAdmin extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
       </div>
     );
   }

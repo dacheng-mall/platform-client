@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Table, Button, Switch, Divider, Modal } from 'antd';
+import { Button, Switch, Divider, Modal } from 'antd';
 import { connect } from 'dva';
 import { jump } from '../../utils';
+import { TableX } from '../../utils/ui';
 
 class CmsHome extends PureComponent {
   columns = [
@@ -102,7 +103,14 @@ class CmsHome extends PureComponent {
         <Button icon="plus" type="primary" onClick={this.edit.bind(null, null)}>
           新建页面
         </Button>
-        <Table
+        <TableX
+          columns={this.columns}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="pages/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           size="small"
           columns={this.columns}
@@ -120,7 +128,7 @@ class CmsHome extends PureComponent {
             }
           }}
 
-        />
+        /> */}
       </div>
     );
   }

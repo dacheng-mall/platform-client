@@ -1,9 +1,10 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Table, Button, Modal, Icon, Input, Divider, InputNumber, message, Popconfirm } from 'antd';
+import { Button, Modal, Icon, Input, Divider, InputNumber, message, Popconfirm } from 'antd';
 import Editor from './editor';
 import { jump } from '../../../utils';
+import { TableX } from "../../../utils/ui";
 import styles from '../index.less';
 import { getApiPreFix } from '../../../utils/request';
 
@@ -390,7 +391,14 @@ class QrBatch extends PureComponent {
             <Button onClick={this.reset}>重置</Button>
           </div>
         </div>
-        <Table
+        <TableX
+          columns={this.columns}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="qrBatch/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns}
           dataSource={this.props.data || []}
@@ -406,7 +414,7 @@ class QrBatch extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
         <Editor editor={this.props.editor} />
         <Modal
           visible={!!this.state.plus}

@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Switch, Button, Divider, Modal } from 'antd';
+import { Switch, Button, Divider, Modal } from 'antd';
 import { jump } from '../../utils';
+import { TableX } from '../../utils/ui';
 import styles from './list.less';
 
 const source = window.config.source;
@@ -116,7 +117,14 @@ class List extends PureComponent {
         {showAddBtn ? <Button type="primary" onClick={this.edit.bind(null, false)} icon="plus">
           添加商品
         </Button> : null}
-        <Table
+        <TableX
+          columns={this.columns}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="products/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           size="small"
           columns={this.columns}
@@ -133,7 +141,7 @@ class List extends PureComponent {
               })
             }
           }}
-        />
+        /> */}
       </div>
     );
   }

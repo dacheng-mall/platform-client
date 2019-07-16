@@ -1,8 +1,9 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Table, Button, Switch, Select, Modal, Input, Form } from 'antd';
+import { Button, Switch, Select, Modal, Input, Form } from 'antd';
 import styles from './styles.less';
+import { TableX } from '../../../utils/ui';
 class Seller extends PureComponent {
   state = {
     show: false,
@@ -207,7 +208,14 @@ class Seller extends PureComponent {
           </Button>
           <Button onClick={this.reset}>重置</Button>
         </div>
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="instSeller/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -223,7 +231,7 @@ class Seller extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
       </Fragment>
     );
   }

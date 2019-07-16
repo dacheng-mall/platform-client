@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Table, Button, Switch, Modal, Icon, Input, Divider } from 'antd';
+import { Button, Switch, Modal, Icon, Input, Divider } from 'antd';
 import Editor from './editor';
 import styles from './styles.less';
+import { TableX } from "../../../utils/ui";
 
 class InstAdmin extends PureComponent {
   state = {
@@ -157,7 +158,14 @@ class InstAdmin extends PureComponent {
             <Button onClick={this.reset}>重置</Button>
           </div>
         </div>
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="instAdmin/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -173,7 +181,7 @@ class InstAdmin extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
         <Editor editor={this.props.editor} />
       </div>
     );

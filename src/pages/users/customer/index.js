@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Button, Switch, Modal } from 'antd';
+import moment from 'moment';
+import { Button, Switch, Modal } from 'antd';
+import { TableX } from '../../../utils/ui';
+
 class Customer extends PureComponent {
   state = {
     show: false,
@@ -13,13 +16,22 @@ class Customer extends PureComponent {
         title: '头像',
         dataIndex: 'avatar',
         render: (t) => {
-          return <img style={{ width: '48px' }} src={t} />;
+          if (t) {
+            return <img style={{ width: '48px' }} src={t} />;
+          }
+          return <div className="nonAvatar" />;
         },
       },
       {
         key: 'name',
         title: '姓名',
         dataIndex: 'name',
+      },
+      {
+        key: 'createTime',
+        title: '注册日期',
+        dataIndex: 'createTime',
+        render: (t) => moment(t).format('YYYY-MM-DD HH:mm:ss'),
       },
       {
         key: 'status',
@@ -72,7 +84,15 @@ class Customer extends PureComponent {
   render() {
     return (
       <div>
-        <Table
+        <TableX
+          columns={this.columns()}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="customer/fetch"
+          dispatch={this.props.dispatch}
+        />
+
+        {/* <Table
           rowKey="id"
           columns={this.columns()}
           dataSource={this.props.data || []}
@@ -88,7 +108,7 @@ class Customer extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
       </div>
     );
   }

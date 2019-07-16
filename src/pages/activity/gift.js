@@ -2,7 +2,8 @@ import React, { Fragment, useState } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
 import moment from 'moment';
-import { Table, Button, Modal, Select } from 'antd';
+import { Button, Modal, Select } from 'antd';
+import { TableX } from '../../utils/ui';
 import styles from './styles.less';
 
 const source = window.config.source;
@@ -156,13 +157,21 @@ function Gift(props) {
           <Button onClick={reFetch} type="primary" style={{ marginRight: '10px' }}>
             查询
           </Button>
-            <Button onClick={exportCSV} type="danger" style={{ marginRight: '10px' }}>
-              导出数据
-            </Button>
+          <Button onClick={exportCSV} type="danger" style={{ marginRight: '10px' }}>
+            导出数据
+          </Button>
           <Button onClick={reset}>重置</Button>
         </div>
       </div>
-      <Table
+
+      <TableX
+        columns={columns()}
+        dataSource={props.data || []}
+        pagination={props.pagination}
+        fetchType="activityGift/fetch"
+        dispatch={props.dispatch}
+      />
+      {/* <Table
         rowKey="id"
         columns={columns()}
         dataSource={props.data || []}
@@ -178,7 +187,7 @@ function Gift(props) {
             });
           },
         }}
-      />
+      /> */}
     </Fragment>
   );
 }

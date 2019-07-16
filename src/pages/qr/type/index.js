@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { Table, Button, Switch, Modal, Icon, Input, Divider } from 'antd';
 import Editor from './editor';
 import styles from '../index.less';
+import { TableX } from '../../../utils/ui';
 
 class QrType extends PureComponent {
   columns = [
@@ -22,14 +23,14 @@ class QrType extends PureComponent {
       title: '采集信息',
       dataIndex: 'fields',
       render: (t, { id }) => {
-        if(t){
+        if (t) {
           return _.map(JSON.parse(t), (item, i) => (
             <div key={`${id}_${item.code}`}>
               {item.label}-{item.help}-{item.required ? '必填' : '选填'}
             </div>
           ));
         }
-        return '--'
+        return '--';
       },
     },
     {
@@ -104,7 +105,7 @@ class QrType extends PureComponent {
       fields: fields ? JSON.parse(fields) : [],
       status,
       bindSalesman,
-      template
+      template,
     });
   };
   render() {
@@ -132,7 +133,14 @@ class QrType extends PureComponent {
             <Button onClick={this.reset}>重置</Button>
           </div>
         </div>
-        <Table
+        <TableX
+          columns={this.columns}
+          dataSource={this.props.data || []}
+          pagination={this.props.pagination}
+          fetchType="qrType/fetch"
+          dispatch={this.props.dispatch}
+        />
+        {/* <Table
           rowKey="id"
           columns={this.columns}
           dataSource={this.props.data || []}
@@ -148,7 +156,7 @@ class QrType extends PureComponent {
               });
             },
           }}
-        />
+        /> */}
         <Editor editor={this.props.editor} />
       </Fragment>
     );
