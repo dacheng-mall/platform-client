@@ -142,7 +142,7 @@ export const menu = () => {
         {
           name: '码批次管理',
           path: 'batch',
-          authority: instAdmin,
+          authority: all,
         },
         {
           name: '码管理',

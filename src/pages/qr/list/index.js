@@ -24,6 +24,11 @@ import BatchInfo from './batchInfo';
 const { RangePicker } = DatePicker;
 
 class QrList extends PureComponent {
+  componentWillUnmount() {
+    this.props.dispatch({
+      type: 'clear',
+    });
+  }
   columns = [
     {
       key: 'autoId',
@@ -177,6 +182,15 @@ class QrList extends PureComponent {
       },
     });
   };
+  changeGetRange = (value) => {
+    console.log(value);
+    this.props.dispatch({
+      type: 'qrList/upState',
+      payload: {
+        getRange: value,
+      },
+    });
+  };
   typeChange = (value) => {
     console.log(value);
     this.props.dispatch({
@@ -223,12 +237,7 @@ class QrList extends PureComponent {
             ) : null}
           </div>
           <div>
-            <Button
-              className={styles.moBtn}
-              onClick={this.exportCsv}
-              icon="download"
-              type="danger"
-            >
+            <Button className={styles.moBtn} onClick={this.exportCsv} icon="download" type="danger">
               导出EXCEL
             </Button>
             <Button className={styles.moBtn} onClick={this.search} icon="search" type="primary">
@@ -247,6 +256,15 @@ class QrList extends PureComponent {
                   style={{ width: '260px' }}
                   onChange={this.changeRange}
                   value={this.props.range}
+                />
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="领取时间段">
+                <RangePicker
+                  style={{ width: '260px' }}
+                  onChange={this.changeGetRange}
+                  value={this.props.getRange}
                 />
               </FormItem>
             </Col>
@@ -287,22 +305,24 @@ class QrList extends PureComponent {
                 </FormItem>
               </Col>
             ) : null}
-            <Col span={8}>
-              <FormItem className={styles.formItem} label="码类型">
-                <Select
-                  placeholder="请选择码类型"
-                  onChange={this.typeChange}
-                  allowClear
-                  style={{ width: '260px' }}
-                >
-                  {_.map(this.props.types, (type, i) => (
-                    <Select.Option value={type.id} key={type.id}>
-                      {type.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </FormItem>
-            </Col>
+            {!this.props.isRoot || !this.props.batchId ? (
+              <Col span={8}>
+                <FormItem className={styles.formItem} label="码类型">
+                  <Select
+                    placeholder="请选择码类型"
+                    onChange={this.typeChange}
+                    allowClear
+                    style={{ width: '260px' }}
+                  >
+                    {_.map(this.props.types, (type, i) => (
+                      <Select.Option value={type.id} key={type.id}>
+                        {type.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </FormItem>
+              </Col>
+            ) : null}
             <Col span={8}>
               <FormItem className={styles.formItem} label="机构">
                 <Select

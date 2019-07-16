@@ -56,6 +56,9 @@ export default {
   effects: {
     *init({ id }, { put, all }) {
       yield put({
+        type: 'clear',
+      });
+      yield put({
         type: 'upState',
         payload: {
           from: undefined,
@@ -66,6 +69,7 @@ export default {
           imgPrefix: getApiPreFix(),
           batchId: id,
           range: undefined,
+          isRoot: false,
         },
       });
       yield all([
@@ -79,8 +83,11 @@ export default {
         }),
       ]);
     },
-    *init4son(p, { put, select }) {
+    *init4son(p, { put, select, all }) {
       const { user } = yield select(({ app }) => app);
+      yield put({
+        type: 'clear',
+      });
       yield put({
         type: 'upState',
         payload: {
@@ -93,10 +100,26 @@ export default {
           imgPrefix: getApiPreFix(),
           batchId: undefined,
           range: undefined,
+          isRoot: false,
         },
       });
+      yield all([
+        put({
+          type: 'fetchInit2',
+        }),
+        put({
+          type: 'fetch',
+        }),
+      ]);
+    },
+    *fetchInit2(p, { call, put }) {
+      const { data: types } = yield call(getTypesWhitoutPage, { status: 1, bindSalesman: 1 });
       yield put({
-        type: 'fetch',
+        type: 'upState',
+        payload: {
+          types,
+          isRoot: false,
+        },
       });
     },
     *fetchInitData({ batchId }, { call, put, select }) {
@@ -112,39 +135,22 @@ export default {
         if (user.institutionId === data[0].institutionId || user.userType === 1) {
           isRoot = true;
         }
-        if (!_types || now - timestamp > 7200000) {
-          const { data: types } = yield call(getTypesWhitoutPage, { status: 1 });
-          const type = _.find(types, ['id', typeId]);
-
-          yield put({
-            type: 'upState',
-            payload: {
-              batch: data[0],
-              type,
-              types,
-              batchId,
-              typeId,
-              timestamp: now,
-              isRoot,
-            },
-          });
-          return;
-        }
-        const type = _.find(_types, ['id', typeId]);
+        const { data: types } = yield call(getTypesWhitoutPage, { id: typeId });
         yield put({
           type: 'upState',
           payload: {
             batch: data[0],
-            type,
+            type: types[0],
             batchId,
             typeId,
+            timestamp: now,
             isRoot,
           },
         });
       }
     },
     *fetch({ payload }, { put, call, select }) {
-      const { from, to, bindStatus, batchId, range, institutionId } = yield select(
+      const { from, to, bindStatus, batchId, range, institutionId, getRange } = yield select(
         ({ qrList }) => qrList,
       );
       const params = {};
@@ -160,9 +166,13 @@ export default {
       if (institutionId) {
         params.institutionId = institutionId;
       }
-      if (range) {
-        params.fromTime = moment(range[0]).format('YYYY-MM-DD HH:mm:ss');
-        params.toTime = moment(range[1]).format('YYYY-MM-DD HH:mm:ss');
+      if (range && range.length > 0) {
+        params.fromTime = moment(range[0]).format('YYYY-MM-DD 00:00:00');
+        params.toTime = moment(range[1]).format('YYYY-MM-DD 23:59:59');
+      }
+      if (getRange && getRange.length > 0) {
+        params.fromGet = moment(getRange[0]).format('YYYY-MM-DD 00:00:00');
+        params.toGet = moment(getRange[1]).format('YYYY-MM-DD 23:59:59');
       }
       if (bindStatus) {
         switch (bindStatus) {
@@ -218,7 +228,6 @@ export default {
         },
       });
     },
-    *fetchChange({ payload }, { put }) {},
     *clearQr({ id }, { call, put, select }) {
       const params = {
         id,
@@ -245,6 +254,22 @@ export default {
           payload: { data: list },
         });
       }
+    },
+    *clear(p, { put }) {
+      yield put({
+        type: 'upState',
+        payload: {
+          from: undefined,
+          to: undefined,
+          institutionId: undefined,
+          bindStatus: undefined,
+          typeId: undefined,
+          batchId: undefined,
+          range: undefined,
+          getRange: undefined,
+          isRoot: false,
+        },
+      });
     },
     *reset(p, { put, select }) {
       const { batchId } = yield select(({ qrList }) => qrList);
