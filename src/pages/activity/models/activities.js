@@ -13,7 +13,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        if (pathname === '/activities') {
+        if (pathname === '/activities/list') {
           dispatch({ type: 'init', payload: { ...PAGE_DEF } });
         }
         if (pathname === '/instActivity') {

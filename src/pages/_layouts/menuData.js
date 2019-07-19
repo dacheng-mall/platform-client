@@ -126,8 +126,20 @@ export const menu = () => {
     },
     {
       name: '活动管理',
-      path: 'activities',
       authority: admin,
+      path: 'activities',
+      children: [
+        {
+          name: '活动类型',
+          path: 'type',
+          authority: admin,
+        },
+        {
+          name: '活动列表',
+          path: 'list',
+          authority: admin,
+        },
+      ]
     },
     {
       name: '二维码管理',

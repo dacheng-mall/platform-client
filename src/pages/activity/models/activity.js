@@ -2,7 +2,14 @@ import ptrx from 'path-to-regexp';
 import _ from 'lodash';
 import moment from 'moment';
 import { message } from 'antd';
-import { findInst, createActivity, findGradesByInsId, find, update } from '../services/activity';
+import {
+  findInst,
+  createActivity,
+  findGradesByInsId,
+  find,
+  update,
+  findTypes,
+} from '../services/activity';
 import { fieldsChange } from '../../../utils/ui';
 import { upload } from '../../../utils';
 
@@ -39,6 +46,9 @@ export default {
   effects: {
     *newActivity(p, { put }) {
       yield put({
+        type: 'fetchTypes',
+      });
+      yield put({
         type: 'upState',
         payload: {
           editor: INIT_EDITOR,
@@ -46,11 +56,21 @@ export default {
         },
       });
     },
-    *fetch({ id }, { call, put, select }) {
+    *fetch({ id }, { call, put }) {
+      yield put({
+        type: 'fetchTypes',
+      });
       const {
         data: [data],
       } = yield call(find, { id });
-      console.log('data', data)
+      console.log('data', data);
+
+      try {
+        data.description = JSON.parse(data.description);
+        console.log('', data.description);
+      } catch (e) {
+        console.log(e);
+      }
       if (data) {
         const { institution, production, ...editor } = data;
         // 回填职级
@@ -94,6 +114,22 @@ export default {
         ];
       }
     },
+    *fetchTypes(p, { call, put, select }) {
+      const { types, typeTimestamp } = yield select(({ activity }) => activity);
+      const now = new Date().valueOf();
+      if (!types || now - typeTimestamp > 3600000) {
+        const { data } = yield call(findTypes);
+        if (data) {
+          yield put({
+            type: 'upState',
+            payload: {
+              types: data,
+              typeTimestamp: now,
+            },
+          });
+        }
+      }
+    },
     *searchInst({ payload }, { call, put }) {
       const { data } = yield call(findInst, payload);
       yield put({
@@ -124,14 +160,12 @@ export default {
       const { editor: values } = yield select(({ activity }) => activity);
       // 处理图片
       const todos = {};
-      let hasModifyImage = false;
       _.forEach(values.images, (img, i) => {
         if (img && img.originFileObj) {
           todos[`images[${i}].url`] = upload(img.originFileObj);
           values.images[i] = {
             url: '',
           };
-          hasModifyImage = true;
         } else {
           values.images[i].url = values.images[i]._url;
           delete values.images[i]._url;
@@ -140,7 +174,17 @@ export default {
         values.images[i].displayOrder = i;
         values.images[i].isMain = i === 0;
       });
-      if (hasModifyImage) {
+      console.log('------', values.description);
+      _.forEach(values.description, (val, i) => {
+        if (val.type === 'image') {
+          if (val.value.originFileObj) {
+            todos[`description[${i}].value`] = upload(val.value.originFileObj);
+          }
+        }
+      });
+      console.log('todos', todos);
+      console.log('values', values);
+      if (!_.isEmpty(todos)) {
         const ups = Object.values(todos);
         const paths = Object.keys(todos);
         if (ups.length > 0) {
@@ -152,7 +196,6 @@ export default {
       } else {
         delete values.images;
       }
-      values.activityType = 'at_gift';
       // 处理时间区间
       const [dateStart, dateEnd] = values.range;
       values.dateStart = dateStart.format('YYYY-MM-DD HH:mm:ss');
@@ -170,6 +213,7 @@ export default {
         delete product.id;
         delete product.status;
       });
+      values.description = JSON.stringify(values.description);
       if (values.id) {
         delete values.createTime;
         delete values.customCount;

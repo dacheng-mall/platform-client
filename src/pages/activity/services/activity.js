@@ -23,3 +23,6 @@ export const find = (query) => {
 export const getInstWithoutPage = (query) => {
   return get(`v1/api/sys/institution`, query);
 };
+export const findTypes = (query) => {
+  return get(`v1/api/sys/activityType`, query);
+};

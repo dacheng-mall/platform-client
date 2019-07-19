@@ -1,7 +1,11 @@
 module.exports = [
   {
-    path: '/activities',
+    path: '/activities/list',
     component: 'activity/list',
+  },
+  {
+    path: '/activities/type',
+    component: 'activity/type',
   },
   {
     path: '/instActivity',
