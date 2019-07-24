@@ -18,3 +18,9 @@ export const removeAdmin = (id) => {
 export const getInstWithoutPage = (query) => {
   return get(`v1/api/sys/institution`, query);
 };
+export const getInstitutionsWhitoutPage = (params) => {
+  return get(`v1/api/sys/institution`, params);
+};
+export const getInstitutionsForInstAdminWhitoutPage = (params) => {
+  return get(`v1/api/sys/institution/getAllLevelSonObjsByQuery`, params);
+};

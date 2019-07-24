@@ -1,8 +1,23 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { getAdmins, updateAdmin, removeAdmin, getInstWithoutPage } from '../services';
+import moment from 'moment';
+import {
+  getAdmins,
+  updateAdmin,
+  removeAdmin,
+  getInstWithoutPage,
+  getInstitutionsWhitoutPage,
+  getInstitutionsForInstAdminWhitoutPage,
+} from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
+const DEF_QUERY = {
+  range: undefined,
+  name: undefined,
+  code: undefined,
+  mobile: undefined,
+  institutionId: undefined,
+};
 
 export default {
   namespace: 'seller',
@@ -12,6 +27,7 @@ export default {
     editor: null,
     errors: {},
     inst: [],
+    ...DEF_QUERY,
   },
 
   subscriptions: {
@@ -31,8 +47,26 @@ export default {
         payload,
       });
     },
-    *fetch({ payload }, { put, call }) {
-      const { data } = yield call(getAdmins, { ...PAGE_DEF, ...payload, userType: 4 });
+    *fetch(p, { put, call, select }) {
+      const { range, institutionId, name, code, mobile } = yield select(({ seller }) => seller);
+      const params = {};
+      if (range && range.length > 0) {
+        params.from = moment(range[0]).format('YYYY-MM-DD 00:00:00');
+        params.to = moment(range[1]).format('YYYY-MM-DD 23:59:59');
+      }
+      if (institutionId) {
+        params.institutionId = institutionId;
+      }
+      if (name) {
+        params.name = name;
+      }
+      if (code) {
+        params.code = code;
+      }
+      if (mobile) {
+        params.mobile = mobile;
+      }
+      const { data } = yield call(getAdmins, { ...PAGE_DEF, ...params, userType: 4 });
       yield put({
         type: 'upState',
         payload: data,
@@ -79,6 +113,25 @@ export default {
       });
       yield put({
         type: 'fetch',
+      });
+    },
+    *fetchInst({ payload }, { put, select, call }) {
+      const { userType, institutionId: id } = yield select(({ app }) => app.user);
+      let data;
+      if (userType === 3) {
+        // 机构管理员查子机构
+        const res = yield call(getInstitutionsForInstAdminWhitoutPage, { ...payload, id });
+        data = res.data;
+      } else if (userType === 1) {
+        // 平台管理员查全部
+        const res = yield call(getInstitutionsWhitoutPage, payload);
+        data = res.data;
+      }
+      yield put({
+        type: 'upState',
+        payload: {
+          institutions: data,
+        },
       });
     },
     *searchInst({ payload }, { call, put }) {

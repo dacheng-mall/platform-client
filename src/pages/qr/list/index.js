@@ -361,23 +361,6 @@ class QrList extends PureComponent {
           fetchType="qrList/fetch"
           dispatch={this.props.dispatch}
         />
-        {/* <Table
-          rowKey="id"
-          columns={this.columns}
-          dataSource={this.props.data || []}
-          locale={{ emptyText: '暂无数据' }}
-          pagination={{
-            pageSize: this.props.pagination.pageSize,
-            total: this.props.pagination.total,
-            current: this.props.pagination.page,
-            onChange: (page, pageSize) => {
-              this.props.dispatch({
-                type: 'qrList/fetch',
-                payload: { page, pageSize },
-              });
-            },
-          }}
-        /> */}
       </Fragment>
     );
   }

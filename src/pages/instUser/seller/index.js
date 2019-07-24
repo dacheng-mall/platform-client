@@ -15,8 +15,11 @@ class Seller extends PureComponent {
         key: 'avatar',
         title: '头像',
         dataIndex: 'avatar',
-        render: (t, r) => {
-          return <img style={{ width: '48px' }} src={t} alt={r.name} />;
+        render: (t) => {
+          if (t) {
+            return <img style={{ width: '48px' }} src={t} />;
+          }
+          return <div className="nonAvatar" />;
         },
       },
       {
