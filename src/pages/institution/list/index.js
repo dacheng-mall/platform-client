@@ -1,15 +1,17 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Switch, Modal, Icon, Input, Divider } from 'antd';
+import { Button, Switch, Modal, Icon, Input, Select, Divider, Row, Col } from 'antd';
+import { createInstQRCode } from './services';
 import Editor from './editor';
 import styles from './styles.less';
-import { TableX } from "../../../utils/ui";
+import { TableX, FormItem } from '../../../utils/ui';
 
 class Institution extends PureComponent {
   state = {
     show: false,
     shwoPassword: false,
+    creating: false,
   };
   columns = [
     {
@@ -74,6 +76,15 @@ class Institution extends PureComponent {
         return (
           <div>
             <Button
+              onClick={this.createQR.bind(null, r.autoId, r.name)}
+              disabled={this.state.creating}
+              size="small"
+              shape="circle"
+              title="生成注册二维码"
+              icon="qrcode"
+            />
+            <Divider type="vertical" />
+            <Button
               onClick={this.update.bind(null, r)}
               size="small"
               shape="circle"
@@ -94,6 +105,31 @@ class Institution extends PureComponent {
       align: 'right',
     },
   ];
+  createQR = async (autoId, name) => {
+    this.setState({
+      creating: true,
+    });
+    const { data } = await createInstQRCode({
+      page: 'pages/personal/bind/index',
+      scene: `?iaid=${autoId}`,
+      width: 1080,
+    });
+    if (data.length < 2000) {
+      this.setState({
+        creating: false,
+      });
+      return;
+    }
+    const base64 = `data:image/jpg;base64,${data}`;
+    let downloadBtn = document.createElement('a');
+    downloadBtn.href = base64;
+    downloadBtn.setAttribute('download', `${name}的注册海报码`);
+    downloadBtn.click();
+    downloadBtn = null;
+    this.setState({
+      creating: false,
+    });
+  };
   update = (r) => {
     const {
       id,
@@ -152,18 +188,28 @@ class Institution extends PureComponent {
       },
     });
   };
-  search = (value) => {
+  search = () => {
     this.props.dispatch({
-      type: 'institution/searchByKeywords',
-      payload: value,
+      type: 'institution/fetch',
     });
   };
   reset = () => {
     this.props.dispatch({
-      type: 'institution/searchByKeywords',
-      payload: '',
+      type: 'institution/reset',
     });
   };
+  // search = (value) => {
+  //   this.props.dispatch({
+  //     type: 'institution/searchByKeywords',
+  //     payload: value,
+  //   });
+  // };
+  // reset = () => {
+  //   this.props.dispatch({
+  //     type: 'institution/searchByKeywords',
+  //     payload: '',
+  //   });
+  // };
   change = (e) => {
     this.props.dispatch({
       type: 'institution/upState',
@@ -172,24 +218,79 @@ class Institution extends PureComponent {
       },
     });
   };
+  instChange = (value) => {
+    this.props.dispatch({
+      type: 'institution/upState',
+      payload: {
+        institutionId: value,
+      },
+    });
+  };
+  fetchInst = (value) => {
+    if (!_.trim(value)) {
+      return;
+    }
+    if (this.fetchTimer) {
+      clearTimeout(this.fetchTimer);
+    }
+    this.fetchTimer = setTimeout(() => {
+      this.props.dispatch({
+        type: 'institution/fetchInst',
+        payload: { name: value },
+      });
+    }, 300);
+  };
   render() {
     return (
       <Fragment>
-        <div className={styles.tableToolBar}>
+        <div className={styles.buttonWrap}>
           <Button onClick={this.showModal.bind(null, {})} type="primary">
             <Icon type="plus" />
             添加机构
           </Button>
-          <div className={styles.tableToolBar}>
-            <Input.Search
-              style={{ width: 320 }}
-              onSearch={this.search}
-              placeholder="请输入机构名称关键字查询"
-              onChange={this.change}
-              value={this.props.keywords}
-            />
-            <Button onClick={this.reset}>重置</Button>
+          <div>
+            <Button className={styles.moBtn} onClick={this.search} icon="search" type="primary">
+              查询
+            </Button>
+            <Button className={styles.moBtn} onClick={this.reset}>
+              重置
+            </Button>
           </div>
+        </div>
+        <div className={styles.tableToolBar}>
+          <Row>
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="父机构">
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="请选择机构,并查询其子机构"
+                  style={{ width: '260px' }}
+                  value={this.props.institutionId}
+                  showArrow={false}
+                  filterOption={false}
+                  onSearch={this.fetchInst}
+                  onChange={this.instChange}
+                >
+                  {_.map(this.props.institutions, (inst, i) => (
+                    <Select.Option value={inst.id} key={inst.id}>
+                      {inst.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              <FormItem className={styles.formItem} label="机构名称">
+                <Input
+                  style={{ width: 320 }}
+                  placeholder="请输入机构名称关键字查询"
+                  onChange={this.change}
+                  value={this.props.keywords}
+                />
+              </FormItem>
+            </Col>
+          </Row>
         </div>
         <TableX
           columns={this.columns}
@@ -198,23 +299,6 @@ class Institution extends PureComponent {
           fetchType="institution/fetch"
           dispatch={this.props.dispatch}
         />
-        {/* <Table
-          rowKey="id"
-          columns={this.columns}
-          dataSource={this.props.data || []}
-          locale={{ emptyText: '暂无数据' }}
-          pagination={{
-            pageSize: this.props.pagination.pageSize,
-            total: this.props.pagination.total,
-            current: this.props.pagination.page,
-            onChange: (page, pageSize) => {
-              this.props.dispatch({
-                type: 'institution/fetch',
-                payload: { page, pageSize },
-              });
-            },
-          }}
-        /> */}
         <Editor editor={this.props.editor} />
       </Fragment>
     );

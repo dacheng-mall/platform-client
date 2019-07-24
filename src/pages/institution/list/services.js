@@ -15,3 +15,12 @@ export const getInstWithoutPage = (query) => {
 export const removeInst = (id) => {
   return del(`v1/api/sys/institution/${id}`);
 };
+export const createInstQRCode = (params) => {
+  return post(`v1/api/wx/createWXAQRCode`, params);
+};
+export const getInstitutionsWhitoutPage = (params) => {
+  return get(`v1/api/sys/institution`, params);
+};
+export const getInstitutionsForInstAdminWhitoutPage = (params) => {
+  return get(`v1/api/sys/institution/getAllLevelSonObjsByQuery`, params);
+};

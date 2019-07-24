@@ -1,13 +1,21 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { getInst, removeInst, updateInst, createInst, getInstWithoutPage } from '../services';
+import {
+  getInst,
+  removeInst,
+  updateInst,
+  createInst,
+  getInstWithoutPage,
+  getInstitutionsForInstAdminWhitoutPage,
+  getInstitutionsWhitoutPage,
+} from '../services';
 import { fieldsChange } from '../../../../utils/ui';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 const INIT_EDITOR = {
   editor: null,
   errors: {},
-}
+};
 export default {
   namespace: 'institution',
   state: {
@@ -36,8 +44,19 @@ export default {
       });
     },
     *fetch({ payload }, { put, call, select }) {
-      const { keywords } = yield select(({ institution }) => institution);
-      const { data } = yield call(getInst, { ...PAGE_DEF, ...payload, name: keywords });
+      const { keywords: name, institutionId: pid } = yield select(({ institution }) => institution);
+      const parmas = {};
+      if (pid) {
+        parmas.pid = pid;
+      } else {
+        delete parmas.pid;
+      }
+      if (name) {
+        parmas.name = name;
+      } else {
+        delete parmas.name;
+      }
+      const { data } = yield call(getInst, { ...PAGE_DEF, ...payload, ...parmas });
       yield put({
         type: 'upState',
         payload: data,
@@ -54,8 +73,8 @@ export default {
       } else {
         payload.status = 0;
       }
-      if(!payload.pid) {
-        delete payload.pid
+      if (!payload.pid) {
+        delete payload.pid;
       }
       if (editor.id) {
         payload.id = editor.id;
@@ -70,7 +89,7 @@ export default {
         payload: pagination,
       });
       yield put({
-        type: 'closeEditor'
+        type: 'closeEditor',
       });
     },
     *remove({ id }, { call, put, select }) {
@@ -85,7 +104,7 @@ export default {
           },
         });
         yield put({
-          type: 'closeEditor'
+          type: 'closeEditor',
         });
       }
     },
@@ -100,6 +119,25 @@ export default {
         type: 'fetch',
       });
     },
+    *fetchInst({ payload }, { put, select, call }) {
+      const { userType, institutionId: id } = yield select(({ app }) => app.user);
+      let data;
+      if (userType === 3) {
+        // 机构管理员查子机构
+        const res = yield call(getInstitutionsForInstAdminWhitoutPage, { ...payload, id });
+        data = res.data;
+      } else if (userType === 1) {
+        // 平台管理员查全部
+        const res = yield call(getInstitutionsWhitoutPage, payload);
+        data = res.data;
+      }
+      yield put({
+        type: 'upState',
+        payload: {
+          institutions: data,
+        },
+      });
+    },
     *searchInst({ payload }, { call, put }) {
       const { data } = yield call(getInstWithoutPage, { name: payload });
       yield put({
@@ -109,11 +147,11 @@ export default {
         },
       });
     },
-    *closeEditor(p, {put}){
+    *closeEditor(p, { put }) {
       yield put({
         type: 'upState',
-        payload: INIT_EDITOR
-      })
+        payload: INIT_EDITOR,
+      });
     },
     *changeStatus({ payload }, { call, put, select }) {
       const { data } = yield call(updateInst, payload);

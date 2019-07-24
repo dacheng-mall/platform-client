@@ -126,17 +126,17 @@ export function parseResponse(res) {
     case isJson(res):
       body = res.json();
       break;
-    case /api\/wx\/createWXAQRCode$/.test(res.url):
-      console.log(res)
-      // return res.blob(res.body).then((blob) => {
-      //   console.log('blob', blob)
-      //   return { blob, isBlob: true };
+    // case /api\/wx\/createWXAQRCode$/.test(res.url):
+    //   console.log(res)
+    //   // return res.blob(res.body).then((blob) => {
+    //   //   console.log('blob', blob)
+    //   //   return { blob, isBlob: true };
 
-    // });
-      body = res.blob();
-      // console.log('----', _blob)
-      // body = res.text();
-      break;
+    // // });
+    //   body = res.blob();
+    //   // console.log('----', _blob)
+    //   // body = res.text();
+    //   break;
     case isText(res):
       body = res.text();
       break;
