@@ -4,6 +4,7 @@ import {
   getBatches,
   updateBatch,
   createBatch,
+  move2OtherBatch,
   getTypesWhitoutPage,
   generate,
   download,
@@ -55,6 +56,23 @@ export default {
         payload: data,
       });
     },
+    *move({ payload }, { put, call, select }) {
+      const { newBatchAutoId, oldBatchAutoId, from, to } = payload;
+      const { data } = yield call(move2OtherBatch, {
+        newBatchAutoId: newBatchAutoId.toString(),
+        oldBatchAutoId: oldBatchAutoId.toString(),
+        from: from.toString(),
+        to: to.toString(),
+      });
+      if (data) {
+        message.success(`成功转移${data}个码`);
+        const { pagination } = yield select(({ qrBatch }) => qrBatch);
+        yield put({
+          type: 'fetch',
+          payload: pagination,
+        });
+      }
+    },
     *fetchTypes({ payload }, { call, put, select }) {
       const { types } = yield select(({ qrBatch }) => qrBatch);
       if (types) {
@@ -87,34 +105,34 @@ export default {
     *download({ payload }, { call, select, put }) {
       const { data } = yield call(download, payload); // console.log(data)
       if (data.id && data.autoId) {
-        message.success('正在压缩, 稍后请刷新页面查看最新的压缩状态')
+        message.success('正在压缩, 稍后请刷新页面查看最新的压缩状态');
         const { data: list } = yield select(({ qrBatch }) => qrBatch);
         const target = _.find(list, ['id', data.id]);
-        if(target) {
+        if (target) {
           target.zipStatus = 1;
           yield put({
             type: 'upState',
             payload: {
-              data: [...list]
-            }
-          })
+              data: [...list],
+            },
+          });
         }
       }
     },
     *check({ payload }, { call, select, put }) {
       const { data } = yield call(supply, payload);
       if (data.id) {
-        message.success('正在检查, 稍后请刷新页面查看最新的检查状态')
+        message.success('正在检查, 稍后请刷新页面查看最新的检查状态');
         const { data: list } = yield select(({ qrBatch }) => qrBatch);
         const target = _.find(list, ['id', payload.id]);
-        if(target) {
+        if (target) {
           target.checkQRStatus = 1;
           yield put({
             type: 'upState',
             payload: {
-              data: [...list]
-            }
-          })
+              data: [...list],
+            },
+          });
         }
       }
     },
@@ -180,6 +198,7 @@ export default {
     *edit({ payload }, { call, all, put, select }) {
       const { editor } = yield select(({ qrBatch }) => qrBatch);
       const body = _.cloneDeep(payload);
+      body.total = 0;
       // 处理图片
       const todos = {};
       let hasModifyImage = false;
@@ -231,7 +250,7 @@ export default {
         body.id = editor.id;
         yield call(updateBatch, body);
       } else {
-        body.status = 0;
+        body.status = 3;
         body.from = 1;
         yield call(createBatch, body);
       }

@@ -49,7 +49,7 @@ export default class LinkProduct extends PureComponent {
   };
   renderProducts = (data = []) => {
     if(data.length < 1) {
-      return '请添加商品'
+      return <div style={{color: '#ccc'}}>请添加商品</div>
     }
     return _.map(data, (d, i) => (
       <Products
@@ -71,12 +71,3 @@ export default class LinkProduct extends PureComponent {
     );
   }
 }
-/* export default function LinkProduct (props) {
-  const renderProducts = (data = []) => {
-    if (data.length < 1) {
-      return <ProductSelector index={0}  />;
-    }
-    return _.map(data, (d, i) => <ProductSelector key={`prod_${i}`} value={d} index={i} />);
-  };
-  return <div>{renderProducts(props.value)}</div>
-} */

@@ -206,12 +206,16 @@ export default {
       // 处理绑定商品
       _.forEach(values.products, (product, i) => {
         product.displayOrder = i;
+        const [beginTime, finishTime] = product.range;
+        product.beginTime = moment(beginTime).format('YYYY-MM-DD HH:mm:ss');
+        product.finishTime = moment(finishTime).format('YYYY-MM-DD HH:mm:ss');
+        delete product.range;
         delete product.img;
         delete product.mainImageUrl;
         delete product.title;
-        delete product.price;
+        product.leftCount = product.stock
         delete product.id;
-        delete product.status;
+        product.status = 'waiting';
       });
       values.description = JSON.stringify(values.description);
       if (values.id) {

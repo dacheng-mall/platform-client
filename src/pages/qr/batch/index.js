@@ -1,12 +1,25 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Modal, Icon, Input, Divider, InputNumber, message, Popconfirm } from 'antd';
+import {
+  Button,
+  Modal,
+  Icon,
+  Input,
+  Divider,
+  InputNumber,
+  message,
+  Popconfirm,
+  Select,
+} from 'antd';
 import Editor from './editor';
 import { jump } from '../../../utils';
-import { TableX } from "../../../utils/ui";
+import { TableX } from '../../../utils/ui';
 import styles from '../index.less';
 import { getApiPreFix } from '../../../utils/request';
+import { getBatchesWhitoutPage } from './services';
+
+let timer = null;
 
 class QrBatch extends PureComponent {
   state = {
@@ -16,6 +29,12 @@ class QrBatch extends PureComponent {
     download: '',
     checkRange: [],
     check: '',
+    moveRange: [],
+    oldBatchAutoId: '',
+    newBatchAutoId: '',
+    batchFrom: 0,
+    batchTo: 0,
+    batches: [],
   };
   columns = [
     {
@@ -35,10 +54,17 @@ class QrBatch extends PureComponent {
       dataIndex: 'qrType',
       render: (t) => t.name,
     },
+    // {
+    //   key: 'total',
+    //   title: '期望数据量',
+    //   dataIndex: 'total',
+    //   align: 'center'
+    // },
     {
-      key: 'total',
-      title: '数量',
-      dataIndex: 'total',
+      key: 'imgCount',
+      title: '图片数量',
+      dataIndex: 'imgCount',
+      align: 'center',
       render: (t, r) => {
         const { userType } = this.props.user;
         // 机构管理员不能追加码
@@ -192,7 +218,7 @@ class QrBatch extends PureComponent {
               icon="edit"
               title="编辑"
             />
-            {r.status !== 1
+            {/* {r.status !== 1
               ? [
                   <Divider key="generator_line" type="vertical" />,
                   <Button
@@ -205,7 +231,7 @@ class QrBatch extends PureComponent {
                     title="生成二维码数据"
                   />,
                 ]
-              : null}
+              : null} */}
             {r.status === 0
               ? [
                   <Divider type="vertical" key="delete_line" />,
@@ -221,13 +247,27 @@ class QrBatch extends PureComponent {
                   </Popconfirm>,
                 ]
               : null}
+            {this.props.user.userType === 1
+              ? [
+                  <Divider type="vertical" key="move_line" />,
+                  <Button
+                    key="move_btn"
+                    size="small"
+                    icon="branches"
+                    shape="circle"
+                    disabled={r.zipStatus === 1}
+                    type="danger"
+                    title="批量转移"
+                    onClick={this.showMove.bind(null, r)}
+                  />,
+                ]
+              : null}
             {r.status > 1 && r.imgCount > 0
               ? [
                   <Divider type="vertical" key="download_line" />,
                   <Button
                     key="download_btn"
                     size="small"
-                    type="default"
                     icon="file-zip"
                     shape="circle"
                     disabled={r.zipStatus === 1}
@@ -345,6 +385,58 @@ class QrBatch extends PureComponent {
       checkRange: '',
     });
   };
+  showMove = (data) => {
+    console.log(data);
+    this.setState({
+      oldBatchAutoId: data.autoId,
+      batchFrom: undefined,
+      batchTo: undefined,
+    });
+  };
+  hideMove = () => {
+    this.setState({
+      oldBatchAutoId: '',
+      batchFrom: undefined,
+      batchTo: undefined,
+    });
+  };
+  searchBatches = (keyworks) => {
+    console.log(keyworks);
+    const name = _.trim(keyworks);
+    if (!name) {
+      return;
+    }
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      getBatchesWhitoutPage({ name }).then(({ data }) => {
+        const batches = _.map(data, ({ autoId: id, name }) => ({
+          id,
+          name,
+        }));
+        this.setState({
+          batches,
+        });
+      });
+      clearTimeout(timer);
+      timer = null;
+    }, 300);
+  };
+  selectBatch = (newBatchAutoId) => {
+    this.setState({
+      newBatchAutoId,
+    });
+  };
+  move = () => {
+    const { oldBatchAutoId, newBatchAutoId, batchFrom: from, batchTo: to } = this.state;
+    this.props.dispatch({
+      type: 'qrBatch/move',
+      payload: { oldBatchAutoId, newBatchAutoId, from, to },
+    });
+    this.hideMove();
+  };
+
   checkImages = () => {
     const { check, checkRange } = this.state;
     const target = _.find(this.props.data, ['id', check]);
@@ -370,8 +462,8 @@ class QrBatch extends PureComponent {
       status: 1,
     };
     // 在这里判断用户身份, 决定显示什么表头
-    if(this.props.user.userType === 3) {
-      this.columns.splice(4, 4)
+    if (this.props.user.userType === 3) {
+      this.columns.splice(4, 4);
     }
     return (
       <Fragment>
@@ -487,6 +579,45 @@ class QrBatch extends PureComponent {
                 this.setState({ checkRange: [this.state.checkRange[0]], number })
               }
             />
+          </div>
+        </Modal>
+        <Modal
+          visible={!!this.state.oldBatchAutoId}
+          onCancel={this.hideMove}
+          onOk={this.move}
+          okText="转移"
+          title="批量转移码数据到其他批次"
+        >
+          <div>
+            <div>请输入要转移的序号区间</div>
+            从
+            <InputNumber
+              value={this.state.batchFrom}
+              min={1}
+              onChange={(batchFrom) => this.setState({ batchFrom })}
+            />
+            到
+            <InputNumber
+              value={this.state.batchTo}
+              min={this.state.batchFrom}
+              disabled={!this.state.batchFrom}
+              onChange={(batchTo) => this.setState({ batchTo })}
+            />
+          </div>
+          <div style={{ marginTop: '20px' }}>
+            <div>请选择要移入的目标批次</div>
+            <Select
+              showSearch
+              onSearch={this.searchBatches}
+              onSelect={this.selectBatch}
+              style={{ width: '320px' }}
+              filterOption={false}
+              placeholder="请输入批次名称关键字查询批次"
+            >
+              {_.map(this.state.batches, (batch) => (
+                <Select.Option key={batch.id}>{batch.name}</Select.Option>
+              ))}
+            </Select>
           </div>
         </Modal>
       </Fragment>

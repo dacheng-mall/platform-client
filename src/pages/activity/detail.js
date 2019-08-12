@@ -48,12 +48,12 @@ function ActivityDetail(props) {
       });
     } catch (e) {}
   };
-  const parseErrorMessage = (error) => {
-    if (error) {
-      return _.map(error, ({ message }, i) => `${i !== 0 ? ',' : ''}${message}`);
-    }
-    return null;
-  };
+  // const parseErrorMessage = (error) => {
+  //   if (error) {
+  //     return _.map(error, ({ message }, i) => `${i !== 0 ? ',' : ''}${message}`);
+  //   }
+  //   return null;
+  // };
   const back = () => {
     goBack();
     props.dispatch({
@@ -106,6 +106,11 @@ function ActivityDetail(props) {
         </div>
         <div className={`${styles.col} ${styles.formWrap}`}>
           <Form className={styles.form}>
+            <FormItem label="活动名称">
+              {getFieldDecorator('name', {
+                rules: [{ required: true, message: '必填项' }],
+              })(<Input placeholder="请输入活动名称" style={{ width: '350px' }} />)}
+            </FormItem>
             <FormItem
               label="图片"
               validateStatus={props.errors.images ? 'error' : ''}
@@ -119,13 +124,10 @@ function ActivityDetail(props) {
               {getFieldDecorator('activityType', {
                 rules: [{ required: true, message: '必填项' }],
               })(
-                <Select
-                  placeholder="请选择类型"
-                  allowClear
-                  style={{ width: '350px' }}
-                >
+                <Select placeholder="请选择类型" allowClear style={{ width: '350px' }}>
                   {renderTypes(props.types)}
-                </Select>)}
+                </Select>,
+              )}
             </FormItem>
             <FormItem label="所属机构">
               {getFieldDecorator('institutionId', {

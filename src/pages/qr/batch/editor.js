@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { Switch, Modal, Select, Row, Col, Form, Input, InputNumber } from 'antd';
+import { Modal, Select, Row, Col, Form, Input } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange as ofc } from '../../../utils/ui';
 import LinkOther from './linkOther';
 import Images from "../../products/components/form/Images";
@@ -28,14 +28,14 @@ function Editor(props) {
   };
   const { getFieldDecorator } = props.form;
   const isNew = !props.editor || !props.editor.id;
-  const handleSearch = (keywords) => {
-    if (_.trim(keywords)) {
-      props.dispatch({
-        type: 'qrBatch/searchInst',
-        payload: keywords,
-      });
-    }
-  };
+  // const handleSearch = (keywords) => {
+  //   if (_.trim(keywords)) {
+  //     props.dispatch({
+  //       type: 'qrBatch/searchInst',
+  //       payload: keywords,
+  //     });
+  //   }
+  // };
   const renderTypesOption = (data) =>
     _.map(data, (d) => (
       <Select.Option key={d.id} value={d.id} title={d.name}>
@@ -60,11 +60,11 @@ function Editor(props) {
                 rules: [{ required: true, message: '必填项' }],
               })(<Input placeholder="请输入二维码批次名称" />)}
             </FormItem>
-            <FormItem label="数量">
+            {/* <FormItem label="数量">
               {getFieldDecorator('total', {
                 rules: [{ required: true, message: '必填项' }],
               })(<InputNumber disabled={!isNew} placeholder="请输入数量" min={1} />)}
-            </FormItem>
+            </FormItem> */}
             <FormItem label="码类型">
               {getFieldDecorator('typeId', {
                 rules: [{ required: true, message: '必填项' }],

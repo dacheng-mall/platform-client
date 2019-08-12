@@ -8,6 +8,9 @@ export const getBatchesWhitoutPage = (parmas) => {
 export const createBatch = (body) => {
   return post('v1/api/sys/qrBatch', body);
 };
+export const move2OtherBatch = (body) => {
+  return put('v1/api/sys/qr/batchInfo', body);
+};
 export const updateBatch = (body) => {
   return put('v1/api/sys/qrBatch', body);
 };
