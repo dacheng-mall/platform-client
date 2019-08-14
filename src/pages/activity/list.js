@@ -5,6 +5,7 @@ import { Input, Button, Icon, Switch, Divider } from 'antd';
 import styles from './styles.less';
 import { jump } from '../../utils';
 import { TableX } from '../../utils/ui';
+import ListProduct from './components/listProduct';
 
 function ActivityList(props) {
   const edit = (id) => {
@@ -97,7 +98,9 @@ function ActivityList(props) {
               icon="team"
               title="参与人员"
               key="btn0"
-            >报名人员</Button>,
+            >
+              报名人员
+            </Button>,
             <Divider type="vertical" key="btn1" />,
             <Button
               onClick={gift.bind(null, t, r)}
@@ -105,7 +108,9 @@ function ActivityList(props) {
               icon="gift"
               title="领取记录"
               key="btn2"
-            >领取记录</Button>,
+            >
+              领取记录
+            </Button>,
           ];
 
           if (!props.isInstitutionAdmin) {
@@ -117,7 +122,9 @@ function ActivityList(props) {
                 type="primary"
                 icon="edit"
                 key="btn4"
-              >编辑</Button>,
+              >
+                编辑
+              </Button>,
               <Divider type="vertical" key="btn5" />,
               <Button
                 onClick={remove.bind(null, t, r)}
@@ -125,7 +132,9 @@ function ActivityList(props) {
                 type="danger"
                 icon="delete"
                 key="btn6"
-              >删除</Button>,
+              >
+                删除
+              </Button>,
             );
           }
           return btns;
@@ -133,6 +142,13 @@ function ActivityList(props) {
         align: 'right',
       },
     ];
+  };
+  const onEdit = (activityId, type, data) => {
+    // const target = _.find(this.state.)
+    props.dispatch({
+      type: 'activities/edit',
+      payload: { activityId, type, data },
+    });
   };
   return (
     <Fragment>
@@ -164,6 +180,21 @@ function ActivityList(props) {
         pagination={props.pagination}
         fetchType="activities/fetch"
         dispatch={props.dispatch}
+        expandedRowRender={(record) => (
+          <ListProduct
+            data={record.products}
+            onEdit={onEdit.bind(null, record.id)}
+            activityId={record.id}
+          />
+        )}
+        onExpand={(expended, record) => {
+          if (expended) {
+            props.dispatch({
+              type: 'activities/getActivityProduct',
+              payload: { activityId: record.id },
+            });
+          }
+        }}
       />
       {/* <Table
         rowKey="id"

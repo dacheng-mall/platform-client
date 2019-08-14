@@ -48,8 +48,8 @@ export default class LinkProduct extends PureComponent {
     this.props.onChange(newVal);
   };
   renderProducts = (data = []) => {
-    if(data.length < 1) {
-      return <div style={{color: '#ccc'}}>请添加商品</div>
+    if (data.length < 1) {
+      return <div style={{ color: '#ccc' }}>请添加商品</div>;
     }
     return _.map(data, (d, i) => (
       <Products
@@ -59,13 +59,16 @@ export default class LinkProduct extends PureComponent {
         value={d}
         index={i}
         onChange={this.onChange}
+        disabled={this.props.disabled}
       />
     ));
   };
   render() {
     return (
       <Fragment>
-        {this.props.value.length > 4 ? null : <Selector onChange={this.onChange} />}
+        {this.props.value.length > 4 || this.props.disabled ? null : (
+          <Selector onChange={this.onChange} />
+        )}
         {this.renderProducts(this.props.value)}
       </Fragment>
     );

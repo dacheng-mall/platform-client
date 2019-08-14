@@ -156,6 +156,7 @@ export const TableX = (props) => {
   const originPageSize = props.pagination.pageSize;
   return (
     <Table
+      {...props}
       rowKey={props.rowKey || 'id'}
       columns={props.columns}
       dataSource={props.dataSource || []}

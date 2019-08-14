@@ -48,12 +48,6 @@ function ActivityDetail(props) {
       });
     } catch (e) {}
   };
-  // const parseErrorMessage = (error) => {
-  //   if (error) {
-  //     return _.map(error, ({ message }, i) => `${i !== 0 ? ',' : ''}${message}`);
-  //   }
-  //   return null;
-  // };
   const back = () => {
     goBack();
     props.dispatch({
@@ -170,8 +164,8 @@ function ActivityDetail(props) {
             <FormItem label="候选礼品">
               {getFieldDecorator('products', {
                 initialValue: [],
-                rules: [{ type: 'array', required: true, message: '必填项' }],
-              })(<LinkProducts />)}
+                rules: [{ type: 'array', required: props.isNew, message: '必填项' }],
+              })(<LinkProducts disabled={!props.isNew} />)}
             </FormItem>
             <FormItem label="领取品类上限" help="允许普通客户从礼品列表中领取的品类数量上限">
               {getFieldDecorator('totalCount', {

@@ -53,6 +53,7 @@ export default {
         payload: {
           editor: INIT_EDITOR,
           errors: INIT_ERRORS,
+          isNew: true,
         },
       });
     },
@@ -60,14 +61,17 @@ export default {
       yield put({
         type: 'fetchTypes',
       });
+      yield put({
+        type: 'upState',
+        payload: {
+          isNew: false,
+        },
+      });
       const {
         data: [data],
       } = yield call(find, { id });
-      console.log('data', data);
-
       try {
         data.description = JSON.parse(data.description);
-        console.log('', data.description);
       } catch (e) {
         console.log(e);
       }
@@ -88,12 +92,12 @@ export default {
           editor.images = images;
         }
         // 回填关联商品
-        if (editor.products) {
-          const products = [];
-          _.forEach(editor.products, (product) => {
-            product.img = `${product.mainImageUrl}`;
+        if (editor.activityProducts) {
+          editor.products = [];
+          _.forEach(editor.activityProducts, (product) => {
+            product.img = `${product.product.mainImageUrl}`;
             product.productId = product.id;
-            products.push(product);
+            editor.products.push(product);
             delete product._pivot_activityId;
             delete product._pivot_productId;
           });
@@ -174,7 +178,6 @@ export default {
         values.images[i].displayOrder = i;
         values.images[i].isMain = i === 0;
       });
-      console.log('------', values.description);
       _.forEach(values.description, (val, i) => {
         if (val.type === 'image') {
           if (val.value.originFileObj) {
@@ -182,8 +185,6 @@ export default {
           }
         }
       });
-      console.log('todos', todos);
-      console.log('values', values);
       if (!_.isEmpty(todos)) {
         const ups = Object.values(todos);
         const paths = Object.keys(todos);
@@ -206,15 +207,18 @@ export default {
       // 处理绑定商品
       _.forEach(values.products, (product, i) => {
         product.displayOrder = i;
-        const [beginTime, finishTime] = product.range;
-        product.beginTime = moment(beginTime).format('YYYY-MM-DD HH:mm:ss');
-        product.finishTime = moment(finishTime).format('YYYY-MM-DD HH:mm:ss');
-        delete product.range;
+        if (product.range) {
+          const [beginTime, finishTime] = product.range;
+          product.beginTime = moment(beginTime).format('YYYY-MM-DD HH:mm:ss');
+          product.finishTime = moment(finishTime).format('YYYY-MM-DD HH:mm:ss');
+          delete product.range;
+        }
         delete product.img;
         delete product.mainImageUrl;
         delete product.title;
-        product.leftCount = product.stock
-        delete product.id;
+        if (!values.id) {
+          product.leftCount = product.stock;
+        }
         product.status = 'waiting';
       });
       values.description = JSON.stringify(values.description);
@@ -224,6 +228,8 @@ export default {
         delete values.salesmanCount;
         delete values.displayOrder;
         delete values.gifts;
+        delete values.products;
+        delete values.activityProducts;
         const { data } = yield call(update, values);
         message.success('修改成功');
         if (data) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
+import moment from 'moment';
 // import _ from 'lodash';
 import styles from './styles.less';
 
@@ -21,6 +22,25 @@ export default function Products(props) {
   const move = (index, type) => {
     props.onChange(null, type, index);
   };
+  const status = ((s) => {
+    switch (s) {
+      case 'waiting': {
+        return '等待开抢';
+      }
+      case 'sellOut': {
+        return '售罄';
+      }
+      case 'expired': {
+        return '到期';
+      }
+      case 'frozen': {
+        return '冻结';
+      }
+      case 'enable': {
+        return '可以抢';
+      }
+    }
+  })(props.value.status);
   return (
     <div className={styles.wrap}>
       <div className={styles.product}>
@@ -28,21 +48,40 @@ export default function Products(props) {
           <img src={`${source}${props.value.img}?imageView2/1/w/88/h/88`} alt="码" />
         </div>
         <div className={styles.productInfo}>
-          <div className={styles.title}>{props.value.title}</div>
-          <div>{props.value.totalCount}件</div>
+          <div className={styles.title}>{props.value.showName || props.value.title}</div>
+          <div className={styles.info}>库存: {props.value.stock}件</div>
+          <div className={styles.info}>单件包含: {props.value.totalCount}件</div>
+          <div className={styles.info}>
+            开始时间: {moment(props.value.beginTime).format('YYYY-MM-DD HH:mm:ss')}
+          </div>
+          <div className={styles.info}>
+            停止时间: {moment(props.value.finishTime).format('YYYY-MM-DD HH:mm:ss')}
+          </div>
+          <div className={styles.info}>状态: {status}</div>
         </div>
       </div>
-      <Button
-        icon="arrow-up"
-        onClick={move.bind(null, props.index, 'up')}
-        disabled={props.isHeader}
-      />
-      <Button
-        icon="arrow-down"
-        onClick={move.bind(null, props.index, 'down')}
-        disabled={props.isTail}
-      />
-      <Button icon="delete" type="danger" onClick={remove.bind(null, props.index, 'remove')} />
+      {props.disabled
+        ? null
+        : [
+            <Button
+              icon="arrow-up"
+              onClick={move.bind(null, props.index, 'up')}
+              disabled={props.isHeader}
+              key="products-up"
+            />,
+            <Button
+              icon="arrow-down"
+              onClick={move.bind(null, props.index, 'down')}
+              disabled={props.isTail}
+              key="products-down"
+            />,
+            <Button
+              icon="delete"
+              type="danger"
+              onClick={remove.bind(null, props.index, 'remove')}
+              key="products-del"
+            />,
+          ]}
     </div>
   );
 }

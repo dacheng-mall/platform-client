@@ -1,4 +1,4 @@
-import { get, post, put } from '../../../utils/request';
+import { get, post, put, del } from '../../../utils/request';
 export const findInst = (query) => {
   return get(`v1/api/sys/institution`, query);
 };
@@ -26,3 +26,15 @@ export const getInstWithoutPage = (query) => {
 export const findTypes = (query) => {
   return get(`v1/api/sys/activityType`, query);
 };
+export const getActivityproducts = (params) => {
+  return get(`v1/api/sys/activityProducts`, params)
+}
+export const updateActivityproducts = (params) => {
+  return put(`v1/api/sys/activityProducts`, params)
+}
+export const createActivityproducts = (params) => {
+  return post(`v1/api/sys/activityProducts`, params)
+}
+export const removeActivityproducts = (id) => {
+  return del(`v1/api/sys/activityProducts/${id}`,)
+}
