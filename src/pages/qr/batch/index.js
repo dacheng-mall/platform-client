@@ -467,7 +467,7 @@ class QrBatch extends PureComponent {
     }
     return (
       <Fragment>
-        <div className={styles.tableToolBar}>
+        {this.props.user.userType === 1 ? <div className={styles.tableToolBar}>
           <Button onClick={this.showModal.bind(null, initNewItem)} type="primary">
             <Icon type="plus" />
             添加批次
@@ -482,7 +482,7 @@ class QrBatch extends PureComponent {
             />
             <Button onClick={this.reset}>重置</Button>
           </div>
-        </div>
+        </div> : null}
         <TableX
           columns={this.columns}
           dataSource={this.props.data || []}

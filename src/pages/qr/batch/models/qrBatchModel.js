@@ -49,8 +49,16 @@ export default {
       });
     },
     *fetch({ payload }, { put, call, select }) {
-      const { keywords } = yield select(({ qrBatch }) => qrBatch);
-      const { data } = yield call(getBatches, { ...PAGE_DEF, ...payload, name: keywords });
+      const { keywords, institutionId } = yield select(({ qrBatch, app }) => ({
+        ...qrBatch,
+        institutionId: app.user.institutionId,
+      }));
+      const { data } = yield call(getBatches, {
+        ...PAGE_DEF,
+        ...payload,
+        institutionId,
+        name: keywords,
+      });
       yield put({
         type: 'upState',
         payload: data,

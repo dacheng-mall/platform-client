@@ -22,6 +22,12 @@ function ActivityDetail(props) {
       });
     }
   };
+  const handleChange = (value) => {
+    props.dispatch({
+      type: 'activity/changeInst',
+      payload: value,
+    });
+  };
   const { getFieldDecorator } = props.form;
   const renderOpts = (data) =>
     _.map(data, (d) => (
@@ -134,6 +140,7 @@ function ActivityDetail(props) {
                   showArrow={false}
                   filterOption={false}
                   onSearch={handleSearch}
+                  onChange={handleChange}
                   allowClear
                   style={{ width: '350px' }}
                 >

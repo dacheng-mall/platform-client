@@ -143,6 +143,19 @@ export default {
         },
       });
     },
+    *changeInst({ payload }, { call, put, select }) {
+      let institutionName = '';
+      const { inst } = yield select(({ activity }) => activity);
+      if (payload) {
+        institutionName = _.find(inst, ['id', payload]).name
+      }
+      yield put({
+        type: 'upState',
+        payload: {
+          institutionName
+        },
+      });
+    },
     *getGrades({ institutionId }, { put, call }) {
       const { data } = yield call(findGradesByInsId, institutionId);
       yield put({
@@ -161,7 +174,8 @@ export default {
       });
     },
     *submit(p, { call, all, select, put }) {
-      const { editor: values } = yield select(({ activity }) => activity);
+      const { editor: values, institutionName } = yield select(({ activity }) => activity);
+      values.institutionName = institutionName
       // 处理图片
       const todos = {};
       _.forEach(values.images, (img, i) => {
@@ -217,7 +231,7 @@ export default {
         delete product.mainImageUrl;
         delete product.title;
         if (!values.id) {
-          product.leftCount = product.stock;
+          product.leftStock = product.stock;
         }
         product.status = 'waiting';
       });

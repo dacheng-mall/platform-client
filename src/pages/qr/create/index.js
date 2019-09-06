@@ -31,12 +31,15 @@ function QrCreate(props) {
     e.preventDefault();
     console.log(page, scene, size);
     post('v1/api/wx/createWXAQRCode', { page, scene }).then((blobObj) => {
-      var a = new FileReader();
-      a.readAsDataURL(blobObj.data);
-      a.onload = function(e) {
-        console.log(e.target.result);
-        setUrl(e.target.result)
-      };
+      // var a = new FileReader();
+      const src = `data:image/jpg;base64,${blobObj.data}`
+      setUrl(src)
+      // return
+      // a.readAsDataURL(blobObj.data);
+      // a.onload = function(e) {
+      //   console.log(e.target.result);
+      //   setUrl(e.target.result)
+      // };
       // console.log('blobObj', window.URL.createObjectURL(blobObj.data))
       // setUrl(window.URL.createObjectURL(blobObj.data))
       // console.log(new Blob(data))

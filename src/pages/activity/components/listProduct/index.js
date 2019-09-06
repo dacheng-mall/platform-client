@@ -122,7 +122,7 @@ class ListProduct extends React.PureComponent {
       } else {
         // 这里需要添加新的;
         values.activityId = this.props.activityId;
-        values.displayOrder = this.props.data.length;
+        values.displayOrder = _.isArray(this.props.data) ? this.props.data.length : 0;
         createActivityproducts(values).then(({ data }) => {
           this.props.onEdit('create', data);
           this.hide();
@@ -194,6 +194,17 @@ class ListProduct extends React.PureComponent {
                 })(
                   <Input
                     placeholder="请输入活动显示名称"
+                    disabled={this.props.user.userType === 3}
+                  />,
+                )}
+              </FormItem>
+              <FormItem label="显示名称">
+                {getFieldDecorator('primaryColor', {
+                  initialValue: this.state.current.primaryColor || '#fff',
+                  rules: [{ required: true, message: '必填项' }],
+                })(
+                  <Input
+                    placeholder="请输入16进制颜色代码"
                     disabled={this.props.user.userType === 3}
                   />,
                 )}

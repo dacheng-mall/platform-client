@@ -30,6 +30,7 @@ export default {
     institutionId: undefined,
     range: undefined,
     typeId: undefined,
+    batchId: '',
   },
 
   subscriptions: {
@@ -55,9 +56,6 @@ export default {
 
   effects: {
     *init({ id }, { put, all }) {
-      yield put({
-        type: 'clear',
-      });
       yield put({
         type: 'upState',
         payload: {
@@ -85,9 +83,6 @@ export default {
     },
     *init4son(p, { put, select, all }) {
       const { user } = yield select(({ app }) => app);
-      yield put({
-        type: 'clear',
-      });
       yield put({
         type: 'upState',
         payload: {
