@@ -3,6 +3,7 @@ import { Radio } from 'antd';
 import _ from 'lodash';
 import { getProductsWithoutPage, getCate } from '../../products/services';
 import { getPagesWithoutPage } from '../services';
+import { find as getActivitiesWithoutPage } from '../../activity/services/activity';
 import Selecter from './Selecter';
 
 const TYPES = [
@@ -13,6 +14,10 @@ const TYPES = [
   {
     label: '页面',
     code: 'page',
+  },
+  {
+    label: '活动',
+    code: 'activity',
   },
   {
     label: '商品分类',
@@ -29,6 +34,8 @@ export default class Selector extends PureComponent {
   state = {
     productOpts: [],
     pageOpts: [],
+    activitesOpts: [],
+    categoryOpts: [],
     itemType: 'product',
   };
   componentDidMount() {
@@ -36,6 +43,7 @@ export default class Selector extends PureComponent {
       const { title, id, image, type } = this.props.value;
       const productOpts = [NONE_OPT];
       const pageOpts = [NONE_OPT];
+      const activitiesOpts = [NONE_OPT];
       const categoryOpts = [NONE_OPT];
       const option = { title, id, image };
       switch (type) {
@@ -46,6 +54,10 @@ export default class Selector extends PureComponent {
           option.institutionId = institutionId;
           option.productImage = productImage;
           productOpts.push(option);
+          break;
+        }
+        case 'activity': {
+          activitiesOpts.push(option);
           break;
         }
         case 'page': {
@@ -64,6 +76,7 @@ export default class Selector extends PureComponent {
         itemType: type,
         productOpts,
         pageOpts,
+        activitiesOpts,
         categoryOpts,
       });
     }
@@ -98,6 +111,15 @@ export default class Selector extends PureComponent {
           });
           break;
         }
+        case 'activity': {
+          console.log('-----');
+          const { data } = await getActivitiesWithoutPage({ name: title });
+          console.log(data);
+          _this.setState({
+            activitiesOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
+          });
+          break;
+        }
         case 'page': {
           const { data } = await getPagesWithoutPage({ name: title });
           _this.setState({
@@ -121,7 +143,7 @@ export default class Selector extends PureComponent {
     }, 300);
   };
   choose = (type, key) => {
-    const { productOpts, pageOpts, categoryOpts } = this.state;
+    const { productOpts, pageOpts, categoryOpts, activitiesOpts } = this.state;
     let target;
     switch (type) {
       case 'product': {
@@ -130,6 +152,10 @@ export default class Selector extends PureComponent {
       }
       case 'page': {
         target = _.find(pageOpts, ['id', key]);
+        break;
+      }
+      case 'activity': {
+        target = _.find(activitiesOpts, ['id', key]);
         break;
       }
       case 'category': {
@@ -156,6 +182,18 @@ export default class Selector extends PureComponent {
             value={this.props.value.id}
             options={this.state.productOpts}
             type="productOpts"
+          />
+        );
+      }
+      case 'activity': {
+        return (
+          <Selecter
+            onSearch={this.onSearch.bind(null, 'activity')}
+            onChange={this.choose.bind(null, 'activity')}
+            placeholder="请输入关键字搜索活动"
+            value={this.props.value.id}
+            options={this.state.activitiesOpts}
+            type="activitiesOpts"
           />
         );
       }
