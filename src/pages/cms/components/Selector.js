@@ -12,6 +12,10 @@ const TYPES = [
     code: 'product',
   },
   {
+    label: '商品分类',
+    code: 'category',
+  },
+  {
     label: '页面',
     code: 'page',
   },
@@ -20,9 +24,16 @@ const TYPES = [
     code: 'activity',
   },
   {
-    label: '商品分类',
-    code: 'category',
+    label: '系统功能',
+    code: 'function',
   },
+];
+const FUNCTIONS = [
+  { id: 'scan', title: '扫一扫' },
+  { id: 'code-personal', title: '我的个人码' },
+  { id: 'code-attendance', title: '签到码' },
+  { id: 'code-visit', title: '拜访码' },
+  { id: 'infomation', title: '个人信息' },
 ];
 const NONE_OPT = { id: 'clear', name: '清空选项', title: '清空选项' };
 
@@ -36,6 +47,7 @@ export default class Selector extends PureComponent {
     pageOpts: [],
     activitesOpts: [],
     categoryOpts: [],
+    functionOpts: [...FUNCTIONS],
     itemType: 'product',
   };
   componentDidMount() {
@@ -43,7 +55,7 @@ export default class Selector extends PureComponent {
       const { title, id, image, type } = this.props.value;
       const productOpts = [NONE_OPT];
       const pageOpts = [NONE_OPT];
-      const activitiesOpts = [NONE_OPT];
+      const activityOpts = [NONE_OPT];
       const categoryOpts = [NONE_OPT];
       const option = { title, id, image };
       switch (type) {
@@ -57,7 +69,7 @@ export default class Selector extends PureComponent {
           break;
         }
         case 'activity': {
-          activitiesOpts.push(option);
+          activityOpts.push(option);
           break;
         }
         case 'page': {
@@ -76,7 +88,7 @@ export default class Selector extends PureComponent {
         itemType: type,
         productOpts,
         pageOpts,
-        activitiesOpts,
+        activityOpts,
         categoryOpts,
       });
     }
@@ -112,11 +124,10 @@ export default class Selector extends PureComponent {
           break;
         }
         case 'activity': {
-          console.log('-----');
-          const { data } = await getActivitiesWithoutPage({ name: title });
+          const { data } = await getActivitiesWithoutPage({ name: title, status: 1 });
           console.log(data);
           _this.setState({
-            activitiesOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
+            activityOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
           });
           break;
         }
@@ -143,30 +154,8 @@ export default class Selector extends PureComponent {
     }, 300);
   };
   choose = (type, key) => {
-    const { productOpts, pageOpts, categoryOpts, activitiesOpts } = this.state;
-    let target;
-    switch (type) {
-      case 'product': {
-        target = _.find(productOpts, ['id', key]);
-        break;
-      }
-      case 'page': {
-        target = _.find(pageOpts, ['id', key]);
-        break;
-      }
-      case 'activity': {
-        target = _.find(activitiesOpts, ['id', key]);
-        break;
-      }
-      case 'category': {
-        target = _.find(categoryOpts, ['id', key]);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-    if (_.isFunction(this.props.onSelect)) {
+    const target = _.find(this.state[`${type}Opts`], ['id', key]);
+    if (_.isFunction(this.props.onSelect) && target) {
       this.props.onSelect({ ...target, type });
     }
   };
@@ -192,8 +181,8 @@ export default class Selector extends PureComponent {
             onChange={this.choose.bind(null, 'activity')}
             placeholder="请输入关键字搜索活动"
             value={this.props.value.id}
-            options={this.state.activitiesOpts}
-            type="activitiesOpts"
+            options={this.state.activityOpts}
+            type="activityOpts"
           />
         );
       }
@@ -221,6 +210,17 @@ export default class Selector extends PureComponent {
           />
         );
       }
+      case 'function': {
+        return (
+          <Selecter
+            onChange={this.choose.bind(null, 'function')}
+            placeholder="请选择系统功能"
+            value={this.props.value.id}
+            options={this.state.functionOpts}
+            type="functionOpts"
+          />
+        );
+      }
       default: {
         return null;
       }
@@ -228,6 +228,7 @@ export default class Selector extends PureComponent {
   };
   render() {
     const { itemType } = this.state;
+    console.log()
     return (
       <Fragment>
         {!this.props.staticType ? (

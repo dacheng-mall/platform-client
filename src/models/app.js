@@ -5,6 +5,7 @@ import { jump } from '../utils';
 import { setAuthority } from '../utils/authority';
 import { menu } from '../pages/_layouts/menuData';
 import { setToken } from '../utils/request';
+import { TYPES } from "../../src/pages/cms/element";
 
 const redirect = (menu) => {
   const allow = _.find(menu, ({ authority }) => authority || undefined);
@@ -27,13 +28,7 @@ export default {
     user: {},
     roles: [],
     dict: {
-      elementsTypes: _.map([
-        { code: 'list', name: '列表' },
-        { code: 'products', name: '商品' },
-        { code: 'swiper', name: '滚动图' },
-        { code: 'grid', name: '九宫格' },
-        { code: 'article', name: '图文' },
-      ], (type, i) => {type.id = `elemType_${i}`; return type})
+      elementsTypes: _.map(TYPES, (type, i) => {type.id = `elemType_${i}`; return type})
     },
     qiniu: {},
   },

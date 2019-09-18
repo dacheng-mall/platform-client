@@ -160,12 +160,14 @@ export default class SwiperEditor extends PureComponent {
         });
         break;
       }
-      case 'title': {
+      case 'title':
+      case 'attributes.color': {
         this.props.onEdit(type, e.target.value);
         break;
       }
       case 'attributes.rate[0]':
-      case 'attributes.rate[1]': {
+      case 'attributes.rate[1]':
+      case 'attributes.padding': {
         this.props.onEdit(type, e);
         break;
       }
@@ -263,6 +265,22 @@ export default class SwiperEditor extends PureComponent {
                 onChange={this.change.bind(null, 'attributes.rate[1]')}
               />
             </Form.Item>
+            <Form.Item label="空白边" {...wrapCol}>
+             <InputNumber
+                placeholder="请输入数字"
+                value={attributes && attributes.padding}
+                onChange={this.change.bind(null, 'attributes.padding')}
+              />
+            </Form.Item>
+            <Form.Item label="背景色" {...wrapCol} help="最好输入16进制色值,例如'#00bcbd'">
+              <Input
+                placeholder="请输入色值"
+                style={{width: '200px'}}
+                value={attributes && attributes.color}
+                onChange={this.change.bind(null, 'attributes.color')}
+              />
+            </Form.Item>
+            
           </Form>
           {visible ? (
             <Fragment>

@@ -111,9 +111,13 @@ export default {
     },
     *change({ payload }, { put, call, select }) {
       const { value, index, type } = payload;
-      let { data, name, type: listType, attributes } = yield select(
-        ({ elementEditor }) => elementEditor,
-      );
+      let {
+        data,
+        name,
+        type: listType,
+        attributes
+      } = yield select(({ elementEditor }) => elementEditor);
+      const gernaral = {};
       switch (type) {
         case 'edit': {
           data[index] = value;
@@ -163,8 +167,8 @@ export default {
         }
         case 'query': {
           const { value: valueX, type: typeX } = value;
-          if(typeX === 'category') {
-            attributes = {...attributes, ...valueX}
+          if (typeX === 'category') {
+            attributes = { ...attributes, ...valueX };
           } else {
             attributes[typeX] = valueX;
           }
@@ -197,6 +201,15 @@ export default {
           name = value;
           break;
         }
+        case 'userType':
+        case 'split':
+        case 'breakLine':
+        case 'itemHeight':
+        case 'gutter': {
+          gernaral[type] = value;
+          break;
+        }
+
         default: {
           const preFix = /^attributes\./;
           if (preFix.test(type)) {
@@ -212,6 +225,7 @@ export default {
           data: _.cloneDeep(data),
           name,
           attributes,
+          ...gernaral,
         },
       });
     },

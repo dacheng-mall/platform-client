@@ -6,6 +6,7 @@ import List from './components/List';
 import Products from './components/ProductsList';
 import Swiper from './components/Swiper';
 import Grid from './components/Grid';
+import Block from './components/Block';
 import Article from './components/Article';
 import styles from './styles.less';
 
@@ -15,24 +16,28 @@ class ElementEditor extends PureComponent {
     editing: null,
     type: '',
   };
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.props.dispatch({
-      type: 'elementEditor/clear'
-    })
-  };
+      type: 'elementEditor/clear',
+    });
+  }
   edit = (type, value, index) => {
-    if (type === 'del') {
-      confirm({
-        title: '是否要删除元素?',
-        content: '',
-        onOk: () => {
-          this.changeData(type, value, index);
-        },
-        onCancel: () => {},
-      });
-      return;
+    switch (type) {
+      case 'del': {
+        confirm({
+          title: '是否要删除元素?',
+          content: '',
+          onOk: () => {
+            this.changeData(type, value, index);
+          },
+          onCancel: () => {},
+        });
+        break;
+      }
+      default: {
+        this.changeData(type, value, index);
+      }
     }
-    this.changeData(type, value, index);
   };
   changeData = (type, value, index) => {
     if (value && (value.value && value.value.id === 'clear')) {
@@ -40,7 +45,7 @@ class ElementEditor extends PureComponent {
         type: 'elementEditor/change',
         payload: {
           type,
-          value: {...value, value: null},
+          value: { ...value, value: null },
           index,
         },
       });
@@ -88,6 +93,9 @@ class ElementEditor extends PureComponent {
       }
       case 'grid': {
         return <Grid {...this.props} onEdit={this.edit} editing={this.editing} />;
+      }
+      case 'block': {
+        return <Block {...this.props} onEdit={this.edit} editing={this.editing} />;
       }
       case 'article': {
         return <Article {...this.props} onEdit={this.edit} editing={this.editing} />;
@@ -150,3 +158,11 @@ function mapStateToProps({
 }
 
 export default connect(mapStateToProps)(ElementEditor);
+export const TYPES = [
+  { code: 'list', name: '列表' },
+  { code: 'products', name: '商品' },
+  { code: 'swiper', name: '滚动图' },
+  { code: 'grid', name: '九宫格' },
+  { code: 'block', name: '块元素' },
+  { code: 'article', name: '图文' },
+];
