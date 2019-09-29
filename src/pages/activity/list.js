@@ -6,6 +6,7 @@ import styles from './styles.less';
 import { jump } from '../../utils';
 import { TableX } from '../../utils/ui';
 import ListProduct from './components/listProduct';
+import ListProductSimple from './components/listProductSimple';
 
 function ActivityList(props) {
   const edit = (id) => {
@@ -65,24 +66,42 @@ function ActivityList(props) {
       },
       {
         key: 'totalCount',
-        title: '先选数量(件)',
+        title: '限选数量(件)',
         dataIndex: 'totalCount',
       },
       {
         key: 'status',
         title: '状态',
         dataIndex: 'status',
-        render: (t, { id }) => {
-          const change = (checked) => {
-            props.dispatch({
-              type: 'activities/changeStatus',
-              payload: { id, status: checked ? 1 : 0 },
-            });
-          };
-          if (props.isInstitutionAdmin) {
-            return t === 1 ? '正常' : '失效';
+        width: 100,
+        render: (t) => {
+          switch(t) {
+            case 'waiting': {
+              return '准备中'
+            }
+            case 'visible': {
+              return '等待...'
+            }
+            case 'enable': {
+              return '进行中'
+            }
+            case 'finish': {
+              return '结束'
+            }
+            default: {
+              return '未知状态'
+            }
           }
-          return <Switch size="small" checked={t === 1} onChange={change} />;
+          // const change = (checked) => {
+          //   props.dispatch({
+          //     type: 'activities/changeStatus',
+          //     payload: { id, status: checked ? 1 : 0 },
+          //   });
+          // };
+          // if (props.isInstitutionAdmin) {
+          //   return t === 1 ? '正常' : '失效';
+          // }
+          // return <Switch size="small" checked={t === 1} onChange={change} />;
         },
         align: 'center',
       },
@@ -180,13 +199,24 @@ function ActivityList(props) {
         pagination={props.pagination}
         fetchType="activities/fetch"
         dispatch={props.dispatch}
-        expandedRowRender={(record) => (
-          <ListProduct
-            data={record.products}
-            onEdit={onEdit.bind(null, record.id)}
-            activityId={record.id}
-          />
-        )}
+        expandedRowRender={(record) => {
+          if (record.activityType !== 'at_lottery') {
+            return (
+              <ListProduct
+                data={record.products}
+                onEdit={onEdit.bind(null, record.id)}
+                activityId={record.id}
+              />
+            );
+          }
+          return (
+            <ListProductSimple
+              data={record.products}
+              onEdit={onEdit.bind(null, record.id)}
+              activityId={record.id}
+            />
+          );
+        }}
         onExpand={(expended, record) => {
           if (expended) {
             props.dispatch({

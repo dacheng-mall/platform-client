@@ -135,12 +135,13 @@ export default class BlockEditor extends PureComponent {
     // 编辑元素信息的行为在这里交给状态容器处理
     const { fileList, editing, oriented, editor } = this.state;
     const { id, title, productImage, institutionId, price, type } = oriented;
-    const { size, displayName, image, color, bgColor, icon } = editor;
+    const { size, displayName, image, color, bgColor, icon, userType } = editor;
     const newData = {
       id,
       name: title,
-      size: size,
-      displayName: displayName,
+      size,
+      displayName,
+      userType,
       image: fileList.length === 0 ? '' : image || productImage,
       type,
       color,
@@ -178,7 +179,9 @@ export default class BlockEditor extends PureComponent {
         });
         break;
       }
-      case 'size': {
+      case 'size':
+      case 'userType': {
+        console.log(e);
         this.setState({
           editor: { ...this.state.editor, [type]: e },
         });
@@ -286,10 +289,7 @@ export default class BlockEditor extends PureComponent {
               />
             </Form.Item>
             <Form.Item label="显示名称" {...wrapCol}>
-              <Switch
-                checked={showName}
-                onChange={this.change.bind(null, 'attributes.showName')}
-              />
+              <Switch checked={showName} onChange={this.change.bind(null, 'attributes.showName')} />
             </Form.Item>
             <Form.Item label="可视权限" {...wrapCol}>
               <Select
@@ -297,7 +297,7 @@ export default class BlockEditor extends PureComponent {
                 placeholder="请选择可视权限"
                 onChange={this.change.bind(null, 'attributes.userType')}
               >
-                <Select.Option key={null}>不限制</Select.Option>
+                <Select.Option key={0}>不限制</Select.Option>
                 <Select.Option key={2}>仅对客户开放</Select.Option>
                 <Select.Option key={4}>仅对业务员开放</Select.Option>
               </Select>
@@ -364,6 +364,17 @@ export default class BlockEditor extends PureComponent {
                     userProductImage={this.userProductImage.bind(null, editor, this.state.oriented)}
                     oriented={oriented}
                   />
+                </Form.Item>
+                <Form.Item label="权限" {...wrapCol}>
+                  <Select
+                    value={editor.userType}
+                    placeholder="请选择可视权限"
+                    onChange={this.change.bind(null, 'userType')}
+                  >
+                    <Select.Option key={0}>不限制</Select.Option>
+                    <Select.Option key={2}>仅对客户开放</Select.Option>
+                    <Select.Option key={4}>仅对业务员开放</Select.Option>
+                  </Select>
                 </Form.Item>
                 <Form.Item label="图标类型" {...wrapCol} help="图片会优先于图标显示">
                   <Input

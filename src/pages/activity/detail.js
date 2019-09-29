@@ -163,17 +163,24 @@ function ActivityDetail(props) {
                     </Checkbox.Group>,
                   )}
             </FormItem>
-            <FormItem label="周期">
+            <FormItem label="起止日期">
               {getFieldDecorator('range', {
+                rules: [{ type: 'array', required: true, message: '请设置起止日期' }],
+              })(<RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />)}
+            </FormItem>
+            <FormItem label="活动周期">
+              {getFieldDecorator('activeRange', {
                 rules: [{ type: 'array', required: true, message: '请设置活动周期' }],
               })(<RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />)}
             </FormItem>
-            <FormItem label="候选礼品">
-              {getFieldDecorator('products', {
-                initialValue: [],
-                rules: [{ type: 'array', required: props.isNew, message: '必填项' }],
-              })(<LinkProducts disabled={!props.isNew} />)}
-            </FormItem>
+            {props.editor.activityType !== 'at_lottery' ? (
+              <FormItem label="候选礼品">
+                {getFieldDecorator('products', {
+                  initialValue: [],
+                  rules: [{ type: 'array', required: props.isNew, message: '必填项' }],
+                })(<LinkProducts disabled={!props.isNew} />)}
+              </FormItem>
+            ) : null}
             <FormItem label="领取品类上限" help="允许普通客户从礼品列表中领取的品类数量上限">
               {getFieldDecorator('totalCount', {
                 initialValue: 1,
@@ -182,7 +189,6 @@ function ActivityDetail(props) {
                 <InputNumber
                   disabled={!editor.products || editor.products.length < 1}
                   min={1}
-                  max={(editor.products && editor.products.length) || 1}
                 />,
               )}
             </FormItem>

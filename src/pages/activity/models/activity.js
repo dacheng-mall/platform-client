@@ -79,8 +79,10 @@ export default {
         const { institution, production, ...editor } = data;
         // 回填职级
         editor.grades = editor.grades.split(',');
-        // 回填时间周期
+        // 回填起止时间
         editor.range = [moment(editor.dateStart), moment(editor.dateEnd)];
+        // 回填活动周期
+        editor.activeRange = [moment(editor.dateActive), moment(editor.dateUnactive)];
         // 回填图片
         if (editor.images) {
           const images = [];
@@ -211,11 +213,16 @@ export default {
       } else {
         delete values.images;
       }
-      // 处理时间区间
+      // 处理起止日期
       const [dateStart, dateEnd] = values.range;
       values.dateStart = dateStart.format('YYYY-MM-DD HH:mm:ss');
       values.dateEnd = dateEnd.format('YYYY-MM-DD HH:mm:ss');
       delete values.range;
+      // 处理活动周期
+      const [dateActive, dateUnactive] = values.activeRange;
+      values.dateActive = dateActive.format('YYYY-MM-DD HH:mm:ss');
+      values.dateUnactive = dateUnactive.format('YYYY-MM-DD HH:mm:ss');
+      delete values.activeRange;
       // 处理职级
       values.grades = values.grades && values.grades.join(',');
       // 处理绑定商品
@@ -244,7 +251,9 @@ export default {
         delete values.gifts;
         delete values.products;
         delete values.activityProducts;
+        delete values.status;
         const { data } = yield call(update, values);
+        console.log(values)
         message.success('修改成功');
         if (data) {
           yield put({

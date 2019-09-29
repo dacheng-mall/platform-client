@@ -124,7 +124,7 @@ export default class Selector extends PureComponent {
           break;
         }
         case 'activity': {
-          const { data } = await getActivitiesWithoutPage({ name: title, status: 1 });
+          const { data } = await getActivitiesWithoutPage({ name: title });
           console.log(data);
           _this.setState({
             activityOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
