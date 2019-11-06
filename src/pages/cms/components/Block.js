@@ -1,6 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import _ from 'lodash';
-import { Input, Form, Radio, Button, Row, Col, message, Select, InputNumber, Switch } from 'antd';
+import { Input, Form, Button, Row, Col, message, Select, InputNumber, Switch } from 'antd';
 import BlockItem from './BlockItem';
 import styles from './styles.less';
 import SelecterX from './Selector';
@@ -134,7 +134,7 @@ export default class BlockEditor extends PureComponent {
   submit = () => {
     // 编辑元素信息的行为在这里交给状态容器处理
     const { fileList, editing, oriented, editor } = this.state;
-    const { id, title, productImage, institutionId, price, type } = oriented;
+    const { id, title, productImage, institutionId, price, type, path } = oriented;
     const { size, displayName, image, color, bgColor, icon, userType } = editor;
     const newData = {
       id,
@@ -148,11 +148,22 @@ export default class BlockEditor extends PureComponent {
       bgColor,
       icon,
     };
-    if (oriented.type === 'product') {
-      newData.productImage = productImage;
-      newData.institutionId = institutionId;
-      newData.price = price;
+    switch(oriented.type){
+      case 'product': {
+        newData.productImage = productImage;
+        newData.institutionId = institutionId;
+        newData.price = price;
+        break;
+      }
+      case 'path': {
+        newData.path = path;
+        break;
+      }
+      default: {
+        break;
+      }
     }
+    console.log(this.state)
     this.props.onEdit('edit', { ...newData, fileList }, editing);
     this.hideModal();
   };
@@ -207,13 +218,13 @@ export default class BlockEditor extends PureComponent {
     }
   };
   onSelect = (detail) => {
+    debugger
     const update = {
       oriented: detail,
     };
     if (!this.state.editor.type) {
       update.editor = { ...this.state.editor, ...detail };
     }
-
     if (update.oriented.id === 'clear') {
       this.setState({ oriented: {}, editor: {}, fileList: [] });
     } else {
@@ -232,7 +243,9 @@ export default class BlockEditor extends PureComponent {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+
     const { editing, editor, visible, oriented, fileList } = this.state;
+    console.log('oriented', oriented)
     const {
       name,
       data,

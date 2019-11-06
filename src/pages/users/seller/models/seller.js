@@ -5,10 +5,13 @@ import {
   getAdmins,
   updateAdmin,
   removeAdmin,
+  createAdmin,
   getInstWithoutPage,
   getInstitutionsWhitoutPage,
   getInstitutionsForInstAdminWhitoutPage,
 } from '../services';
+
+import { parseEditor } from '../../../../utils/ui';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 const DEF_QUERY = {
@@ -67,10 +70,47 @@ export default {
         params.mobile = mobile;
       }
       const { data } = yield call(getAdmins, { ...PAGE_DEF, ...params, userType: 4 });
+      // debugger
+
+      console.log('====', data);
+      data.data = _.map(data.data, (d) => {
+        d.institutionName = d.institution.name;
+        return d;
+      });
       yield put({
         type: 'upState',
         payload: data,
       });
+    },
+    *editUser({ payload }, { call, select, put }) {
+      const { editor, pagination } = yield select(({ seller }) => seller);
+      let res;
+
+      const values = parseEditor(payload);
+      console.log(values, payload)
+      if (editor.id) {
+        const { data } = yield call(updateAdmin, { ...editor, ...values });
+        res = data;
+      } else {
+        editor.userType = 1;
+        const { data } = yield call(createAdmin, { ...editor, ...values });
+        res = data;
+      }
+      if (res) {
+        yield put({
+          type: 'fetch',
+          payload: {
+            ...pagination,
+            userType: 1,
+          },
+        });
+        yield put({
+          type: 'upState',
+          payload: {
+            editor: null,
+          },
+        });
+      }
     },
     *remove({ id }, { call, put, select }) {
       const { data } = yield call(removeAdmin, id);
@@ -89,7 +129,7 @@ export default {
       const { data } = yield call(updateAdmin, payload);
       if (data) {
         message.success('状态更新成功');
-        const list = yield select(({ admin }) => admin.data);
+        const list = yield select(({ seller }) => seller.data);
         const newList = _.map(list, (item) => {
           if (item.id === data.id) {
             item.status = payload.status;

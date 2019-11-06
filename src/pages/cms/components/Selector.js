@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Radio } from 'antd';
+import { Radio, Input } from 'antd';
 import _ from 'lodash';
 import { getProductsWithoutPage, getCate } from '../../products/services';
 import { getPagesWithoutPage } from '../services';
@@ -26,6 +26,10 @@ const TYPES = [
   {
     label: '系统功能',
     code: 'function',
+  },
+  {
+    label: '页面路径',
+    code: 'path',
   },
 ];
 const FUNCTIONS = [
@@ -78,6 +82,10 @@ export default class Selector extends PureComponent {
         }
         case 'category': {
           categoryOpts.push(option);
+          break;
+        }
+        case 'path': {
+          console.log('进来了', this.props.value)
           break;
         }
         default: {
@@ -145,6 +153,13 @@ export default class Selector extends PureComponent {
           });
           break;
         }
+        case 'path': {
+          const { data } = await getCate({ name: title });
+          _this.setState({
+            categoryOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
+          });
+          break;
+        }
         default: {
           return;
         }
@@ -154,9 +169,18 @@ export default class Selector extends PureComponent {
     }, 300);
   };
   choose = (type, key) => {
-    const target = _.find(this.state[`${type}Opts`], ['id', key]);
-    if (_.isFunction(this.props.onSelect) && target) {
-      this.props.onSelect({ ...target, type });
+    console.log(type, key);
+    if (type === 'path') {
+      const path = key.currentTarget.value;
+      console.log(path)
+      if (_.isFunction(this.props.onSelect) && path) {
+        this.props.onSelect({ path, type });
+      }
+    } else {
+      const target = _.find(this.state[`${type}Opts`], ['id', key]);
+      if (_.isFunction(this.props.onSelect) && target) {
+        this.props.onSelect({ ...target, type });
+      }
     }
   };
 
@@ -221,6 +245,15 @@ export default class Selector extends PureComponent {
           />
         );
       }
+      case 'path': {
+        return (
+          <Input
+            onChange={this.choose.bind(null, 'path')}
+            placeholder="请选输入小程序内的页面路径"
+            value={this.props.value.path || ''}
+          />
+        );
+      }
       default: {
         return null;
       }
@@ -228,7 +261,7 @@ export default class Selector extends PureComponent {
   };
   render() {
     const { itemType } = this.state;
-    console.log()
+    console.log();
     return (
       <Fragment>
         {!this.props.staticType ? (

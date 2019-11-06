@@ -273,12 +273,6 @@ export default function request(url, { body, method, ...options }) {
   if (/api\/wx\/createWXAQRCode$/.test(_url)) {
     options.responseType = 'arraybuffer'
   }
-  // // 如果是生成二维码图片的需要改编请求头
-  // const getQrApi = /createWXAQRCode$/;
-  // if(getQrApi.test(_url)){
-  //   options.headers[CONTENT_TYPE] = 'application/octet-stream';
-  //   // options.Accept = 'image/webp,image/apng,image/*,*/*;q=0.8';
-  // }
   return fetch(_url, options)
     .then(parseResponse)
     .then(checkStatus)

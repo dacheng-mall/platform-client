@@ -111,12 +111,9 @@ export default {
     },
     *change({ payload }, { put, call, select }) {
       const { value, index, type } = payload;
-      let {
-        data,
-        name,
-        type: listType,
-        attributes
-      } = yield select(({ elementEditor }) => elementEditor);
+      let { data, name, type: listType, attributes } = yield select(
+        ({ elementEditor }) => elementEditor,
+      );
       const gernaral = {};
       switch (type) {
         case 'edit': {
@@ -267,8 +264,13 @@ export default {
     *submit(p, { put, call, select, all }) {
       const elementEditor = yield select(({ elementEditor }) => elementEditor);
       let listData = _.cloneDeep(elementEditor);
+      console.log('listData', listData);
       _.remove(listData.data, (item) => {
-        return !item || !item.id;
+        if (item.type === 'path') {
+          return !item.path;
+        } else {
+          return !item || !item.id;
+        }
       });
       if (listData.type !== 'article' && (!listData.data || listData.data.length < 1)) {
         message.error('没有可以提交的内容');
