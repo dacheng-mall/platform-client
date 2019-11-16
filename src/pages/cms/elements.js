@@ -113,24 +113,6 @@ class CmsElements extends PureComponent {
           fetchType="elements/fetch"
           dispatch={this.props.dispatch}
         />
-        {/* <Table
-          rowKey="id"
-          size="small"
-          columns={this.columns}
-          dataSource={this.props.data}
-          locale={{ emptyText: '暂无数据' }}
-          pagination={{
-            pageSize: this.props.pagination.pageSize,
-            total: this.props.pagination.total,
-            current: this.props.pagination.page,
-            onChange: (page, pageSize) => {
-              this.props.dispatch({
-                type: 'elements/fetch',
-                payload: {page, pageSize}
-              })
-            }
-          }}
-        /> */}
       </div>
     );
   }

@@ -36,7 +36,6 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        console.log('pathname', pathname);
         const pn = ptrx('/qr/list/:batchId').exec(pathname);
         let id;
         if (pn) {

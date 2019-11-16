@@ -1,0 +1,44 @@
+.initBtn {
+  text-align: center;
+  border: 2px dotted #ddd;
+  border-radius: 10px;
+  padding: 20px 0;
+  margin: 10px;
+}
+.listItem {
+  margin: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  img {
+    width: 88px;
+  }
+  .info {
+    margin: 0 0 0 10px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    .showName {
+      font-size: 18px;
+      line-height: 1.2em;
+    }
+    .price {
+      font-size: 14px;
+      line-height: 1.2em;
+      text-decoration: line-through;
+    }
+    .showPrice {
+      font-size: 16px;
+      line-height: 1.2em;
+    }
+  }
+  .btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+  }
+}

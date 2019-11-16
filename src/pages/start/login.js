@@ -39,9 +39,7 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
         <div className={styles.formWrap}>
           <div className={styles.title}>
             <img src={require('../../assets/imgs/logo.png')} alt="logo" />
-            <div>
-              欢迎登录礼全有管理端
-            </div>
+            <div>访便面 - 数据中心</div>
           </div>
           <Form onSubmit={submit}>
             <Form.Item>
@@ -71,9 +69,11 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
             </Button>
           </Form>
         </div>
-        <div style={{ position: 'absolute', bottom: '10px', fontSize: '14px', textAlign: 'center' }}>
-          <div style={{color: '#fff'}}>河南洋白菜电子商务有限公司</div>
-          <a style={{color: '#fff'}} href="http://www.beian.miit.gov.cn" target="_blank">
+        <div
+          style={{ position: 'absolute', bottom: '10px', fontSize: '14px', textAlign: 'center' }}
+        >
+          <div style={{ color: '#fff' }}>河南洋白菜电子商务有限公司</div>
+          <a style={{ color: '#fff' }} href="http://www.beian.miit.gov.cn" target="_blank">
             豫ICP备18044641号
           </a>
         </div>

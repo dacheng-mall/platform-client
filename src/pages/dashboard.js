@@ -9,5 +9,7 @@ module.exports = {
     ...require('./activity'),
     ...require('./instUser'),
     ...require('./qr'),
+    ...require('./convert'),
+    ...require('./trade'),
   ],
 };

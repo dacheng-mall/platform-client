@@ -22,18 +22,17 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
         const pn = ptrx('/products/detail/:id').exec(pathname);
-        let id;
         if (pn) {
-          id = pn[1];
           dispatch({
             type: 'init',
-            id,
+            id: pn[1],
           });
-        }
-        if(pathname === '/products/detail') {
-          dispatch({
-            type: 'init'
-          });
+        } else {
+          if (pathname === '/products/detail') {
+            dispatch({
+              type: 'init',
+            });
+          }
         }
       });
     },
@@ -63,7 +62,7 @@ export default {
           const editor = {};
           _.forEach(data[0], (val, key) => {
             switch (key) {
-              case 'images': 
+              case 'images':
               case 'id':
               case 'title':
               case 'video':
@@ -155,10 +154,10 @@ export default {
                   todos[`images[${i}].name`] = upload(val.originFileObj);
                   editor.images[i] = {
                     type: 'image',
-                    name: ''
+                    name: '',
                   };
                 }
-                editor.images[i].displayOrder = i
+                editor.images[i].displayOrder = i;
               });
               break;
             }
@@ -227,14 +226,14 @@ export default {
         }
       }
     },
-    *clear(p, {put}){
+    *clear(p, { put }) {
       yield put({
         type: 'upState',
         payload: {
-          ...INIT_STATE
-        }
-      })
-    }
+          ...INIT_STATE,
+        },
+      });
+    },
   },
   reducers: {
     upState(state, { payload }) {

@@ -168,6 +168,35 @@ export const menu = () => {
         },
       ]
     },
+    {
+      name: '兑换管理',
+      path: 'convert',
+      authority: admin,
+      children: [
+        {
+          name: '礼包管理',
+          path: 'prizes',
+          authority: admin,
+        },
+        {
+          name: '电子兑换券管理',
+          path: 'tickets',
+          authority: admin,
+        },
+      ]
+    },
+    {
+      name: '交易管理',
+      path: 'trade',
+      authority: admin,
+      children: [
+        {
+          name: '订单管理',
+          path: 'orders',
+          authority: admin,
+        }
+      ]
+    }
 
     // {
     //   name: '订单管理',
