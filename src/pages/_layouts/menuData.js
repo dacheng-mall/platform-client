@@ -194,7 +194,17 @@ export const menu = () => {
           name: '订单管理',
           path: 'orders',
           authority: admin,
-        }
+        },
+        {
+          name: '发货',
+          path: 'sending',
+          authority: admin,
+        },
+        {
+          name: '物流模板',
+          path: 'logistics-template',
+          authority: admin,
+        },
       ]
     }
 

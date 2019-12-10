@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
 import _ from 'lodash';
 import { Input, Icon } from 'antd';
-import { findInst, findProducts, getPrizes } from './service';
+import { findInst, findProducts, findPrizes } from './service';
 
 const source = window.config.source;
 const Search = Input.Search;
@@ -23,25 +23,22 @@ export default class InstPicker extends PureComponent {
     });
   };
   fetchPeizes = async (name) => {
-    const { data } = await getPrizes({
-      query: {
-        match: {
-          name,
-        },
-      },
+    console.log('name,', name);
+    const { data } = await findPrizes({
+      name,
     });
-    const { hits } = data.hits;
-    if(hits.length > 0) {
-      const res = _.map(hits, ({_source, _id}) => {
-        return {
-          id: _id,
-          name: _source.name
-        }
-      })
-      this.setState({
-        data: res,
-      });
-    }
+    this.setState({
+      data,
+    });
+    // const { hits } = data.hits;
+    // if (hits.length > 0) {
+    //   const res = _.map(hits, ({ _source, _id }) => {
+    //     return {
+    //       id: _id,
+    //       name: _source.name,
+    //     };
+    //   });
+    // }
   };
   onSearch = (val) => {
     const _val = _.trim(val);
@@ -70,8 +67,15 @@ export default class InstPicker extends PureComponent {
         break;
       }
       case 'product': {
-        const { title, id, price, mainImageUrl: image, autoId } = val;
-        this.props.onChange({ name: title, id, price, image, autoId });
+        const {
+          title,
+          id,
+          price,
+          mainImageUrl: image,
+          autoId,
+          category: { id: cateId, name: cateName },
+        } = val;
+        this.props.onChange({ name: title, id, price, image, autoId, cateId, cateName });
         break;
       }
       case 'prize': {

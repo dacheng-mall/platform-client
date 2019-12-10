@@ -171,23 +171,6 @@ function Gift(props) {
         fetchType="activityGift/fetch"
         dispatch={props.dispatch}
       />
-      {/* <Table
-        rowKey="id"
-        columns={columns()}
-        dataSource={props.data || []}
-        locale={{ emptyText: '暂无数据' }}
-        pagination={{
-          pageSize: props.pagination.pageSize,
-          total: props.pagination.total,
-          current: props.pagination.page,
-          onChange: (page, pageSize) => {
-            props.dispatch({
-              type: 'activityGift/fetch',
-              payload: { page, pageSize },
-            });
-          },
-        }}
-      /> */}
     </Fragment>
   );
 }

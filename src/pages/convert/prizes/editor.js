@@ -46,17 +46,17 @@ function Editor(props) {
           <div className={styles.title}>礼包图片</div>
           <Form layout="inline">
             <div style={{display: "flex", justifyContent: "center"}}>
-              <FormItem validateStatus={errors.images ? 'error' : ''} help="封面图">
+              <FormItem validateStatus={errors.coverImg ? 'error' : ''} help="封面图">
                 {getFieldDecorator('coverImg', {
                   rules: [{ required: false, message: '必填项' }],
                 })(<Images max={1} />)}
               </FormItem>
-              <FormItem validateStatus={errors.images ? 'error' : ''} help="内容图">
+              <FormItem validateStatus={errors.contentImg ? 'error' : ''} help="内容图">
                 {getFieldDecorator('contentImg', {
                   rules: [{ required: false, message: '必填项' }],
                 })(<Images max={1} />)}
               </FormItem>
-              <FormItem validateStatus={errors.images ? 'error' : ''} help="海报图">
+              <FormItem validateStatus={errors.posterImg ? 'error' : ''} help="海报图">
                 {getFieldDecorator('posterImg', {
                   rules: [{ required: false, message: '必填项' }],
                 })(<Images max={1} />)}
@@ -73,6 +73,15 @@ function Editor(props) {
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: '必填项' }],
               })(<Input placeholder="请输入" />)}
+            </FormItem>
+            <FormItem
+              label="礼包面值(元)"
+              validateStatus={errors.value ? 'error' : ''}
+              help={parseErrorMessage(errors.name)}
+            >
+              {getFieldDecorator('value', {
+                rules: [{ required: true, message: '必填项' }],
+              })(<InputNumber min={0} step={100} placeholder="请输入" />)}
             </FormItem>
             <FormItem label="描述">
               {getFieldDecorator('description')(

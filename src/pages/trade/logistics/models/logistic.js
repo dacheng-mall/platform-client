@@ -2,19 +2,21 @@ import _ from 'lodash';
 import ptrx from 'path-to-regexp';
 import { message } from 'antd';
 import { fieldsChange } from '../../../../utils/ui';
-import { upload } from '../../../../utils';
-import { createPrize, updatePrize, getPrize } from '../service';
+// import { upload } from '../../../../utils';
+import { createPrize, updatePrize, getPrize } from '../services';
 
 const INIT_STATE = {
-  editor: {},
+  editor: {
+    billingType: "count"
+  },
   errors: {}
 };
 export default {
-  namespace: 'prize',
+  namespace: 'logistic',
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        const pn = ptrx('/convert/prize/:id').exec(pathname);
+        const pn = ptrx('/logisitic-template/:id').exec(pathname);
         let id;
         if (pn) {
           id = pn[1];
@@ -33,12 +35,12 @@ export default {
     *init({ id }, { put }) {
       if (id) {
         yield put({
-          type: 'fetchPrize',
+          type: 'fetch',
           id,
         });
       }
     },
-    *fetchPrize({ id }, { call, put }) {
+    *fetch({ id }, { call, put }) {
       try {
         const { data } = yield call(getPrize, id);
         if (data.id) {
@@ -55,29 +57,7 @@ export default {
     *submit(p, { call, select, all }) {
       const { editor: _editor, id } = yield select(({ prize }) => prize);
       const editor = _.cloneDeep(_editor);
-      const todos = {};
-      // 处理图片
-      _.forEach(editor, (val, key) => {
-        switch (key) {
-          case 'coverImg':
-          case 'contentImg':
-          case 'posterImg': {
-            if (val && val.length > 0 && val[0].originFileObj) {
-              todos[key] = upload(val[0].originFileObj);
-              editor[key] = '';
-            }
-            break;
-          }
-        }
-      });
-      const ups = Object.values(todos);
-      const paths = Object.keys(todos);
-      if (ups.length > 0) {
-        const res = yield all(_.map(ups, (up) => up()));
-        _.forEach(paths, (path, i) => {
-          _.set(editor, path, res[i].key);
-        });
-      }
+      // const todos = {};
       if (!id) {
         try {
           yield call(createPrize, editor);

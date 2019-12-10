@@ -1,9 +1,35 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { generateTickets, getTickets } from '../service';
+import { generateTickets, getTickets, exportCSV } from '../service';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 
+function parseQuery(_q) {
+  let query;
+  if (_q.code || _q.range) {
+    query = {};
+    if (_q.code) {
+      query.term = {
+        code: {
+          value: _q.code,
+        },
+      };
+    }
+    if (_q.range) {
+      query.range = {
+        sn: _q.range,
+      };
+    }
+  }
+  return query;
+}
+function daley(time = 500) {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res();
+    }, time);
+  });
+}
 export default {
   namespace: 'tickets',
   subscriptions: {
@@ -17,11 +43,16 @@ export default {
   },
   state: {
     pagination: { ...PAGE_DEF },
-    data: [],},
-
+    data: [],
+    query: {
+      code: '',
+      gte: null,
+      lte: null,
+    },
+  },
   effects: {
     *init(p, { select, put }) {
-      const { pagination, data } = yield select(({ prizes }) => prizes);
+      const { pagination, data } = yield select(({ tickets }) => tickets);
       if (data.length < 1) {
         yield put({
           type: 'fetch',
@@ -29,35 +60,41 @@ export default {
         });
       }
     },
-    *fetch({ payload }, { put, call }) {
+    *fetch({ payload }, { put, call, select }) {
       try {
-        const from = (payload.page - 1) * payload.pageSize;
-        const { data } = yield call(getTickets, { from, size: payload.pageSize });
-        const {
-          hits,
-          total: { value: total },
-        } = data.hits;
-        const _list = _.map(hits, (item) => ({ ...item._source, id: item._id }));
-        const _pagination = {
-          total,
-          pageCount: Math.ceil(total / payload.pageSize),
-          page: payload.page,
-          pageSize: payload.pageSize,
-        };
+        const { query } = yield select(({ tickets }) => tickets);
+        const { data } = yield call(getTickets, { ...payload, query });
         yield put({
           type: 'upState',
           payload: {
-            data: _list,
-            pagination: _pagination,
+            ...data,
           },
         });
       } catch (error) {
         console.log(error);
       }
     },
+    *exportCSV(p, { call, put, select }) {
+      try {
+        const { query } = yield select(({ tickets }) => tickets);
+        // const query = parseQuery(_q);
+        const { data } = yield call(exportCSV, query);
+
+        if (data && data.url) {
+          message.success('导出成功');
+          window.location.href = `${window.config.api_prod}${data.url}`;
+        } else {
+          message.warning(`导出失败-${data}`);
+        }
+      } catch (error) {}
+    },
     *generateTickets({ payload }, { put, call }) {
       try {
-        const { data } = yield call(generateTickets, payload);
+        const {
+          prize: { id, name, value },
+          ...values
+        } = payload;
+        const { data } = yield call(generateTickets, { prize: { id, name, value }, ...values });
         if (!data.errors) {
           message.success(`成功生成${payload.count}个兑换券`);
           yield put({
@@ -67,6 +104,14 @@ export default {
             },
           });
         }
+        yield daley(2000);
+        console.log('yanchile');
+        yield put({
+          type: 'fetch',
+          payload: {
+            ...PAGE_DEF,
+          },
+        });
       } catch (error) {}
     },
   },

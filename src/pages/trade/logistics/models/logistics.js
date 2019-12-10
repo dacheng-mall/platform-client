@@ -1,14 +1,14 @@
 // import _ from 'lodash';
-import { getOrders } from '../service';
+import { getLogisticsTemplate } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 
 export default {
-  namespace: 'orders',
+  namespace: 'logistics',
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        if (pathname === '/trade/orders') {
+        if (pathname === '/trade/logistics') {
           dispatch({ type: 'init', payload: { ...PAGE_DEF } });
         }
       });
@@ -29,7 +29,7 @@ export default {
       try {
         debugger
         const { query } = yield select(({ tickets }) => tickets);
-        const { data } = yield call(getOrders, { ...payload, query });
+        const { data } = yield call(getLogisticsTemplate, { ...payload, query });
         yield put({
           type: 'upState',
           payload: {

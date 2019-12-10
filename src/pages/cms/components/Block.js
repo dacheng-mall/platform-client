@@ -17,6 +17,7 @@ export default class BlockEditor extends PureComponent {
   };
   // same
   edit = (type, value, index) => {
+            debugger
     switch (type) {
       case 'edit': {
         // 点击元素上的编辑按钮, 进入编辑状态
@@ -42,7 +43,7 @@ export default class BlockEditor extends PureComponent {
             break;
           }
           default: {
-            newState.oriented.type = editor.type;
+            newState.oriented = editor;
             break;
           }
         }
@@ -127,6 +128,7 @@ export default class BlockEditor extends PureComponent {
     });
   };
   componentDidMount() {
+    console.log(this.state, this.props)
     const width = document.getElementById('_listWrap').clientWidth - 20;
     this.setState({ height: width * 0.48 + 'px' });
   }
@@ -218,7 +220,6 @@ export default class BlockEditor extends PureComponent {
     }
   };
   onSelect = (detail) => {
-    debugger
     const update = {
       oriented: detail,
     };

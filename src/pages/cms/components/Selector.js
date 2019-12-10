@@ -9,7 +9,7 @@ import Selecter from './Selecter';
 const TYPES = [
   {
     label: '商品',
-    code: 'product',
+    code: 'products',
   },
   {
     label: '商品分类',
@@ -47,29 +47,29 @@ let timer;
 
 export default class Selector extends PureComponent {
   state = {
-    productOpts: [],
+    productsOpts: [],
     pageOpts: [],
     activitesOpts: [],
     categoryOpts: [],
     functionOpts: [...FUNCTIONS],
-    itemType: 'product',
+    itemType: 'products',
   };
   componentDidMount() {
     if (this.props.value) {
       const { title, id, image, type } = this.props.value;
-      const productOpts = [NONE_OPT];
+      const productsOpts = [NONE_OPT];
       const pageOpts = [NONE_OPT];
       const activityOpts = [NONE_OPT];
       const categoryOpts = [NONE_OPT];
       const option = { title, id, image };
       switch (type) {
-        case 'product': {
+        case 'products': {
           const { productImage, price, institutionId } = this.props.value;
           option.mainImageUrl = productImage;
           option.price = price;
           option.institutionId = institutionId;
           option.productImage = productImage;
-          productOpts.push(option);
+          productsOpts.push(option);
           break;
         }
         case 'activity': {
@@ -84,17 +84,17 @@ export default class Selector extends PureComponent {
           categoryOpts.push(option);
           break;
         }
-        case 'path': {
-          console.log('进来了', this.props.value)
-          break;
-        }
+        // case 'path': 
+        // case 'function': {
+        //   break;
+        // }
         default: {
-          return;
+          break;
         }
       }
       this.setState({
         itemType: type,
-        productOpts,
+        productsOpts,
         pageOpts,
         activityOpts,
         categoryOpts,
@@ -115,10 +115,10 @@ export default class Selector extends PureComponent {
     const _this = this;
     timer = setTimeout(async function() {
       switch (type) {
-        case 'product': {
+        case 'products': {
           const { data } = await getProductsWithoutPage({ title });
           _this.setState({
-            productOpts: _.map(
+            productsOpts: _.map(
               [NONE_OPT, ...data],
               ({ id, title, mainImageUrl, price, institutionId, name }) => ({
                 id,
@@ -172,11 +172,12 @@ export default class Selector extends PureComponent {
     console.log(type, key);
     if (type === 'path') {
       const path = key.currentTarget.value;
-      console.log(path)
       if (_.isFunction(this.props.onSelect) && path) {
         this.props.onSelect({ path, type });
       }
     } else {
+      console.log('----', type, key)
+      debugger
       const target = _.find(this.state[`${type}Opts`], ['id', key]);
       if (_.isFunction(this.props.onSelect) && target) {
         this.props.onSelect({ ...target, type });
@@ -186,15 +187,15 @@ export default class Selector extends PureComponent {
 
   renderLink = (itemType) => {
     switch (itemType) {
-      case 'product': {
+      case 'products': {
         return (
           <Selecter
-            onSearch={this.onSearch.bind(null, 'product')}
-            onChange={this.choose.bind(null, 'product')}
+            onSearch={this.onSearch.bind(null, 'products')}
+            onChange={this.choose.bind(null, 'products')}
             placeholder="请输入关键字搜索商品"
             value={this.props.value.id}
-            options={this.state.productOpts}
-            type="productOpts"
+            options={this.state.productsOpts}
+            type="productsOpts"
           />
         );
       }

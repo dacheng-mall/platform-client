@@ -21,7 +21,6 @@ export default class Products extends PureComponent {
       case 'add': {
         const newValue = this.props.value ? [...this.props.value, value] : [value];
         this.props.onChange(newValue);
-
         this.cancel();
         break;
       }
@@ -36,6 +35,7 @@ export default class Products extends PureComponent {
           newValue.splice(value + 1, 0, target);
         }
         this.props.onChange(newValue);
+        break;
       }
       case 'del': {
         const newValue = [...this.props.value];
@@ -132,7 +132,6 @@ export default class Products extends PureComponent {
       );
     }
     if (this.state.editing) {
-      console.log('----------', this.state.newProduct);
       return (
         <div>
           <FormItem label="关联商品">

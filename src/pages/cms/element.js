@@ -40,6 +40,7 @@ class ElementEditor extends PureComponent {
     }
   };
   changeData = (type, value, index) => {
+    console.log(type, value, index)
     if (value && (value.value && value.value.id === 'clear')) {
       this.props.dispatch({
         type: 'elementEditor/change',
