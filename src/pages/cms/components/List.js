@@ -35,12 +35,12 @@ export default class ListEditor extends PureComponent {
           },
         };
         switch (editor.type) {
-          case 'product': {
+          case 'products': {
             const { productImage, institutionId, price } = editor;
             newState.oriented.productImage = productImage;
             newState.oriented.institutionId = institutionId;
             newState.oriented.price = price;
-            newState.oriented.type = 'product';
+            newState.oriented.type = 'products';
             break;
           }
           default: {
@@ -145,7 +145,7 @@ export default class ListEditor extends PureComponent {
       image: fileList.length === 0 ? '' : (image || productImage),
       type,
     };
-    if (oriented.type === 'product') {
+    if (oriented.type === 'products') {
       newData.productImage = productImage;
       newData.institutionId = institutionId;
       newData.price = price;

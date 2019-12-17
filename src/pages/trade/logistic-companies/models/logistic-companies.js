@@ -1,14 +1,14 @@
 // import _ from 'lodash';
-import { getTemplates } from '../services';
+import { getCompanies } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 
 export default {
-  namespace: 'logistics',
+  namespace: 'logisticCompanies',
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        if (pathname === '/trade/logistics-template') {
+        if (pathname === '/trade/logistic-companies') {
           dispatch({ type: 'init', payload: { ...PAGE_DEF } });
         }
       });
@@ -20,7 +20,7 @@ export default {
   },
   effects: {
     *init(p, { select, put }) {
-      const { pagination, data } = yield select(({ logistics }) => logistics);
+      const { pagination, data } = yield select(({ logisticCompanies }) => logisticCompanies);
       if (data.length < 1) {
         yield put({
           type: 'fetch',
@@ -30,9 +30,9 @@ export default {
     },
     *fetch({ payload = {} }, { put, call, select }) {
       try {
-        const { query } = yield select(({ logistics }) => logistics);
+        const { query } = yield select(({ logisticCompanies }) => logisticCompanies);
         console.log(query);
-        const { data } = yield call(getTemplates, { ...payload, query });
+        const { data } = yield call(getCompanies, { ...payload, query });
         yield put({
           type: 'upState',
           payload: {

@@ -12,7 +12,15 @@ module.exports = [
     component: 'trade/logistics/editor',
   },
   {
+    path: '/trade/logistics-template/editor/:id',
+    component: 'trade/logistics/editor',
+  },
+  {
     path: '/trade/sending',
-    component: 'trade/logistics',
+    component: 'trade/orders',
+  },
+  {
+    path: '/trade/logistic-companies',
+    component: 'trade/logistic-companies',
   },
 ];

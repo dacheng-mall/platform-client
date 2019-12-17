@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import { connect } from 'dva';
-import _ from "lodash";
-import { Button, Form, Input, InputNumber, Switch } from 'antd';
+import _ from 'lodash';
+import { Button, Form, Input, InputNumber } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange } from '../../../utils/ui';
 import { goBack } from '../../../utils/index';
 
 import Images from '../../products/components/form/Images';
 import Picker from './Picker';
 import Products from './Products';
+import Rules from './Rules';
 import styles from './index.less';
 
 function Editor(props) {
-  const { errors, editors } = props;
+  const { errors } = props;
 
   const parseErrorMessage = (error) => {
     if (error) {
@@ -45,7 +46,7 @@ function Editor(props) {
         <div className={styles.info}>
           <div className={styles.title}>礼包图片</div>
           <Form layout="inline">
-            <div style={{display: "flex", justifyContent: "center"}}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <FormItem validateStatus={errors.coverImg ? 'error' : ''} help="封面图">
                 {getFieldDecorator('coverImg', {
                   rules: [{ required: false, message: '必填项' }],
@@ -106,7 +107,6 @@ function Editor(props) {
             <FormItem
               label="限选总金额(元)"
               validateStatus={errors.maxCount ? 'error' : ''}
-              help={parseErrorMessage(errors.maxCount)}
               help="0元为不限制, 精确到百分位"
             >
               {getFieldDecorator('sumPrice', {
@@ -115,10 +115,16 @@ function Editor(props) {
                 decimalSeparator: '2',
               })(<InputNumber step={100} min={0} />)}
             </FormItem>
-            <FormItem label="启用状态">
+            {/* <FormItem label="启用状态">
               {getFieldDecorator('status', {
                 initialValue: false,
               })(<Switch />)}
+            </FormItem> */}
+            <FormItem label="规则">
+              {getFieldDecorator('rules', {
+                type: 'array',
+                rules: [{ required: true, message: '必填项' }],
+              })(<Rules />)}
             </FormItem>
           </Form>
         </div>

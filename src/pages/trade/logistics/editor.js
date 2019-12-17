@@ -1,13 +1,29 @@
 import { useEffect, useState } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Form, Input, InputNumber, Switch, Radio, Cascader, Select, Checkbox } from 'antd';
+import { Button, Form, Input, Radio, Cascader, Select } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange } from '../../../utils/ui';
 import { goBack } from '../../../utils/index';
-import SendingTypeEditor from "./sendingTypeEditor";
+import SendingTypeEditor from './sendingTypeEditor';
 
 import styles from './editor.less';
-
+const BILLING_TYPE = [
+  {
+    code: 'count',
+    name: '按件数',
+    unit: '件',
+  },
+  {
+    code: 'weight',
+    name: '按重量',
+    unit: 'kg',
+  },
+  {
+    code: 'volume',
+    name: '按体积',
+    unit: 'm³',
+  },
+];
 const RESPOND = [
   { name: '4小时内', code: '4-h' },
   { name: '8小时内', code: '8-h' },
@@ -27,41 +43,35 @@ const RESPOND = [
 const areaDataOrigin = require('../../../assets/area.json');
 
 function Editor(props) {
-  const { errors, editors, form } = props;
   const [respOpts, setResOpts] = useState([...RESPOND]);
-  const parseErrorMessage = (error) => {
-    if (error) {
-      return _.map(error, ({ message }, i) => `${i !== 0 ? ',' : ''}${message}`);
-    }
-    return null;
-  };
   const { getFieldDecorator, validateFields } = props.form;
   const submit = () => {
-    validateFields();
-    props.dispatch({
-      type: 'logistics/submit',
+    validateFields((err) => {
+      if (!err) {
+        props.dispatch({
+          type: 'logistic/submit',
+        });
+      }
     });
   };
   useEffect(() => {
     return () => {
       props.dispatch({
-        type: 'logistics/clear',
+        type: 'logistic/clear',
       });
     };
   }, []);
   const changeArea = (v, vo) => {
     const regionName = _.map(vo, ({ label }) => label).join(' ');
-    props.dispatch({
-      type: 'logistic/fieldsChange',
-      payload: {
-        fields: {
-          regionName: {
-            value: regionName,
-            name: 'regionName',
-          },
+    console.log(regionName);
+    setTimeout(() => {
+      props.dispatch({
+        type: 'logistic/upState',
+        payload: {
+          regionName
         },
-      },
-    });
+      });
+    }, 1000);
   };
   const filterOptions = (inputValue) => {
     const res = RESPOND.filter((resp) => resp.name.includes(inputValue));
@@ -126,7 +136,7 @@ function Editor(props) {
                 initialValue: false,
                 rules: [{ required: true, message: '必填项' }],
               })(
-                <Radio.Group buttonStyle="solid">
+                <Radio.Group buttonStyle="solid"> 
                   <Radio.Button value={false}>自定义运费</Radio.Button>
                   <Radio.Button value={true}>卖家承担运费</Radio.Button>
                 </Radio.Group>,
@@ -134,19 +144,21 @@ function Editor(props) {
             </FormItem>
             <FormItem label="计价方式">
               {getFieldDecorator('billingType', {
-                initialValue: 'count',
+                initialValue: BILLING_TYPE[0].code,
                 rules: [{ required: true, message: '必填项' }],
               })(
                 <Radio.Group buttonStyle="solid">
-                  <Radio.Button value="count">按件数</Radio.Button>
-                  <Radio.Button value="weight">按重量</Radio.Button>
-                  <Radio.Button value="volume">按体积</Radio.Button>
+                  {_.map(BILLING_TYPE, (b) => (
+                    <Radio.Button value={b.code} key={b.code}>
+                      {b.name}
+                    </Radio.Button>
+                  ))}
                 </Radio.Group>,
               )}
             </FormItem>
           </Form>
         </div>
-        <div className={styles.products}>
+        <div className={styles.billingType}>
           <Form labelCol={{ span: 0 }}>
             <div className={styles.title}>编辑运送方式</div>
             <Form.Item>

@@ -17,7 +17,6 @@ export default class BlockEditor extends PureComponent {
   };
   // same
   edit = (type, value, index) => {
-            debugger
     switch (type) {
       case 'edit': {
         // 点击元素上的编辑按钮, 进入编辑状态
@@ -128,7 +127,6 @@ export default class BlockEditor extends PureComponent {
     });
   };
   componentDidMount() {
-    console.log(this.state, this.props)
     const width = document.getElementById('_listWrap').clientWidth - 20;
     this.setState({ height: width * 0.48 + 'px' });
   }
@@ -165,7 +163,6 @@ export default class BlockEditor extends PureComponent {
         break;
       }
     }
-    console.log(this.state)
     this.props.onEdit('edit', { ...newData, fileList }, editing);
     this.hideModal();
   };
@@ -194,7 +191,6 @@ export default class BlockEditor extends PureComponent {
       }
       case 'size':
       case 'userType': {
-        console.log(e);
         this.setState({
           editor: { ...this.state.editor, [type]: e },
         });
@@ -246,7 +242,6 @@ export default class BlockEditor extends PureComponent {
     };
 
     const { editing, editor, visible, oriented, fileList } = this.state;
-    console.log('oriented', oriented)
     const {
       name,
       data,

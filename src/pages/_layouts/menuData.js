@@ -13,7 +13,8 @@ roles编码
 export const menu = () => {
   const admin = _checkAuthority([1]);
   const instAdmin = _checkAuthority([3]);
-  const all = _checkAuthority([1,3]);
+  const all = _checkAuthority([1, 3]);
+  const all2 = _checkAuthority([1, 5]);
   return [
     {
       name: '人员管理',
@@ -33,13 +34,13 @@ export const menu = () => {
           path: 'instAdmin',
           authority: instAdmin,
         },
-      ]
+      ],
     },
     {
       name: '活动管理',
       authority: instAdmin,
       icon: 'iconfont icon-user',
-      path: 'instActivity'
+      path: 'instActivity',
     },
     {
       name: '人员管理',
@@ -122,7 +123,7 @@ export const menu = () => {
           path: 'instAdmin',
           authority: admin,
         },
-      ]
+      ],
     },
     {
       name: '活动管理',
@@ -139,7 +140,7 @@ export const menu = () => {
           path: 'list',
           authority: admin,
         },
-      ]
+      ],
     },
     {
       name: '二维码管理',
@@ -166,7 +167,7 @@ export const menu = () => {
           path: 'create',
           authority: admin,
         },
-      ]
+      ],
     },
     {
       name: '兑换管理',
@@ -183,30 +184,35 @@ export const menu = () => {
           path: 'tickets',
           authority: admin,
         },
-      ]
+      ],
     },
     {
       name: '交易管理',
       path: 'trade',
-      authority: admin,
+      authority: all2,
       children: [
         {
           name: '订单管理',
           path: 'orders',
-          authority: admin,
+          authority: all2,
         },
         {
           name: '发货',
           path: 'sending',
-          authority: admin,
+          authority: all2,
         },
         {
           name: '物流模板',
           path: 'logistics-template',
+          authority: all2,
+        },
+        {
+          name: '物流公司',
+          path: 'logistic-companies',
           authority: admin,
         },
-      ]
-    }
+      ],
+    },
 
     // {
     //   name: '订单管理',

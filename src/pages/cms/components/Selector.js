@@ -56,7 +56,7 @@ export default class Selector extends PureComponent {
   };
   componentDidMount() {
     if (this.props.value) {
-      const { title, id, image, type } = this.props.value;
+      const { title, id, image, type, name } = this.props.value;
       const productsOpts = [NONE_OPT];
       const pageOpts = [NONE_OPT];
       const activityOpts = [NONE_OPT];
@@ -65,8 +65,10 @@ export default class Selector extends PureComponent {
       switch (type) {
         case 'products': {
           const { productImage, price, institutionId } = this.props.value;
+          console.log('this.props.value', this.props.value)
           option.mainImageUrl = productImage;
           option.price = price;
+          option.title = name || title;
           option.institutionId = institutionId;
           option.productImage = productImage;
           productsOpts.push(option);
@@ -84,7 +86,7 @@ export default class Selector extends PureComponent {
           categoryOpts.push(option);
           break;
         }
-        // case 'path': 
+        // case 'path':
         // case 'function': {
         //   break;
         // }
@@ -133,7 +135,6 @@ export default class Selector extends PureComponent {
         }
         case 'activity': {
           const { data } = await getActivitiesWithoutPage({ name: title });
-          console.log(data);
           _this.setState({
             activityOpts: _.map([NONE_OPT, ...data], ({ id, name: title }) => ({ id, title })),
           });
@@ -169,15 +170,13 @@ export default class Selector extends PureComponent {
     }, 300);
   };
   choose = (type, key) => {
-    console.log(type, key);
     if (type === 'path') {
       const path = key.currentTarget.value;
       if (_.isFunction(this.props.onSelect) && path) {
         this.props.onSelect({ path, type });
       }
     } else {
-      console.log('----', type, key)
-      debugger
+      debugger;
       const target = _.find(this.state[`${type}Opts`], ['id', key]);
       if (_.isFunction(this.props.onSelect) && target) {
         this.props.onSelect({ ...target, type });
@@ -262,7 +261,6 @@ export default class Selector extends PureComponent {
   };
   render() {
     const { itemType } = this.state;
-    console.log();
     return (
       <Fragment>
         {!this.props.staticType ? (

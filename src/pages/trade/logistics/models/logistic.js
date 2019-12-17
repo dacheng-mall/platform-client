@@ -3,20 +3,20 @@ import ptrx from 'path-to-regexp';
 import { message } from 'antd';
 import { fieldsChange } from '../../../../utils/ui';
 // import { upload } from '../../../../utils';
-import { createPrize, updatePrize, getPrize } from '../services';
+import { createPrize, updatePrize, getTemplate, createTemplate, updateTemplate } from '../services';
 
 const INIT_STATE = {
   editor: {
-    billingType: "count"
+    billingType: 'count',
   },
-  errors: {}
+  errors: {},
 };
 export default {
   namespace: 'logistic',
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        const pn = ptrx('/logisitic-template/:id').exec(pathname);
+        const pn = ptrx('/trade/logistics-template/editor/:id').exec(pathname);
         let id;
         if (pn) {
           id = pn[1];
@@ -33,6 +33,7 @@ export default {
   },
   effects: {
     *init({ id }, { put }) {
+      console.log(id);
       if (id) {
         yield put({
           type: 'fetch',
@@ -42,31 +43,55 @@ export default {
     },
     *fetch({ id }, { call, put }) {
       try {
-        const { data } = yield call(getPrize, id);
+        const { data } = yield call(getTemplate, id);
         if (data.id) {
+          if (data.respond) {
+            data.respond = {
+              label: data.respond.name,
+              key: data.respond.code,
+            };
+          }
+          let regionName = ''
+          if (data.origin) {
+            regionName = data.origin.name
+            data.origin = data.origin.code.split(' ');
+          }
           yield put({
             type: 'upState',
             payload: {
               editor: data,
               id: data.id,
+              regionName
             },
           });
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     },
-    *submit(p, { call, select, all }) {
-      const { editor: _editor, id } = yield select(({ prize }) => prize);
+    *submit(p, { call, select }) {
+      const { editor: _editor, id, regionName } = yield select(({ logistic }) => logistic);
       const editor = _.cloneDeep(_editor);
-      // const todos = {};
+      if (editor.respond) {
+        editor.respond = {
+          name: editor.respond.label,
+          code: editor.respond.key,
+        };
+      }
+      if (editor.origin) {
+        editor.origin = {
+          code: editor.origin.join(' '),
+          name: regionName,
+        };
+      }
       if (!id) {
         try {
-          yield call(createPrize, editor);
+          yield call(createTemplate, editor);
           message.success('新建成功');
         } catch (error) {}
       } else {
-        // 这里执行更新的逻辑
         try {
-          yield call(updatePrize, editor);
+          yield call(updateTemplate, editor);
           message.success('更新成功');
         } catch (error) {}
       }
