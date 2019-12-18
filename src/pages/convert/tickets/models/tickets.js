@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { generateTickets, getTickets, exportCSV, batch } from '../service';
+import { generateTickets, getTickets, exportCSV, batch, remove, update } from '../service';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 const QUERY_DEF = {
@@ -55,11 +55,60 @@ export default {
         console.log(error);
       }
     },
-    *exportCSV(p, { call, put, select }) {
+    *remove({ id }, { call, put }) {
+      const { data } = yield call(remove, id);
+      if (data.result === 'updated') {
+        message.success(`删除成功`);
+        yield daley(500);
+        yield put({
+          type: 'fetch',
+          payload: {
+            ...PAGE_DEF,
+          },
+        });
+      }
+    },
+    *edit({ payload = {}, form }, { call, put, select }) {
+      try {
+        const { id } = yield select(({ tickets }) => tickets);
+        const body = { ...payload };
+        _.forEach(payload, (val, key) => {
+          if (val === undefined || val === null || val === '') {
+            delete payload[key];
+          }
+        });
+        if (!_.isEmpty(body)) {
+          const { data } = yield call(update, { id, ...body });
+          if (data.result === 'updated') {
+            message.success(`更新成功`);
+            yield put({
+              type: 'upState',
+              payload: {
+                visible: false,
+                loading: false,
+                query: { ...QUERY_DEF },
+              },
+            });
+            form.resetFields();
+            yield daley(500);
+            yield put({
+              type: 'fetch',
+              payload: {
+                ...PAGE_DEF,
+              },
+            });
+          }
+        } else {
+          message.warning('没有需要修改的内容');
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    *exportCSV({ prefix }, { call, select }) {
       try {
         const { query } = yield select(({ tickets }) => tickets);
-        // const query = parseQuery(_q);
-        const { data } = yield call(exportCSV, query);
+        const { data } = yield call(exportCSV, { query, prefix });
 
         if (data && data.url) {
           message.success('导出成功');
@@ -73,7 +122,7 @@ export default {
       try {
         const { query } = yield select(({ tickets }) => tickets);
         const { prize, expiredTime, code } = payload;
-        const { id, name, value } = prize || {}
+        const { id, name, value } = prize || {};
         const body = {};
         if (id) {
           body.prize = { id, name, value };
@@ -99,7 +148,7 @@ export default {
               query: { ...QUERY_DEF },
             },
           });
-          form.resetFields()
+          form.resetFields();
           yield daley(2000);
           yield put({
             type: 'fetch',
@@ -138,7 +187,7 @@ export default {
             query: { ...QUERY_DEF },
           },
         });
-        form.resetFields()
+        form.resetFields();
         yield daley(2000);
         yield put({
           type: 'fetch',
