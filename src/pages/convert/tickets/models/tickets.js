@@ -1,28 +1,13 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { generateTickets, getTickets, exportCSV } from '../service';
+import { generateTickets, getTickets, exportCSV, batch } from '../service';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
-
-function parseQuery(_q) {
-  let query;
-  if (_q.code || _q.range) {
-    query = {};
-    if (_q.code) {
-      query.term = {
-        code: {
-          value: _q.code,
-        },
-      };
-    }
-    if (_q.range) {
-      query.range = {
-        sn: _q.range,
-      };
-    }
-  }
-  return query;
-}
+const QUERY_DEF = {
+  code: '',
+  gte: null,
+  lte: null,
+};
 function daley(time = 500) {
   return new Promise((res) => {
     setTimeout(() => {
@@ -44,11 +29,7 @@ export default {
   state: {
     pagination: { ...PAGE_DEF },
     data: [],
-    query: {
-      code: '',
-      gte: null,
-      lte: null,
-    },
+    query: { ...QUERY_DEF },
   },
   effects: {
     *init(p, { select, put }) {
@@ -88,31 +69,86 @@ export default {
         }
       } catch (error) {}
     },
-    *generateTickets({ payload }, { put, call }) {
+    *batch({ payload, form }, { call, put, select }) {
       try {
-        const {
-          prize: { id, name, value },
-          ...values
-        } = payload;
-        const { data } = yield call(generateTickets, { prize: { id, name, value }, ...values });
-        if (!data.errors) {
-          message.success(`成功生成${payload.count}个兑换券`);
+        const { query } = yield select(({ tickets }) => tickets);
+        const { prize, expiredTime, code } = payload;
+        const { id, name, value } = prize || {}
+        const body = {};
+        if (id) {
+          body.prize = { id, name, value };
+        }
+        if (expiredTime) {
+          body.expiredTime = expiredTime;
+        }
+        if (code) {
+          body.code = code;
+        }
+        if (_.isEmpty(body)) {
+          message.warning(`没有任何更新项`);
+          return;
+        }
+        const { data } = yield call(batch, { query, body });
+        if (data) {
+          message.success(`成功更新${data.total}个兑换券`);
           yield put({
             type: 'upState',
             payload: {
               visible: false,
+              loading: false,
+              query: { ...QUERY_DEF },
+            },
+          });
+          form.resetFields()
+          yield daley(2000);
+          yield put({
+            type: 'fetch',
+            payload: {
+              ...PAGE_DEF,
             },
           });
         }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    *generateTickets({ payload, form }, { put, call }) {
+      try {
+        yield put({
+          type: 'upState',
+          payload: {
+            loading: true,
+          },
+        });
+        const { prize, ...values } = payload;
+        const body = { ...values };
+        if (prize) {
+          const { id, name, value } = prize;
+          body.prize = { id, name, value };
+        }
+        const { data } = yield call(generateTickets, body);
+        if (!data.errors) {
+          message.success(`成功生成${payload.count}个兑换券`);
+        }
+        yield put({
+          type: 'upState',
+          payload: {
+            visible: false,
+            loading: false,
+            query: { ...QUERY_DEF },
+          },
+        });
+        form.resetFields()
         yield daley(2000);
-        console.log('yanchile');
         yield put({
           type: 'fetch',
           payload: {
             ...PAGE_DEF,
           },
         });
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   reducers: {

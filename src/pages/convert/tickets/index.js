@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import _ from 'lodash';
@@ -32,22 +33,20 @@ function Tickets(props) {
       align: 'center',
     },
     {
-      key: 'name',
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
       key: 'prize.value',
       title: '面值(元)',
       dataIndex: 'prize.value',
       render: function(t) {
-        return t.toFixed(2);
+        return t ? t.toFixed(2) : '无';
       },
     },
     {
       key: 'prize.name',
       title: '关联礼包',
       dataIndex: 'prize.name',
+      render: function(t) {
+        return t || '无';
+      },
     },
     {
       key: 'user.name',
@@ -62,7 +61,7 @@ function Tickets(props) {
             </div>
           );
         }
-        return '--';
+        return '无';
       },
     },
     {
@@ -114,11 +113,13 @@ function Tickets(props) {
   };
   const onOk = () => {
     const { validateFields } = props.form;
+    const { visible } = props;
     validateFields((errors, values) => {
       if (!errors) {
         props.dispatch({
-          type: 'tickets/generateTickets',
+          type: visible === 'generator' ? 'tickets/generateTickets' : 'tickets/batch',
           payload: values,
+          form: props.form,
         });
       }
     });
@@ -163,7 +164,7 @@ function Tickets(props) {
   return (
     <div>
       <div className={styles.top}>
-        <Button icon="plus" type="primary" onClick={edit.bind(null, true)}>
+        <Button icon="plus" type="primary" onClick={edit.bind(null, 'generator')}>
           批量生成电子券
         </Button>
         <div className={styles.searcher}>
@@ -193,11 +194,13 @@ function Tickets(props) {
               />
             </Form.Item>
             <Form.Item>
-              <Button onClick={fetch} type="primary">
+              <Button onClick={fetch} type="primary" className={styles.btn}>
                 查询
               </Button>
-              <Button disabled>批量操作</Button>
-              <Button onClick={exportCSV} type="danger">
+              <Button onClick={edit.bind(null, 'batch')} type="danger" className={styles.btn}>
+                批量操作
+              </Button>
+              <Button onClick={exportCSV} type="danger" className={styles.btn}>
                 导出CSV
               </Button>
             </Form.Item>
@@ -212,21 +215,51 @@ function Tickets(props) {
         dispatch={props.dispatch}
       />
       <Modal
-        title="批量生成电子券"
-        visible={props.visible}
+        title={
+          props.visible === 'generator'
+            ? '批量生成电子券'
+            : props.visible === 'batch'
+            ? '批处理'
+            : ''
+        }
+        visible={props.visible === 'generator' || props.visible === 'batch'}
         onCancel={edit.bind(null, false)}
-        onOk={onOk}
+        footer={[
+          <Button key="back" onClick={edit.bind(null, false)}>
+            取消
+          </Button>,
+          <Button key="submit" type="primary" loading={props.loading} onClick={onOk}>
+            {props.visible === 'generator'
+              ? '批量生成'
+              : props.visible === 'batch'
+              ? '批量更新'
+              : ''}
+          </Button>,
+        ]}
       >
+        {props.visible === 'batch' ? (
+          <div className={styles.batchQuery}>
+            <div className={styles.title}>更新条件</div>
+            {`范围: ${props.query.code ? `批号为(${props.query.code})的数据` : '全部数据'}`}
+            {props.query.gte ? <div>{`起始: ${props.query.gte}`}</div> : null}
+            {props.query.lte ? <div>{`结束: ${props.query.lte}`}</div> : null}
+          </div>
+        ) : null}
         <Form>
           <FormItem label="关联礼包">
             {props.form.getFieldDecorator('prize', {
               type: Object,
-              rules: [{ required: true, message: '必填想' }],
+              // rules: [{ required: props.visible === 'generator', message: '必填项' }],
             })(<Picker type="prize" />)}
+          </FormItem>
+          <FormItem label="批号">
+            {props.form.getFieldDecorator('code', { initialValue: '' })(
+              <Input placeholder="请输入批号" />,
+            )}
           </FormItem>
           <FormItem label="失效日期">
             {props.form.getFieldDecorator('expiredTime', {
-              rules: [{ required: true }],
+              rules: [{ required: props.visible === 'generator', message: '必填项' }],
             })(
               <DatePicker
                 disabledDate={(m) => m.valueOf() < moment().valueOf()}
@@ -234,26 +267,25 @@ function Tickets(props) {
               />,
             )}
           </FormItem>
-          <FormItem label="数量">
-            {props.form.getFieldDecorator('count', { initialValue: 1 })(
-              <InputNumber min={1} placeholder="请输入" />,
-            )}
-          </FormItem>
-          <FormItem label="批号">
-            {props.form.getFieldDecorator('code', { initialValue: '' })(
-              <Input placeholder="请输入批号" />,
-            )}
-          </FormItem>
-          <FormItem label="起始编号">
-            {props.form.getFieldDecorator('beginNum', { initialValue: 0 })(
-              <InputNumber min={0} placeholder="请输入" />,
-            )}
-          </FormItem>
-          <FormItem label="编号位数">
-            {props.form.getFieldDecorator('numberCount', {
-              initialValue: 5,
-            })(<InputNumber min={0} placeholder="请输入" />)}
-          </FormItem>
+          {props.visible === 'generator' && (
+            <Fragment>
+              <FormItem label="数量">
+                {props.form.getFieldDecorator('count', { initialValue: 1 })(
+                  <InputNumber min={1} placeholder="请输入" />,
+                )}
+              </FormItem>
+              <FormItem label="起始编号">
+                {props.form.getFieldDecorator('beginNum', { initialValue: 0 })(
+                  <InputNumber min={0} placeholder="请输入" />,
+                )}
+              </FormItem>
+              <FormItem label="编号位数">
+                {props.form.getFieldDecorator('numberCount', {
+                  initialValue: 5,
+                })(<InputNumber min={0} placeholder="请输入" />)}
+              </FormItem>
+            </Fragment>
+          )}
         </Form>
       </Modal>
     </div>
