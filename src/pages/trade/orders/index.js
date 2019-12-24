@@ -242,7 +242,7 @@ function Orders(props) {
                   filterOption={false}
                 >
                   {_.map(opts, (opt) => (
-                    <Select.Option key={opt.id} value={opt.id}>
+                    <Select.Option key={opt.id} value={opt.code}>
                       {opt.name}
                     </Select.Option>
                   ))}

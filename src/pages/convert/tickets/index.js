@@ -13,6 +13,7 @@ import {
   Popconfirm,
   Icon,
   Select,
+  Switch,
 } from 'antd';
 import { TableX, FormItem } from '../../../utils/ui';
 import Picker from '../prizes/Picker';
@@ -77,6 +78,23 @@ function Tickets(props) {
       },
     },
     {
+      key: 'enable',
+      title: '启用状态',
+      dataIndex: 'enable',
+      render: function(t, r) {
+        return (
+          <div>
+            <Switch
+              checked={t}
+              onChange={enableChange.bind(null, r.id)}
+              checkedChildren="启"
+              unCheckedChildren="停"
+            />
+          </div>
+        );
+      },
+    },
+    {
       key: 'status',
       title: '状态',
       dataIndex: 'status',
@@ -88,11 +106,16 @@ function Tickets(props) {
           case 'expired': {
             return '已过期';
           }
+          case 'removed': {
+            return '已删除';
+          }
           case 'binded': {
-            <div>
-              <div>已领取</div>
-              <div>{moment(r.bindedTime).format('YYYY-MM-DD')}</div>
-            </div>;
+            return (
+              <div>
+                <div>待兑换</div>
+                <div>{moment(r.bindedTime).format('YYYY-MM-DD')}</div>
+              </div>
+            );
           }
           case 'expended': {
             return (
@@ -146,6 +169,16 @@ function Tickets(props) {
       },
     },
   ];
+  const enableChange = (id, checked) => {
+    console.log(id, checked);
+    props.dispatch({
+      type: 'tickets/changeEnable',
+      id,
+      body: {
+        enable: checked,
+      },
+    });
+  };
   const deleteTicket = (id) => {
     props.dispatch({
       type: 'tickets/remove',
@@ -363,12 +396,20 @@ function Tickets(props) {
               <Input placeholder="请输入批号" />,
             )}
           </FormItem>
+          {props.visible !== 'edit' ? (
+            <FormItem label="启用状态">
+              {props.form.getFieldDecorator('enable', {
+                initialValue: false,
+                valuePropName: 'checked',
+              })(<Switch checkedChildren="启" unCheckedChildren="停" />)}
+            </FormItem>
+          ) : null}
           <FormItem label="失效日期">
             {props.form.getFieldDecorator('expiredTime', {
               rules: [{ required: props.visible === 'generator', message: '必填项' }],
             })(
               <DatePicker
-                disabledDate={(m) => m.valueOf() < moment().valueOf()}
+                disabledDate={(m) => m.valueOf() <= moment().valueOf()}
                 placeholder="请输入"
               />,
             )}

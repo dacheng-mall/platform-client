@@ -102,7 +102,21 @@ export default {
           message.warning('没有需要修改的内容');
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
+      }
+    },
+    *changeEnable({ id, body }, { call, put, select }) {
+      const { data: _data } = yield call(update, { id, ...body });
+      if (_data.result === 'updated') {
+        message.success(`更新成功`);
+        const { data } = yield select(({ tickets }) => tickets);
+        const target = _.find(data, ['id', id]);
+        target.enable = body.enable;
+        // yield daley(1000);
+        yield put({
+          type: 'upState',
+          payload: { data: [...data] },
+        });
       }
     },
     *exportCSV({ prefix }, { call, select }) {
@@ -121,7 +135,7 @@ export default {
     *batch({ payload, form }, { call, put, select }) {
       try {
         const { query } = yield select(({ tickets }) => tickets);
-        const { prize, expiredTime, code } = payload;
+        const { prize, expiredTime, code, enable } = payload;
         const { id, name, value } = prize || {};
         const body = {};
         if (id) {
@@ -132,6 +146,9 @@ export default {
         }
         if (code) {
           body.code = code;
+        }
+        if (enable !== undefined) {
+          body.enable = enable;
         }
         if (_.isEmpty(body)) {
           message.warning(`没有任何更新项`);

@@ -77,7 +77,7 @@ export default {
     *send({ values }, { select, call, put }) {
       try {
         const logistics = {
-          id: values.logistics.key,
+          code: values.logistics.key,
           name: values.logistics.label,
           sn: values.sn,
         };
