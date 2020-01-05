@@ -5,7 +5,8 @@ import { jump } from '../utils';
 import { setAuthority } from '../utils/authority';
 import { menu } from '../pages/_layouts/menuData';
 import { setToken } from '../utils/request';
-import { TYPES } from "../../src/pages/cms/element";
+import { TYPES } from '../../src/pages/cms/element';
+import { getRegionData } from '../services/dict';
 
 const redirect = (menu) => {
   const allow = _.find(menu, ({ authority }) => authority || undefined);
@@ -28,9 +29,13 @@ export default {
     user: {},
     roles: [],
     dict: {
-      elementsTypes: _.map(TYPES, (type, i) => {type.id = `elemType_${i}`; return type})
+      elementsTypes: _.map(TYPES, (type, i) => {
+        type.id = `elemType_${i}`;
+        return type;
+      }),
     },
     qiniu: {},
+    region: [],
   },
 
   subscriptions: {
@@ -64,6 +69,30 @@ export default {
         } else {
           jump('/');
         }
+      }
+    },
+    *getRegion(p, { call, put, select }) {
+      const { region } = yield select(({ app }) => app);
+      if (region.length < 1) {
+        const { data } = yield call(getRegionData);
+        const group = _.groupBy(data, ({ pid }) => pid);
+        const res = group.null;
+        function dg(nodes) {
+          _.forEach(nodes, (node) => {
+            const children = group[node.id];
+            if (children && children.length > 0) {
+              dg(children);
+            }
+            node.children = children;
+          });
+        }
+        dg(res);
+        yield put({
+          type: 'upState',
+          payload: {
+            region: res,
+          },
+        });
       }
     },
     *login({ payload }, { call, put, all }) {

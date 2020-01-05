@@ -1,11 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Switch, Modal, Icon, Input, Select, Divider, Row, Col } from 'antd';
+import { Button, Switch, Modal, Icon, Input, Select, Divider, Row, Col, Cascader } from 'antd';
 import { createInstQRCode } from './services';
 import Editor from './editor';
 import styles from './styles.less';
 import { TableX, FormItem } from '../../../utils/ui';
+
+const areaDataOrigin = require('../../../assets/area.json');
 
 class Institution extends PureComponent {
   state = {
@@ -20,14 +22,64 @@ class Institution extends PureComponent {
       dataIndex: 'name',
     },
     {
+      key: 'shortName',
+      title: '简称',
+      dataIndex: 'shortName',
+    },
+    {
+      key: 'code',
+      title: '机构编码',
+      dataIndex: 'code',
+      align: 'center',
+    },
+    {
+      key: 'sn',
+      title: '序列号',
+      dataIndex: 'sn',
+      align: 'center',
+      render: function(t) {
+        return t || '--';
+      },
+    },
+    {
+      key: 'level',
+      title: '级别',
+      dataIndex: 'level',
+      align: 'center',
+      render: function(t) {
+        switch (t) {
+          case 0: {
+            return '总公司';
+          }
+          case 1: {
+            return '分公司';
+          }
+          case 2: {
+            return '中支';
+          }
+          case 3: {
+            return '营业区';
+          }
+          default: {
+            return '未知级别';
+          }
+        }
+      },
+    },
+    {
       key: 'master',
       title: '联系人',
       dataIndex: 'master',
-    },
-    {
-      key: 'masterPhone',
-      title: '联系电话',
-      dataIndex: 'masterPhone',
+      align: 'center',
+      render: function(t, r) {
+        return (
+          <div>
+            {t}
+            <br />
+            {r.masterPhone}
+          </div>
+        );
+      },
     },
     {
       key: 'address',
@@ -48,10 +100,11 @@ class Institution extends PureComponent {
       dataIndex: 'pInstitution',
       render: (t) => {
         if (t.id) {
-          return <div>{t.name}</div>;
+          return <div>{t.shortName}</div>;
         }
-        return '无';
+        return '--';
       },
+      align: 'center',
     },
     {
       key: 'status',
@@ -75,7 +128,7 @@ class Institution extends PureComponent {
       render: (t, r) => {
         return (
           <div>
-            <Button
+            {/* <Button
               onClick={this.createQR.bind(null, r.autoId, r.name)}
               disabled={this.state.creating}
               size="small"
@@ -83,7 +136,7 @@ class Institution extends PureComponent {
               title="生成注册二维码"
               icon="qrcode"
             />
-            <Divider type="vertical" />
+            <Divider type="vertical" /> */}
             <Button
               onClick={this.update.bind(null, r)}
               size="small"
@@ -130,6 +183,7 @@ class Institution extends PureComponent {
       creating: false,
     });
   };
+  changeArea = () => {};
   update = (r) => {
     const {
       id,
@@ -141,6 +195,9 @@ class Institution extends PureComponent {
       master,
       masterPhone,
       status,
+      sn,
+      code,
+      shortName,
       pInstitution: { id: pid, name: pName },
     } = r;
 
@@ -148,12 +205,15 @@ class Institution extends PureComponent {
       id,
       name,
       description,
-      regionId: (regionId && regionId.split(',')) || [],
+      regionId: (regionId && regionId.split(',').map(d => parseInt(d, 10))) || [],
       regionName,
       address,
       master,
       masterPhone,
       status,
+      sn,
+      code,
+      shortName,
       pid,
     });
     this.props.dispatch({
@@ -198,25 +258,28 @@ class Institution extends PureComponent {
       type: 'institution/reset',
     });
   };
-  // search = (value) => {
-  //   this.props.dispatch({
-  //     type: 'institution/searchByKeywords',
-  //     payload: value,
-  //   });
-  // };
-  // reset = () => {
-  //   this.props.dispatch({
-  //     type: 'institution/searchByKeywords',
-  //     payload: '',
-  //   });
-  // };
-  change = (e) => {
-    this.props.dispatch({
-      type: 'institution/upState',
-      payload: {
-        keywords: _.trim(e.target.value),
-      },
-    });
+  change = (type, e) => {
+    switch (type) {
+      case 'pid':
+      case 'regionId':
+      case 'level': {
+        this.props.dispatch({
+          type: 'institution/changeQuery',
+          payload: {
+            [type]: e,
+          },
+        });
+        break;
+      }
+      default: {
+        this.props.dispatch({
+          type: 'institution/changeQuery',
+          payload: {
+            [type]: _.trim(e.target.value),
+          },
+        });
+      }
+    }
   };
   instChange = (value) => {
     this.props.dispatch({
@@ -259,18 +322,18 @@ class Institution extends PureComponent {
         </div>
         <div className={styles.tableToolBar}>
           <Row>
-            <Col span={8}>
+            <Col span={6}>
               <FormItem className={styles.formItem} label="父机构">
                 <Select
                   showSearch
                   allowClear
                   placeholder="请选择机构,并查询其子机构"
-                  style={{ width: '260px' }}
-                  value={this.props.institutionId}
+                  style={{ width: 200 }}
+                  value={this.props.query.pid}
                   showArrow={false}
                   filterOption={false}
                   onSearch={this.fetchInst}
-                  onChange={this.instChange}
+                  onChange={this.change.bind(null, 'pid')}
                 >
                   {_.map(this.props.institutions, (inst, i) => (
                     <Select.Option value={inst.id} key={inst.id}>
@@ -280,13 +343,60 @@ class Institution extends PureComponent {
                 </Select>
               </FormItem>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <FormItem className={styles.formItem} label="机构名称">
                 <Input
-                  style={{ width: 320 }}
+                  style={{ width: 200 }}
                   placeholder="请输入机构名称关键字查询"
-                  onChange={this.change}
-                  value={this.props.keywords}
+                  onChange={this.change.bind(null, 'name')}
+                  value={this.props.query.name}
+                />
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem className={styles.formItem} label="机构编码">
+                <Input
+                  style={{ width: 200 }}
+                  placeholder="请输入机构编码"
+                  onChange={this.change.bind(null, 'code')}
+                  value={this.props.query.code}
+                />
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem className={styles.formItem} label="序列号">
+                <Input
+                  style={{ width: 200 }}
+                  placeholder="请输入机构序列号"
+                  onChange={this.change.bind(null, 'sn')}
+                  value={this.props.query.sn}
+                />
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem className={styles.formItem} label="级别">
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="请选择机构级别"
+                  onChange={this.change.bind(null, 'level')}
+                  value={this.props.query.level}
+                >
+                  <Select.Option value={0}>总公司</Select.Option>
+                  <Select.Option value={1}>分公司</Select.Option>
+                  <Select.Option value={2}>中心支公司</Select.Option>
+                  <Select.Option value={3}>营业区</Select.Option>
+                </Select>
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem className={styles.formItem} label="地区">
+                <Cascader
+                  style={{ width: 200 }}
+                  options={this.props.region}
+                  onChange={this.change.bind(null, 'regionId')}
+                  changeOnSelect
+                  showSearch
+                  placeholder="请选择区域"
                 />
               </FormItem>
             </Col>

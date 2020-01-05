@@ -8,6 +8,9 @@ import {
   getInstWithoutPage,
   getInstitutionsForInstAdminWhitoutPage,
   getInstitutionsWhitoutPage,
+  getRegionData,
+  findRegionData,
+  fetchRegionData,
 } from '../services';
 import { fieldsChange } from '../../../../utils/ui';
 
@@ -24,6 +27,7 @@ export default {
     ...INIT_EDITOR,
     parents: [],
     keywords: '',
+    query: {}
   },
 
   subscriptions: {
@@ -42,24 +46,46 @@ export default {
         type: 'fetch',
         payload,
       });
+      yield put({
+        type: 'app/getRegion'
+      });
     },
     *fetch({ payload }, { put, call, select }) {
-      const { keywords: name, institutionId: pid } = yield select(({ institution }) => institution);
-      const parmas = {};
-      if (pid) {
-        parmas.pid = pid;
-      } else {
-        delete parmas.pid;
-      }
-      if (name) {
-        parmas.name = name;
-      } else {
-        delete parmas.name;
-      }
-      const { data } = yield call(getInst, { ...PAGE_DEF, ...payload, ...parmas });
+      const { query } = yield select(({ institution }) => institution);
+      const params = {};
+      _.forEach(query, (val, key) => {
+        if (val !== undefined) {
+          if (key === 'regionId') {
+            params[key] = val.join(',');
+          } else {
+            params[key] = val;
+          }
+        }
+      });
+      const { data } = yield call(getInst, { ...PAGE_DEF, ...payload, ...params });
       yield put({
         type: 'upState',
         payload: data,
+      });
+    },
+    *reset(p, { put }) {
+      yield put({
+        type: 'upState',
+        payload: {
+          query: {},
+        },
+      });
+    },
+    *changeQuery({ payload }, { put, select }) {
+      const { query } = yield select(({ institution }) => institution);
+      yield put({
+        type: 'upState',
+        payload: {
+          query: {
+            ...query,
+            ...payload,
+          },
+        },
       });
     },
     *edit({ payload }, { call, put, select }) {

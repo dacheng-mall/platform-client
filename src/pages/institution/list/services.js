@@ -24,3 +24,12 @@ export const getInstitutionsWhitoutPage = (params) => {
 export const getInstitutionsForInstAdminWhitoutPage = (params) => {
   return get(`v1/api/sys/institution/getAllLevelSonObjsByQuery`, params);
 };
+export const getRegionData = (type, name) => {
+  return get(`v1/api/sys/dict/fetchData/${type}`, { name });
+};
+export const findRegionData = (pid) => {
+  return get(`v1/api/sys/dict/region`, { pid });
+};
+export const fetchRegionData = (name) => {
+  return get(`v1/api/sys/dict/fetchData/region`, { name });
+};

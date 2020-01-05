@@ -92,7 +92,6 @@ export const onFieldsChange = (ns) => (props, field, fields) => {
   //   default: {
   //     break;
   //   }
-  // }
   props.dispatch({
     type: `${ns}/fieldsChange`,
     payload: { fields, field },

@@ -213,21 +213,22 @@ export const menu = () => {
         },
       ],
     },
-
-    // {
-    //   name: '订单管理',
-    //   path: 'order',
-    //   authority: admin,
-    // },
-    // {
-    //   name: '厂商管理',
-    //   path: 'factory',
-    //   authority: admin,
-    // },
-    // {
-    //   name: '基础数据',
-    //   path: 'dict',
-    //   authority: admin, // todo 以上都是平台管理员的权限
-    // },
+    {
+        name: '基础数据管理',
+        path: 'dict',
+        authority: admin,
+        children: [
+          {
+            name: '字典类型',
+            path: 'sys',
+            authority: admin,
+          },
+          {
+            name: '地区',
+            path: 'region',
+            authority: admin,
+          }
+        ]
+    }
   ];
 };

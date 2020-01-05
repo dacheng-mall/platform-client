@@ -11,5 +11,6 @@ module.exports = {
     ...require('./qr'),
     ...require('./convert'),
     ...require('./trade'),
+    ...require('./dict'),
   ],
 };

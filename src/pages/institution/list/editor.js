@@ -1,10 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import { connect } from 'dva';
 import { Switch, Modal, Select, Row, Col, Form, Input, Cascader } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange as ofc } from '../../../utils/ui';
-
-const areaDataOrigin = require('../../../assets/area.json');
 
 function Editor(props) {
   const handleOk = () => {
@@ -26,19 +24,9 @@ function Editor(props) {
       },
     });
   };
-  const changeArea = (v, vo) => {
-    const regionName = _.map(vo, ({ label }) => label).join(' ');
-    props.dispatch({
-      type: 'institution/fieldsChange',
-      payload: {
-        fields: {
-          regionName: {
-            value: regionName,
-            name: 'regionName',
-          },
-        },
-      },
-    });
+  const changeArea = (path, vo) => {
+    const regionName = _.map(vo, ({ name }) => name).join(' ');
+    props.form.setFields({ regionName: { value: regionName } });
   };
   const { getFieldDecorator } = props.form;
   const isNew = !props.editor || !props.editor.id;
@@ -75,6 +63,9 @@ function Editor(props) {
                 rules: [{ required: true, message: '必填项' }],
               })(<Input placeholder="请输入机构名称" />)}
             </FormItem>
+            <FormItem label="编码">
+              {getFieldDecorator('code')(<Input placeholder="请输入机构编码" />)}
+            </FormItem>
             <FormItem label="上级机构">
               {getFieldDecorator('pid')(
                 <Select
@@ -104,13 +95,17 @@ function Editor(props) {
             <FormItem label="区域">
               {getFieldDecorator('regionId')(
                 <Cascader
-                  options={areaDataOrigin}
+                  fieldNames={{ label: 'name', value: 'id', children: 'children' }}
+                  options={props.region}
+                  placeholder="请选择区域"
                   onChange={changeArea}
                   changeOnSelect
                   showSearch
-                  placeholder="请选择区域"
                 />,
               )}
+            </FormItem>
+            <FormItem label="序列号">
+              {getFieldDecorator('sn')(<Input placeholder="请输入数字" />)}
             </FormItem>
             <FormItem label="详细地址">
               {getFieldDecorator('address')(
@@ -128,8 +123,8 @@ function Editor(props) {
     </Modal>
   );
 }
-function mapStateToProps({ institution }) {
-  return institution;
+function mapStateToProps({ institution, app }) {
+  return { ...institution, region: app.region };
 }
 
 export default connect(mapStateToProps)(
