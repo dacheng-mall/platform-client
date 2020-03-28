@@ -1,0 +1,309 @@
+{
+  "took" : 0,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 10,
+      "relation" : "eq"
+    },
+    "max_score" : 0.0,
+    "hits" : [
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "82a2801eea974196b70694dedba5d66b",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 1503,
+          "code" : "fuka",
+          "showSN" : "71502",
+          "createTime" : "2020-01-02T10:38:07.464Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-01-22T23:37:22",
+          "source" : "convert",
+          "sn" : 1785,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-01-22T23:37:22",
+          "user" : {
+            "name" : "沈欣欣",
+            "mobile" : "13938371778",
+            "location" : "33.148698,113.97796"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "86b17162190f426c9339280bee3fe673",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 648,
+          "code" : "fuka",
+          "showSN" : "70647",
+          "createTime" : "2020-01-02T10:38:07.459Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-01-25T17:14:09",
+          "source" : "convert",
+          "sn" : 930,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-01-25T17:14:09",
+          "user" : {
+            "name" : "胡岚博",
+            "mobile" : "15737499725",
+            "location" : "34.20147705078125,113.79674530029297"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "decb124f458b4a7da4205a6a5fd59db8",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 61,
+          "code" : "luka",
+          "showSN" : "80060",
+          "createTime" : "2020-01-02T10:39:49.032Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-01-27T22:17:23",
+          "source" : "convert",
+          "sn" : 2343,
+          "prize" : {
+            "name" : "臻享型（禄卡系列 10选6）",
+            "id" : "cjMl6m4Bv68PgcoOwE_H",
+            "value" : 2998
+          },
+          "expiredTime" : "2020-12-31T10:39:24.491Z",
+          "status" : "binded",
+          "bindedTime" : "2020-01-27T22:17:23",
+          "user" : {
+            "name" : "徐琰",
+            "mobile" : "15036106699",
+            "location" : "33.651688,114.708984"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "cf0843b7b66e4a2f92b8c972f2e2a9cc",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 642,
+          "code" : "fuka",
+          "showSN" : "70641",
+          "createTime" : "2020-01-02T10:38:07.458Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-02T19:15:38",
+          "source" : "convert",
+          "sn" : 924,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-02T19:15:38",
+          "user" : {
+            "name" : "张军",
+            "mobile" : "13733606138",
+            "location" : "34.225756,113.761889"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "d98c88ddf1ce4f82bb9c5719854484bc",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 1130,
+          "code" : "fuka",
+          "showSN" : "71129",
+          "createTime" : "2020-01-02T10:38:07.460Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-04T12:33:06",
+          "source" : "convert",
+          "sn" : 1412,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-04T12:33:06",
+          "user" : {
+            "name" : "王莉",
+            "mobile" : "15637286287",
+            "location" : "36.094786,113.812643"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "f7d04762ac334cffa6420d41db93459a",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 1196,
+          "code" : "fuka",
+          "showSN" : "71195",
+          "createTime" : "2020-01-02T10:38:07.461Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-08T12:17:55",
+          "source" : "convert",
+          "sn" : 1478,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-08T12:17:55",
+          "user" : {
+            "name" : "芦雪云",
+            "mobile" : "13525287282",
+            "location" : "35.775044,115.023368"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "60f9dc0a0736473c919204a6e4de0d70",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 1560,
+          "code" : "fuka",
+          "showSN" : "71559",
+          "createTime" : "2020-01-02T10:38:07.465Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-09T18:56:36",
+          "source" : "convert",
+          "sn" : 1842,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-09T18:56:36",
+          "user" : {
+            "name" : "姚国爱",
+            "mobile" : "13643928116",
+            "location" : "35.68202,114.244425"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "c31e6bb0916d4a0789802323b18e7d9d",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 547,
+          "code" : "fuka",
+          "showSN" : "70546",
+          "createTime" : "2020-01-02T10:38:07.458Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-21T15:20:38",
+          "source" : "convert",
+          "sn" : 829,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-21T15:20:38",
+          "user" : {
+            "name" : "沈丘启程会计-讲师",
+            "mobile" : "18736116992",
+            "location" : "33.375341,115.071977"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "632f7c7bbc9946179e125d70e1c4105d",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 1103,
+          "code" : "fuka",
+          "showSN" : "71102",
+          "createTime" : "2020-01-02T10:38:07.460Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-21T12:42:39",
+          "source" : "convert",
+          "sn" : 1385,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-21T12:42:39",
+          "user" : {
+            "name" : "莫浩磊",
+            "mobile" : "15138457603",
+            "location" : "36.063767,113.750532"
+          }
+        }
+      },
+      {
+        "_index" : "tickets",
+        "_type" : "_doc",
+        "_id" : "2e61bb0234644b39905068b893059f98",
+        "_score" : 0.0,
+        "_source" : {
+          "codeSN" : 1370,
+          "code" : "fuka",
+          "showSN" : "71369",
+          "createTime" : "2020-01-02T10:38:07.464Z",
+          "enable" : true,
+          "lastModifyTime" : "2020-02-24T11:06:24",
+          "source" : "convert",
+          "sn" : 1652,
+          "prize" : {
+            "name" : "乐享型（福卡系列 10选4）",
+            "id" : "dyBE1G4Bv68PgcoOicj5",
+            "value" : 1598
+          },
+          "expiredTime" : "2020-12-31T10:37:20.957Z",
+          "status" : "binded",
+          "bindedTime" : "2020-02-24T11:06:24",
+          "user" : {
+            "name" : "王安安",
+            "mobile" : "18629577206",
+            "location" : "34.047201,115.316702"
+          }
+        }
+      }
+    ]
+  }
+}

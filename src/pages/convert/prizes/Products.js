@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
 import { Input, Button, InputNumber, Popconfirm } from 'antd';
 import _ from 'lodash';
-import Picker from './Picker';
+import Picker from './Picker/index';
 import { FormItem } from '../../../utils/ui';
 import styles from './Products.less';
 

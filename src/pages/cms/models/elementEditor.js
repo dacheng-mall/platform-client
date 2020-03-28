@@ -264,7 +264,6 @@ export default {
     *submit(p, { put, call, select, all }) {
       const elementEditor = yield select(({ elementEditor }) => elementEditor);
       let listData = _.cloneDeep(elementEditor);
-      console.log('listData', listData);
       _.remove(listData.data, (item) => {
         if (item.type === 'path') {
           return !item.path;

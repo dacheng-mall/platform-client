@@ -99,7 +99,6 @@ export const onFieldsChange = (ns) => (props, field, fields) => {
 };
 // 这个再model里使用, 维护store里的表单数据
 export const fieldsChange = (state, { payload }) => {
-  console.log(payload)
   _.forEach(payload.fields, ({ value, errors }, key) => {
     if (!key) {
       return;

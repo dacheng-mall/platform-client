@@ -104,7 +104,7 @@ export const qiniuToken = () =>
     const { uploadToken, deadline } = getData('qiniu') || {};
     const now = new Date().valueOf();
     let token = uploadToken;
-    if (!uploadToken || (!deadline || deadline <= now)) {
+    if (!uploadToken || !deadline || deadline <= now) {
       getQiniuToken()
         .then(({ data }) => {
           if (data) {
@@ -146,4 +146,12 @@ export const getQuery = (query = {}) => {
   });
   _query.replace(/\&$/, '');
   return `?${_query}`;
+};
+
+export const sleep = (time = 1000) => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res();
+    }, time);
+  });
 };

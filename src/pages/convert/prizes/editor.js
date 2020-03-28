@@ -6,9 +6,9 @@ import { FormItem, mapPropsToFields, onFieldsChange } from '../../../utils/ui';
 import { goBack } from '../../../utils/index';
 
 import Images from '../../products/components/form/Images';
-import Picker from './Picker';
+import Picker from './Picker/index';
 import Products from './Products';
-import Rules from './Rules';
+import Rules from './Rules/index';
 import styles from './index.less';
 
 function Editor(props) {

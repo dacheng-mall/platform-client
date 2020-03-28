@@ -197,7 +197,9 @@ class Institution extends PureComponent {
       status,
       sn,
       code,
+      level,
       shortName,
+      displayOrder,
       pInstitution: { id: pid, name: pName },
     } = r;
 
@@ -213,6 +215,8 @@ class Institution extends PureComponent {
       status,
       sn,
       code,
+      level,
+      displayOrder,
       shortName,
       pid,
     });

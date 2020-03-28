@@ -70,7 +70,7 @@ function Companies(props) {
         columns={columns}
         dataSource={props.data || []}
         pagination={props.pagination || {}}
-        fetchType="logistic-companies/fetch"
+        fetchType="logisticCompanies/fetch"
         dispatch={props.dispatch}
       />
     </div>

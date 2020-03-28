@@ -176,7 +176,6 @@ export default class Selector extends PureComponent {
         this.props.onSelect({ path, type });
       }
     } else {
-      debugger;
       const target = _.find(this.state[`${type}Opts`], ['id', key]);
       if (_.isFunction(this.props.onSelect) && target) {
         this.props.onSelect({ ...target, type });

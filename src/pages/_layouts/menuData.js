@@ -214,21 +214,72 @@ export const menu = () => {
       ],
     },
     {
-        name: '基础数据管理',
-        path: 'dict',
-        authority: admin,
-        children: [
-          {
-            name: '字典类型',
-            path: 'sys',
-            authority: admin,
-          },
-          {
-            name: '地区',
-            path: 'region',
-            authority: admin,
-          }
-        ]
-    }
+      name: '基础数据管理',
+      path: 'dict',
+      authority: admin,
+      children: [
+        {
+          name: '字典类型',
+          path: 'sys',
+          authority: admin,
+        },
+        {
+          name: '地区',
+          path: 'region',
+          authority: admin,
+        },
+      ],
+    },
+    {
+      name: '任务管理',
+      path: 'mission',
+      authority: admin,
+      children: [
+        {
+          name: '任务列表',
+          path: 'task',
+          authority: admin,
+        },
+        {
+          name: '任务奖励',
+          path: 'prize',
+          authority: admin,
+        },
+      ],
+    },
+    {
+      name: '基础管理',
+      path: 'baseManage',
+      authority: all,
+      children: [
+        {
+          name: '拜访记录',
+          path: 'visited',
+          authority: all,
+        },
+        // {
+        //   name: '活动商品',
+        //   path: 'product',
+        //   authority: admin,
+        // },
+      ],
+    },
+    {
+      name: '集会活动管理',
+      path: 'gathering',
+      authority: all,
+      children: [
+        {
+          name: '活动列表',
+          path: 'active',
+          authority: all,
+        },
+        {
+          name: '活动商品',
+          path: 'product',
+          authority: admin,
+        },
+      ],
+    },
   ];
 };

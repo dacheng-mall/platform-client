@@ -93,10 +93,7 @@ function Orders(props) {
             return (
               <div>
                 <div>待收货</div>
-                <Popconfirm
-                  title={`${r.logistics.name}, ${r.logistics.sn}`}
-                  okText="知道了"
-                >
+                <Popconfirm title={`${r.logistics.name}, ${r.logistics.sn}`} okText="知道了">
                   <a href="#">物流信息</a>
                 </Popconfirm>
               </div>
@@ -136,8 +133,8 @@ function Orders(props) {
       render: (t, r) => {
         return (
           <div>
-            <div>来自 {r.source.name}</div>
-            <div>{moment(t).format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>{r.source.cardSN}</div>
+            <div>{moment(r.createTime).format('YYYY-MM-DD HH:mm:ss')}</div>
             <div>{r.code}</div>
           </div>
         );
@@ -195,15 +192,24 @@ function Orders(props) {
       }
     }, 500);
   };
-  const handleSearch = () => {}
-  const handleReset = () => {}
-  const toggle = () => {}
+  const handleSearch = () => {};
+  const handleReset = () => {};
+  const toggle = () => {};
+  const addCardSN = () => {
+    props.dispatch({
+      type: 'orders/addCardSN',
+    });
+  };
   return (
     <div>
       <Form className="ant-advanced-search-form" onSubmit={handleSearch}>
-        <Row gutter={24}></Row>
         <Row>
-          <Col span={24} style={{ textAlign: 'right' }}>
+          <Col span={12} style={{ textAlign: 'left' }}>
+            <Button type="primary" onClick={addCardSN}>
+              添加卡号
+            </Button>
+          </Col>
+          <Col span={12} style={{ textAlign: 'right' }}>
             <Button type="primary" htmlType="submit">
               查询
             </Button>

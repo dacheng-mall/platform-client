@@ -1,7 +1,13 @@
 import { PureComponent } from 'react';
 import _ from 'lodash';
 import { Input, Icon } from 'antd';
-import { findInst, findProducts, findPrizes } from './service';
+import {
+  findInst,
+  findProducts,
+  findPrizes,
+  findMissionPrize,
+  findGatheringProducts,
+} from './services';
 
 const source = window.config.source;
 const Search = Input.Search;
@@ -22,26 +28,29 @@ export default class InstPicker extends PureComponent {
       data,
     });
   };
+  findMissionPrize = async (name) => {
+    const { data } = await findMissionPrize({ name });
+    this.setState({
+      data,
+    });
+  };
+  findGatheringProducts = async (name) => {
+    const { data } = await findGatheringProducts({ name });
+    this.setState({
+      data,
+    });
+  };
   fetchPeizes = async (name) => {
-    console.log('name,', name);
     const { data } = await findPrizes({
       name,
     });
     this.setState({
       data,
     });
-    // const { hits } = data.hits;
-    // if (hits.length > 0) {
-    //   const res = _.map(hits, ({ _source, _id }) => {
-    //     return {
-    //       id: _id,
-    //       name: _source.name,
-    //     };
-    //   });
-    // }
   };
   onSearch = (val) => {
     const _val = _.trim(val);
+    console.log('val', this.props.type);
     if (_val) {
       switch (this.props.type) {
         case 'inst': {
@@ -56,14 +65,23 @@ export default class InstPicker extends PureComponent {
           this.fetchPeizes(_val);
           break;
         }
+        case 'missionPrize': {
+          this.findMissionPrize(_val);
+          break;
+        }
+        case 'gatheringProducts': {
+          console.log('------');
+          this.findGatheringProducts(_val);
+          break;
+        }
       }
     }
   };
   onCheck = (val) => {
     switch (this.props.type) {
       case 'inst': {
-        const { name, id, level, shortName, autoId } = val;
-        this.props.onChange({ name, id, level, shortName, autoId });
+        const { name, id, level, shortName, autoId, code } = val;
+        this.props.onChange({ name, id, level, shortName, autoId, code });
         break;
       }
       case 'product': {
@@ -78,7 +96,12 @@ export default class InstPicker extends PureComponent {
         this.props.onChange({ name: title, id, price, image, autoId, cateId, cateName });
         break;
       }
-      case 'prize': {
+      case 'prize':
+      case 'missionPrize': {
+        this.props.onChange(val);
+        break;
+      }
+      default: {
         this.props.onChange(val);
         break;
       }

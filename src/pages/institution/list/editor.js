@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { Switch, Modal, Select, Row, Col, Form, Input, Cascader } from 'antd';
+import { Switch, Modal, Select, Row, Col, Form, Input, Cascader, InputNumber } from 'antd';
 import { FormItem, mapPropsToFields, onFieldsChange as ofc } from '../../../utils/ui';
 
 function Editor(props) {
@@ -63,6 +63,23 @@ function Editor(props) {
                 rules: [{ required: true, message: '必填项' }],
               })(<Input placeholder="请输入机构名称" />)}
             </FormItem>
+            <FormItem label="机构简称">
+              {getFieldDecorator('shortName', {
+                rules: [{ required: true, message: '必填项' }],
+              })(<Input placeholder="请输入机构简称" />)}
+            </FormItem>
+            <FormItem label="机构等级">
+              {getFieldDecorator('level')(
+                <Select
+                  placeholder="请选择"
+                >
+                  <Select.Option value={0}>总公司</Select.Option>
+                  <Select.Option value={1}>分公司</Select.Option>
+                  <Select.Option value={2}>中心支公司</Select.Option>
+                  <Select.Option value={3}>营业区</Select.Option>
+                </Select>,
+              )}
+            </FormItem>
             <FormItem label="编码">
               {getFieldDecorator('code')(<Input placeholder="请输入机构编码" />)}
             </FormItem>
@@ -92,6 +109,11 @@ function Editor(props) {
             </FormItem>
           </Col>
           <Col span={12}>
+            <FormItem label="显示权重" help="数字越小越靠前">
+              {getFieldDecorator('displayOrder', {
+                rules: [{ required: true, message: '必填项' }],
+              })(<InputNumber placeholder="数字" />)}
+            </FormItem>
             <FormItem label="区域">
               {getFieldDecorator('regionId')(
                 <Cascader

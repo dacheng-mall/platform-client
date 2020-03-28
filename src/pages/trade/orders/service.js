@@ -16,3 +16,6 @@ export const getCompanies = (query) => {
 export const send = ({id, ...body}) => {
   return put(`v1/api/sys/order/send/${id}`, body);
 };
+export const addCardSN = () => {
+  return post(`v1/api/sys/order/addCardSN2Orders`);
+};

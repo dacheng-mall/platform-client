@@ -29,6 +29,7 @@ export default {
       }
     },
     *fetch({ payload = {} }, { put, call, select }) {
+      console.log('----')
       try {
         const { query } = yield select(({ logisticCompanies }) => logisticCompanies);
         console.log(query);

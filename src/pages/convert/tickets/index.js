@@ -16,7 +16,7 @@ import {
   Switch,
 } from 'antd';
 import { TableX, FormItem } from '../../../utils/ui';
-import Picker from '../prizes/Picker';
+import Picker from '../prizes/Picker/index';
 import styles from './index.less';
 
 function Tickets(props) {
@@ -186,6 +186,7 @@ function Tickets(props) {
     });
   };
   const edit = (visible, id) => {
+    console.log(visible, id)
     props.dispatch({
       type: 'tickets/upState',
       payload: {
@@ -194,7 +195,8 @@ function Tickets(props) {
       },
     });
   };
-  const onOk = () => {
+  const onOk = (e) => {
+    e.persist();
     const { validateFields } = props.form;
     const { visible } = props;
     validateFields((errors, values) => {
@@ -271,7 +273,7 @@ function Tickets(props) {
   return (
     <div>
       <div className={styles.top}>
-        <Button icon="plus" type="primary" onClick={edit.bind(null, 'generator')}>
+        <Button icon="plus" type="primary" onClick={edit.bind(null, 'generator', null)}>
           批量生成电子券
         </Button>
         <div className={styles.searcher}>
@@ -319,7 +321,7 @@ function Tickets(props) {
               <Button onClick={fetch} type="primary" className={styles.btn}>
                 查询
               </Button>
-              <Button onClick={edit.bind(null, 'batch')} type="danger" className={styles.btn}>
+              <Button onClick={edit.bind(null, 'batch', null)} type="danger" className={styles.btn}>
                 批量操作
               </Button>
               <Button onClick={visibleCSV.bind(null, true)} type="danger" className={styles.btn}>
@@ -366,9 +368,9 @@ function Tickets(props) {
             : ''
         }
         visible={!!props.visible}
-        onCancel={edit.bind(null, false)}
+        onCancel={edit.bind(null, false, null)}
         footer={[
-          <Button key="back" onClick={edit.bind(null, false)}>
+          <Button key="back" onClick={edit.bind(null, false, null)}>
             取消
           </Button>,
           <Button key="submit" type="primary" loading={props.loading} onClick={onOk}>

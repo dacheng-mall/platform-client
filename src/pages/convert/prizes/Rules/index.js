@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
 import { Input, Button, Divider } from 'antd';
 import _ from 'lodash';
-import styles from './Rules.less';
+import styles from './index.less';
 
 export default class Rules extends PureComponent {
   state = {
@@ -52,7 +52,7 @@ export default class Rules extends PureComponent {
   };
   move = (i, type) => {
     const rules = [...this.props.value];
-    const target = rules.splice(i, 1);
+    const [target] = rules.splice(i, 1);
     switch (type) {
       case 'up': {
         rules.splice(i - 1, 0, target);
@@ -63,7 +63,7 @@ export default class Rules extends PureComponent {
         break;
       }
       default:
-        break
+        break;
     }
     this.props.onChange(rules);
   };
@@ -78,7 +78,7 @@ export default class Rules extends PureComponent {
     return rules;
   };
   del = (i) => {
-    const rules = this.props.value
+    const rules = this.props.value;
     rules.splice(i, 1);
     this.props.onChange(rules);
     return rules;

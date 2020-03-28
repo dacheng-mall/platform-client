@@ -1,0 +1,58 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  .top {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  .content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    .products {
+      height: 100%;
+      width: 40%;
+      overflow: auto;
+    }
+    .title {
+      padding: 0 10px;
+      font-size: 20px;
+      margin: 20px 10px;
+      line-height: 1.2em;
+      border-left: 16px solid #4cb0b2;
+    }
+    .info {
+      margin: 0 0 0 10px;
+      height: 100%;
+      flex: 1;
+      overflow: auto;
+    }
+  }
+}
+.products {
+  overflow: hidden;
+  clear: both;
+}
+.listProduct {
+  float: left;
+  img {
+    width: 64px;
+  }
+  div {
+    width: 64px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+.prizeName {
+  display: flex;
+  align-items: center;
+  img {
+    width: 100px;
+  }
+}

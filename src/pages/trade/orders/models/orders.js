@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { getOrders, getCompanies, send } from '../service';
+import { getOrders, getCompanies, send, addCardSN } from '../service';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 
@@ -99,6 +99,13 @@ export default {
           });
           message.success('发货成功');
         }
+      } catch (error) {}
+    },
+    *addCardSN(p, { call }) {
+      console.log('------')
+      try {
+        const data = yield call(addCardSN);
+        console.log(data);
       } catch (error) {}
     },
   },
