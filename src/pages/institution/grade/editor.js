@@ -36,7 +36,7 @@ function Editor(props) {
   };
   const renderOpts = (data) =>
     _.map(data, (d) => (
-      <Select.Option key={d.id} value={d.id} title={d.name}>
+      <Select.Option key={`${d.id},${d.code}`} value={`${d.id},${d.code}`} title={d.name}>
         {d.name}
       </Select.Option>
     ));
@@ -54,7 +54,7 @@ function Editor(props) {
         <Row type="flex">
           <Col span={12}>
             <FormItem label="所属机构">
-              {getFieldDecorator('institutionId', {
+              {getFieldDecorator('institution', {
                 rules: [{ required: true, message: '必填项' }],
               })(
                 <Select
@@ -85,8 +85,15 @@ function Editor(props) {
           <Col span={12}>
             <FormItem label="排序权重" help="数值越大越靠前">
               {getFieldDecorator('displayOrder', {
-                initialValue: 0
-              })(<InputNumber style={{minWidth: '200px'}} min={0} max={9999} placeholder="数字越大越靠前" />)}
+                initialValue: 0,
+              })(
+                <InputNumber
+                  style={{ minWidth: '200px' }}
+                  min={0}
+                  max={9999}
+                  placeholder="数字越大越靠前"
+                />,
+              )}
             </FormItem>
             <FormItem label="描述">
               {getFieldDecorator('description')(

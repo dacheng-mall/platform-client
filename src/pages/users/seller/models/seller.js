@@ -9,6 +9,7 @@ import {
   getInstWithoutPage,
   getInstitutionsWhitoutPage,
   getInstitutionsForInstAdminWhitoutPage,
+  exportCSV,
 } from '../services';
 
 import { parseEditor } from '../../../../utils/ui';
@@ -50,7 +51,7 @@ export default {
         payload,
       });
     },
-    *fetch(p, { put, call, select }) {
+    *fetch({ payload }, { put, call, select }) {
       const { range, institutionId, name, code, mobile } = yield select(({ seller }) => seller);
       const params = {};
       if (range && range.length > 0) {
@@ -69,10 +70,8 @@ export default {
       if (mobile) {
         params.mobile = mobile;
       }
-      const { data } = yield call(getAdmins, { ...PAGE_DEF, ...params, userType: 4 });
-      // debugger
+      const { data } = yield call(getAdmins, { ...payload, ...params, userType: 4 });
 
-      console.log('====', data);
       data.data = _.map(data.data, (d) => {
         d.institutionName = d.institution.name;
         return d;
@@ -87,7 +86,7 @@ export default {
       let res;
 
       const values = parseEditor(payload);
-      console.log(values, payload)
+      console.log(values, payload);
       if (editor.id) {
         const { data } = yield call(updateAdmin, { ...editor, ...values });
         res = data;
@@ -182,6 +181,11 @@ export default {
           inst: data,
         },
       });
+    },
+    *exportCSV(p, { select, call }) {
+      const { institutionId } = yield select(({ seller }) => seller);
+      // console.log('inst', inst);
+      const data = yield call(exportCSV, { id: institutionId });
     },
   },
   reducers: {

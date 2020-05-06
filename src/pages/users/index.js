@@ -11,4 +11,8 @@ module.exports = [
     path: '/users/customer',
     component: 'users/customer',
   },
+  {
+    path: '/users/attestation',
+    component: 'users/attestation',
+  },
 ];

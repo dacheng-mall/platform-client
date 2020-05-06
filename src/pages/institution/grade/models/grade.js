@@ -1,13 +1,13 @@
 import _ from 'lodash';
 import { message } from 'antd';
 import { fetch as get, remove, update, create, find, findInst } from '../services';
-import {fieldsChange} from '../../../../utils/ui'
+import { fieldsChange } from '../../../../utils/ui';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 const INIT_EDITOR = {
   editor: null,
   errors: {},
-}
+};
 
 export default {
   namespace: 'grade',
@@ -37,7 +37,7 @@ export default {
     },
     *fetch({ payload }, { put, call, select }) {
       const { keywords } = yield select(({ grade }) => grade);
-      const { data } = yield call(get, { ...PAGE_DEF, ...payload, name: keywords});
+      const { data } = yield call(get, { ...PAGE_DEF, ...payload, name: keywords });
       yield put({
         type: 'upState',
         payload: data,
@@ -45,14 +45,16 @@ export default {
     },
     *edit({ payload }, { call, put, select }) {
       const { editor } = yield select(({ grade }) => grade);
-      if (payload.regionId) {
-        payload.regionId = payload.regionId.join(',');
-        payload.regionName = editor.regionName;
-      }
       if (payload.status) {
         payload.status = 1;
       } else {
         payload.status = 0;
+      }
+      if (payload.institution) {
+        const [institutionId, institutionCode] = payload.institution.split(',');
+        payload.institutionId = institutionId;
+        payload.institutionCode = institutionCode;
+        delete payload.institution;
       }
       if (editor.id) {
         payload.id = editor.id;
@@ -67,8 +69,8 @@ export default {
         payload: pagination,
       });
       yield put({
-        type: 'closeModal'
-      })
+        type: 'closeModal',
+      });
     },
     *remove({ id }, { call, put, select }) {
       const { data } = yield call(remove, id);
@@ -82,15 +84,15 @@ export default {
           },
         });
         yield put({
-          type: 'closeModal'
-        })
+          type: 'closeModal',
+        });
       }
     },
-    *closeModal(p, {put}){
+    *closeModal(p, { put }) {
       yield put({
         type: 'upState',
-        payload: INIT_EDITOR
-      })
+        payload: INIT_EDITOR,
+      });
     },
     *searchByKeywords({ payload }, { put }) {
       yield put({
@@ -104,7 +106,7 @@ export default {
       });
     },
     *searchInst({ payload }, { call, put }) {
-      const { data } = yield call(findInst, {...payload, pid: ''});
+      const { data } = yield call(findInst, { ...payload, level: 0 });
       yield put({
         type: 'upState',
         payload: {
@@ -145,6 +147,6 @@ export default {
     //   });
     //   return { ...state, error };
     // },
-    fieldsChange
+    fieldsChange,
   },
 };

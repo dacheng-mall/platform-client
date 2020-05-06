@@ -1,16 +1,17 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { Input, Button, Checkbox, Form, Icon } from 'antd';
 import { connect } from 'dva';
 import Particleground from 'particleground-light';
 import styles from './index.less';
 
-function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
+function Login({ form: { getFieldDecorator, validateFields, getFieldValue }, dispatch }) {
   useEffect(() => {
     new Particleground(document.getElementById('loginWrap'), {
       dotColor: '#5cbdaa',
       lineColor: '#5cbdaa',
     });
   }, []);
+  const [RM, setRM] = useState(true);
   const submit = (e) => {
     e.preventDefault();
     validateFields((err, val) => {
@@ -21,6 +22,31 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
         });
       }
     });
+  };
+  const remember = (e) => {
+    console.log('e', e);
+    setRM(e.target.checked);
+    if (e.target.checked) {
+      const username = getFieldValue('username');
+      console.log('username', username);
+      if (username && username.trim()) {
+        localStorage.setItem('username', username);
+      }
+    } else {
+      localStorage.removeItem('username');
+    }
+  };
+  let timers;
+  const changeUsername = (e) => {
+    if (RM) {
+      if (timers) {
+        clearTimeout(timers);
+      }
+      timers = setTimeout(() => {
+        const username = getFieldValue('username');
+        localStorage.setItem('username', username);
+      }, 300);
+    }
   };
   return (
     <Fragment>
@@ -38,17 +64,19 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
       <div className={styles.login}>
         <div className={styles.formWrap}>
           <div className={styles.title}>
-            <img src={require('../../assets/imgs/logo.png')} alt="logo" />
-            <div>访便面 - 数据中心</div>
+            <img src={require('../../assets/imgs/logo.jpg')} alt="logo" />
+            <div>智惠工牌 - 数据中心</div>
           </div>
           <Form onSubmit={submit}>
             <Form.Item>
               {getFieldDecorator('username', {
                 rules: [{ required: true, message: '请输入用户名' }],
+                initialValue: localStorage.getItem('username')
               })(
                 <Input
                   prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
                   placeholder="用户名"
+                  onChange={changeUsername}
                 />,
               )}
             </Form.Item>
@@ -63,7 +91,9 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
                 />,
               )}
             </Form.Item>
-            <Checkbox>在这台计算机上记住我的信息</Checkbox>
+            <Checkbox onChange={remember} checked={RM}>
+              在这台计算机上记住我的用户名
+            </Checkbox>
             <Button type="primary" htmlType="submit" className={styles.button}>
               登录
             </Button>
@@ -72,7 +102,7 @@ function Login({ form: { getFieldDecorator, validateFields }, dispatch }) {
         <div
           style={{ position: 'absolute', bottom: '10px', fontSize: '14px', textAlign: 'center' }}
         >
-          <div style={{ color: '#fff' }}>河南洋白菜电子商务有限公司</div>
+          <div style={{ color: '#fff' }}>浙江米棉有电子商务有限公司</div>
           <a style={{ color: '#fff' }} href="http://www.beian.miit.gov.cn" target="_blank">
             豫ICP备18044641号
           </a>

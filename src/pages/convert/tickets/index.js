@@ -14,6 +14,7 @@ import {
   Icon,
   Select,
   Switch,
+  message,
 } from 'antd';
 import { TableX, FormItem } from '../../../utils/ui';
 import Picker from '../prizes/Picker/index';
@@ -21,6 +22,8 @@ import styles from './index.less';
 
 function Tickets(props) {
   const [prefix, setPrefix] = useState('');
+  const [addOrderShow, setAddOrderShow] = useState(false);
+  const [orderInfo, setOrderInfo] = useState(null);
   const columns = [
     {
       key: 'sn',
@@ -142,9 +145,22 @@ function Tickets(props) {
       title: '操作',
       dataIndex: 'id',
       align: 'right',
-      render: (t) => {
+      render: (t, r) => {
         return (
           <div>
+            {r.status === 'expended' && r.expendedTime === '1970-01-01T00:00:00.000Z' ? (
+              <Fragment>
+                <Button
+                  shape="circle"
+                  type="primary"
+                  icon="copy"
+                  title="恢复订单"
+                  disabled={r.user.id === 'none'}
+                  onClick={addOrder.bind(null, t, r.user.name)}
+                />
+                <Divider type="vertical" />
+              </Fragment>
+            ) : null}
             <Button
               shape="circle"
               type="primary"
@@ -185,8 +201,42 @@ function Tickets(props) {
       id,
     });
   };
+  const addOrder = (id, userName) => {
+    if (!id || addOrderShow) {
+      // 关闭补全订单窗口
+      setAddOrderShow(false);
+      // 清空订单收货信息
+      setOrderInfo(null);
+    } else {
+      // 开启补全订单窗口
+      setAddOrderShow({ id, userName });
+      setOrderInfo(null);
+    }
+  };
+  const changeOrderInfo = (type, e) => {
+    setOrderInfo({ ...orderInfo, [type]: e.target.value });
+  };
+  const addOrderSubmit = () => {
+    const { name, address, mobile } = orderInfo || {};
+    if (name && address && mobile) {
+      const { id } = addOrderShow || {};
+      if (id) {
+        props.dispatch({
+          type: 'tickets/addOrderFromTicket',
+          payload: {
+            id,
+            name,
+            address,
+            mobile,
+          },
+        });
+      }
+    } else {
+      message.warning('收货信息不全');
+    }
+  };
   const edit = (visible, id) => {
-    console.log(visible, id)
+    console.log(visible, id);
     props.dispatch({
       type: 'tickets/upState',
       payload: {
@@ -436,6 +486,43 @@ function Tickets(props) {
             </Fragment>
           )}
         </Form>
+      </Modal>
+      <Modal
+        title={`恢复${addOrderShow ? ` [${addOrderShow.userName}] ` : ''}订单`}
+        visible={!!addOrderShow}
+        onCancel={addOrder}
+        footer={[
+          <Button key="back" onClick={addOrder}>
+            取消
+          </Button>,
+          <Button key="submit" type="primary" loading={props.loading} onClick={addOrderSubmit}>
+            恢复订单
+          </Button>,
+        ]}
+      >
+        <Fragment>
+          <FormItem label="收货人姓名">
+            <Input
+              placeholder="请输入"
+              value={orderInfo && orderInfo.name}
+              onChange={changeOrderInfo.bind(null, 'name')}
+            />
+          </FormItem>
+          <FormItem label="联系电话">
+            <Input
+              placeholder="请输入"
+              value={orderInfo && orderInfo.mobile}
+              onChange={changeOrderInfo.bind(null, 'mobile')}
+            />
+          </FormItem>
+          <FormItem label="收货地址">
+            <Input.TextArea
+              placeholder="请输入"
+              value={orderInfo && orderInfo.address}
+              onChange={changeOrderInfo.bind(null, 'address')}
+            />
+          </FormItem>
+        </Fragment>
       </Modal>
     </div>
   );

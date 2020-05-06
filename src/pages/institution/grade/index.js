@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Table, Button, Switch, Modal, Icon, Input, Divider } from 'antd';
 import Editor from './editor';
 import styles from './styles.less';
-import { TableX } from "../../../utils/ui";
+import { TableX } from '../../../utils/ui';
 
 class Grade extends PureComponent {
   state = {
@@ -21,10 +21,17 @@ class Grade extends PureComponent {
       {
         key: 'institution',
         title: '所属机构',
-        render: function(t, r){
-          const {institution: {name}} = r;
-          return name
-        }
+        render: function(t, r) {
+          const {
+            institution: { name },
+          } = r;
+          return name;
+        },
+      },
+      {
+        key: 'institutionCode',
+        title: '机构code',
+        dataIndex: 'institutionCode',
       },
       {
         key: 'code',
@@ -81,7 +88,7 @@ class Grade extends PureComponent {
     ];
   };
   update = (r) => {
-    const { id, name, description, code, displayOrder, status, institutionId } = r;
+    const { id, name, description, code, displayOrder, status, institutionId, institutionCode } = r;
 
     this.showModal({
       id,
@@ -90,12 +97,12 @@ class Grade extends PureComponent {
       code,
       displayOrder,
       status,
-      institutionId,
+      institution: `${institutionId},${institutionCode}`,
     });
     this.props.dispatch({
       type: 'grade/searchInst',
       payload: {
-        id: institutionId
+        id: institutionId,
       },
     });
   };

@@ -199,6 +199,7 @@ class Institution extends PureComponent {
       code,
       level,
       shortName,
+      rootName,
       displayOrder,
       pInstitution: { id: pid, name: pName },
     } = r;
@@ -218,6 +219,7 @@ class Institution extends PureComponent {
       level,
       displayOrder,
       shortName,
+      rootName,
       pid,
     });
     this.props.dispatch({

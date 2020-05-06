@@ -7,7 +7,7 @@ const PAGE_DEF = { page: 1, pageSize: 8 };
 const INIT_EDITOR = {
   editor: null,
   errors: {},
-}
+};
 
 export default {
   namespace: 'instAdmin',
@@ -45,11 +45,17 @@ export default {
       });
     },
     *edit({ payload }, { call, put, select }) {
-      const { editor } = yield select(({ instAdmin }) => instAdmin);
+      const { editor, inst } = yield select(({ instAdmin }) => instAdmin);
       if (payload.status) {
         payload.status = 1;
       } else {
         payload.status = 0;
+      }
+      if (payload.institutionId) {
+        const target = _.find(inst, ['id', payload.institutionId]);
+        if (target && target.name) {
+          payload.institutionName = target.name;
+        }
       }
       if (editor.id) {
         payload.id = editor.id;
@@ -65,8 +71,8 @@ export default {
         payload: pagination,
       });
       yield put({
-        type: 'closeModal'
-      })
+        type: 'closeModal',
+      });
     },
     *remove({ id }, { call, put, select }) {
       const { data } = yield call(removeAdmin, id);
@@ -80,15 +86,15 @@ export default {
           },
         });
         yield put({
-          type: 'closeModal'
-        })
+          type: 'closeModal',
+        });
       }
     },
-    *closeModal(p, {put}){
+    *closeModal(p, { put }) {
       yield put({
         type: 'upState',
-        payload: INIT_EDITOR
-      })
+        payload: INIT_EDITOR,
+      });
     },
     *searchByKeywords({ payload }, { put }) {
       yield put({

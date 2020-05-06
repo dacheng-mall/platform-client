@@ -21,6 +21,9 @@ export const getInstWithoutPage = (query) => {
 export const getInstitutionsWhitoutPage = (params) => {
   return get(`v1/api/sys/institution`, params);
 };
+export const exportCSV = (query) => {
+  return get(`v1/api/sys/user/csv/user/by/inst`, query);
+};
 export const getInstitutionsForInstAdminWhitoutPage = (params) => {
   return get(`v1/api/sys/institution/getAllLevelSonObjsByQuery`, params);
 };

@@ -106,6 +106,19 @@ function Gathering(props) {
       },
     },
     {
+      key: 'export',
+      title: '导出数据',
+      dataIndex: 'id',
+      render: function(t, r) {
+        return (
+          <div>
+            <Button onClick={exportCSV.bind(null, 'order', r)}>订单数据</Button>
+            <Button onClick={exportCSV.bind(null, 'tickets', r)}>兑换券数据</Button>
+          </div>
+        );
+      },
+    },
+    {
       key: 'operator',
       title: '操作',
       dataIndex: 'id',
@@ -145,6 +158,18 @@ function Gathering(props) {
       },
     },
   ];
+  const exportCSV = (type, record) => {
+    props.dispatch({
+      type: 'gathering/exportCSV',
+      payload: {
+        type,
+        id: record.id,
+        name: record.name,
+        institutionId: record.institution.id,
+        institutionCode: record.institution.code,
+      },
+    });
+  };
   const clone = (id) => {
     props.dispatch({
       type: 'gathering/clone',
@@ -161,7 +186,7 @@ function Gathering(props) {
   const queryChange = () => {};
   const exportCsv = (type) => {
     props.dispatch({
-      type: 'task/visitedCSV',
+      type: 'gathering/exportCSV',
       payload: { type },
     });
   };

@@ -30,6 +30,9 @@ export const getStore = (id) => {
   return get(`v1/api/sys/gathering/store/${id}`);
 };
 
-export const visitedCSV = (query) => {
-  return get(`v1/api/sys/visited/csv/salesman/customer`, query);
+export const exportOrderCSV = (query) => {
+  return get('v1/api/sys/gathering/orders/exportCSV', query);
+};
+export const exportTicketsCSV = (query) => {
+  return get('v1/api/sys/gathering/tickets/exportCSV', query);
 };

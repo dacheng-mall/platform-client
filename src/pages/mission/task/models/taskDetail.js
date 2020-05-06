@@ -8,8 +8,7 @@ import { match, update, create } from '../services';
 
 const INIT_STATE = {
   editor: {
-    source: 'visited',
-    type: 'total',
+    source: 'visited'
   },
   errors: {},
 };

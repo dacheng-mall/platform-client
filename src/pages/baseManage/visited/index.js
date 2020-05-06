@@ -24,6 +24,116 @@ import styles from './index.less';
 const { RangePicker } = DatePicker;
 
 function Visited(props) {
+  const columns = [
+    {
+      key: 'level0.shortName',
+      title: '总公司',
+      dataIndex: 'level0.shortName',
+      render: (t, r) => {
+        return `${r.level0 && r.level0.rootName}`
+      },
+      align: 'left',
+    },
+    {
+      key: 'level1.shortName',
+      title: '分公司',
+      dataIndex: 'level1.shortName',
+      align: 'left',
+    },
+    {
+      key: 'level2.shortName',
+      title: '中支',
+      dataIndex: 'level2.shortName',
+      align: 'left',
+    },
+    {
+      key: 'level3.shortName',
+      title: '营业区',
+      dataIndex: 'level3.shortName',
+      align: 'left',
+    },
+    {
+      key: 'salesmanName',
+      title: '营销员',
+      dataIndex: 'salesmanName',
+      align: 'center',
+    },
+    {
+      key: 'salesmanCode',
+      title: '工号',
+      dataIndex: 'salesmanCode',
+      align: 'center',
+    },
+    {
+      key: 'gradeName',
+      title: '职级',
+      dataIndex: 'gradeName',
+      align: 'center',
+    },
+    {
+      key: 'salesmanMobile',
+      title: '营销员手机号',
+      dataIndex: 'salesmanMobile',
+      align: 'center',
+    },
+    {
+      key: 'salesmanIdCard',
+      title: '营销员身份证',
+      dataIndex: 'salesmanIdCard',
+      align: 'center',
+    },
+    {
+      key: 'isNewCustomer',
+      title: '新客',
+      dataIndex: 'isNewCustomer',
+      render: function(t) {
+        return t ? '新' : '--';
+      },
+      align: 'center',
+    },
+    {
+      key: 'customerName',
+      title: '客户',
+      dataIndex: 'name',
+      render: (t,r) => t || r.customerName,
+      align: 'center',
+    },
+    {
+      key: 'mobile',
+      title: '客户电话',
+      dataIndex: 'mobile',
+      align: 'center',
+    },
+    {
+      key: 'createTime',
+      title: '拜访时间',
+      dataIndex: 'createTime',
+      render: function(t) {
+        return moment(t).format('YYYY-MM-DD HH:mm:ss');
+      },
+    },
+    {
+      key: 'category',
+      title: '拜访类型',
+      dataIndex: 'category',
+      render: function(t, r) {
+        switch (t) {
+          case 'badge': {
+            return '见面';
+          }
+          case 'online': {
+            return '云拜访';
+          }
+          case 'active': {
+            return '活动';
+          }
+          default: {
+            return '未知类型';
+          }
+        }
+      },
+    },
+  ];
   const enableChange = (id, checked) => {
     props.dispatch({
       type: 'task/changeEnable',
@@ -32,151 +142,6 @@ function Visited(props) {
         enable: checked,
       },
     });
-  };
-  const deleteMission = () => {};
-  const columns = [
-    {
-      key: 'name',
-      title: '名称',
-      dataIndex: 'name',
-      align: 'left',
-    },
-    {
-      key: 'from',
-      title: '开始时间',
-      dataIndex: 'from',
-      render: function(t) {
-        return moment(t).format('YYYY-MM-DD');
-      },
-    },
-    {
-      key: 'to',
-      title: '结束时间',
-      dataIndex: 'to',
-      render: function(t) {
-        return moment(t).format('YYYY-MM-DD');
-      },
-    },
-    {
-      key: 'institution',
-      title: '机构',
-      dataIndex: 'institution.name',
-    },
-    {
-      key: 'source',
-      title: '数据来源',
-      dataIndex: 'source',
-      render: function(t, r) {
-        switch (t) {
-          case 'visited': {
-            return '拜访';
-          }
-          case 'attendance': {
-            return '出勤';
-          }
-          case 'recruiting': {
-            return '增员';
-          }
-          default: {
-            return '未知来源';
-          }
-        }
-      },
-    },
-    {
-      key: 'type',
-      title: '统计方式',
-      dataIndex: 'type',
-      render: function(t, r) {
-        switch (t) {
-          case 'continue': {
-            return '连续统计天数';
-          }
-          case 'total': {
-            return '累计统计数据';
-          }
-          default: {
-            return '未知统计方式';
-          }
-        }
-      },
-    },
-    {
-      key: 'enable',
-      title: '启用状态',
-      dataIndex: 'enable',
-      render: function(t, r) {
-        return (
-          <div>
-            <Switch
-              checked={t}
-              onChange={enableChange.bind(null, r.id)}
-              checkedChildren="启"
-              unCheckedChildren="停"
-            />
-          </div>
-        );
-      },
-    },
-    {
-      key: 'status',
-      title: '状态',
-      dataIndex: 'status',
-      render: (t, r) => {
-        switch (t) {
-          case 1: {
-            return '进行中';
-          }
-          case 0: {
-            return '未启动';
-          }
-          case 2: {
-            return '已结束';
-          }
-          default: {
-            return '未知状态';
-          }
-        }
-      },
-    },
-    {
-      key: 'operator',
-      title: '操作',
-      dataIndex: 'id',
-      align: 'right',
-      render: (t) => {
-        return (
-          <div>
-            <Button
-              shape="circle"
-              type="primary"
-              icon="edit"
-              title="编辑"
-              onClick={edit.bind(null, 'edit', t)}
-            />
-            <Divider type="vertical" />
-            <Popconfirm
-              title="是否要删除任务"
-              onConfirm={deleteMission.bind(null, t)}
-              confirmText="删除"
-              placement="topRight"
-              icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-              okText="删除"
-              cancelText="算了, 我再考虑下"
-            >
-              <Button shape="circle" type="danger" icon="delete" title="删除" />
-            </Popconfirm>
-          </div>
-        );
-      },
-    },
-  ];
-  const edit = (e, id) => {
-    if (id) {
-      jump(`/gathering/active/detail/${id}`);
-    } else {
-      jump('/gathering/active/detail');
-    }
   };
   const queryChange = (type, e) => {
     let value;
@@ -187,8 +152,8 @@ function Visited(props) {
         break;
       }
       case 'range':
-      case 'type':
-      case 'method': {
+      case 'isNewCustomer':
+      case 'category': {
         console.log(type, e);
         value = { [type]: e };
         break;
@@ -217,28 +182,31 @@ function Visited(props) {
     }, 500);
   };
   // 拜访数据报表
-  const getcsvdata = (isActive) => {
-    console.log('isActive', isActive)
+  const getCsvDetail = () => {
     props.dispatch({
-      type: 'visited/getcsvdata',
-      isActive
+      type: 'visited/getCsvDetail',
     });
   };
   // 活动人力报表
-  const addPids = () => {
+  // const addPids = () => {
+  //   props.dispatch({
+  //     type: 'visited/addPids',
+  //   });
+  // };
+  // const exportCsv = (type) => {
+  //   props.dispatch({
+  //     type: 'visited/visitedCSV',
+  //     payload: { type },
+  //   });
+  // };
+  const search = () => {
     props.dispatch({
-      type: 'visited/addPids',
-    });
-  };
-  const exportCsv = (type) => {
-    props.dispatch({
-      type: 'visited/visitedCSV',
-      payload: { type },
+      type: 'visited/fetch',
     });
   };
   return (
     <div>
-      <div className={styles.top}>
+      {/* <div className={styles.top}>
         <Button icon="download" type="primary" onClick={exportCsv.bind(null, null)}>
           导出全部数据
         </Button>
@@ -254,11 +222,11 @@ function Visited(props) {
         <Button icon="download" type="primary" onClick={addPids}>
           客户信息补全pids
         </Button>
-      </div>
+      </div> */}
       <div className={styles.buttonWrap}>
         <div className={styles.title}>拜访数据筛选器</div>
         <div>
-          <Button
+          {/* <Button
             className={styles.moBtn}
             onClick={getcsvdata.bind(null, true)}
             icon="download"
@@ -266,24 +234,36 @@ function Visited(props) {
           >
             活动人力报表
           </Button>
-          <Button className={styles.moBtn} onClick={getcsvdata.bind(null, false)} icon="download" type="danger">
-            拜访数据报表
+          <Button
+            className={styles.moBtn}
+            onClick={getcsvdata.bind(null, false)}
+            icon="download"
+            type="danger"
+          >
+            拜访报表
+          </Button> */}
+          <Button className={styles.moBtn} onClick={getCsvDetail} icon="download" type="danger">
+            拜访详细数据报表
+          </Button>
+          <Button className={styles.moBtn} onClick={search} icon="download" type="primary">
+            查询
           </Button>
         </div>
       </div>
       <div className={styles.tableToolBar}>
         <Row>
           <Col span={12}>
-            <FormItem className={styles.formItem} label="机构" required={true}>
+            <FormItem className={styles.formItem} label="机构">
               <Select
                 showSearch
                 value={props.query.institution}
                 placeholder="输入名称关键字查询机构"
-                style={{ width: 320 }}
+                style={{ width: 240 }}
                 defaultActiveFirstOption={false}
                 showArrow={false}
                 filterOption={false}
                 labelInValue
+                allowClear={props.userType !== 3}
                 onSearch={searchInst}
                 onChange={queryChange.bind(null, 'institution')}
                 notFoundContent="暂无选项"
@@ -295,21 +275,32 @@ function Visited(props) {
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem className={styles.formItem} label="时间段" required={true}>
+            <FormItem className={styles.formItem} label="时间段" >
               <RangePicker
-                style={{ width: 320 }}
+                style={{ width: 240 }}
+                ranges={{
+                  '昨日': [moment().subtract(1, 'day').startOf('day'), moment().subtract(1, 'day').endOf('day')],
+                  '今日': [moment(), moment()],
+                  '上周': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+                  '本周': [moment().startOf('week'), moment().endOf('week')],
+                  '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                  '本月': [moment().startOf('month'), moment().endOf('month')],
+                  '上季度': [moment().subtract(1, 'quarter').startOf('quarter'), moment().subtract(1, 'quarter').endOf('quarter')],
+                  '本季度': [moment().startOf('quarter'), moment().endOf('quarter')],
+                }}
+                format="YYYY-MM-DD"
                 onChange={queryChange.bind(null, 'range')}
                 value={props.query.range}
               />
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem className={styles.formItem} label="访客类型" help="活动人力报表忽略该参数">
+            <FormItem className={styles.formItem} label="访客类型">
               <Select
-                style={{ width: 320 }}
-                onChange={queryChange.bind(null, 'type')}
+                style={{ width: 240 }}
+                onChange={queryChange.bind(null, 'isNewCustomer')}
                 placeholder="请选择访客类型"
-                value={props.query.type}
+                value={props.query.isNewCustomer}
               >
                 <Select.Option value="all">不限</Select.Option>
                 <Select.Option value="new">新客拜访</Select.Option>
@@ -318,22 +309,30 @@ function Visited(props) {
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem className={styles.formItem} label="拜访类型" help="暂不启用">
+            <FormItem className={styles.formItem} label="拜访类型">
               <Select
-                style={{ width: 320 }}
-                disabled
-                onChange={queryChange.bind(null, 'method')}
+                style={{ width: 240 }}
+                onChange={queryChange.bind(null, 'category')}
                 placeholder="请选择拜访类型"
-                value={props.query.method}
+                value={props.query.category}
               >
-                <Select.Option value="all">不限</Select.Option>
-                <Select.Option value="online">新客拜访</Select.Option>
-                <Select.Option value="offline">老客拜访</Select.Option>
+                <Select.Option value="all">全部</Select.Option>
+                <Select.Option value="online">云拜访</Select.Option>
+                <Select.Option value="badge">见面</Select.Option>
+                <Select.Option value="active">活动</Select.Option>
               </Select>
             </FormItem>
           </Col>
         </Row>
       </div>
+
+      <TableX
+        columns={columns}
+        dataSource={props.data || []}
+        pagination={props.pagination || {}}
+        fetchType="visited/fetch"
+        dispatch={props.dispatch}
+      />
     </div>
   );
 }

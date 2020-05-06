@@ -109,6 +109,11 @@ function Editor(props) {
             </FormItem>
           </Col>
           <Col span={12}>
+            <FormItem label="总称" help="比如'天安人寿', '富德生命'等">
+              {getFieldDecorator('rootName', {
+                rules: [{ required: true, message: '必填项' }],
+              })(<Input placeholder="请输入" />)}
+            </FormItem>
             <FormItem label="显示权重" help="数字越小越靠前">
               {getFieldDecorator('displayOrder', {
                 rules: [{ required: true, message: '必填项' }],

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { fetch, update, visitedCSV, clone, remove, getStore, setStore } from '../services';
+import { fetch, update, exportOrderCSV, clone, remove, getStore, setStore } from '../services';
 import { sleep } from '../../../../utils';
 import { get } from '../../../../utils/request';
 
@@ -134,16 +134,22 @@ export default {
         });
       }
     },
-    *visitedCSV({ payload }, { call }) {
-      console.log('payload', payload);
-      const { data } = yield call(visitedCSV, payload);
-      if (data && data.url) {
-        message.success('导出成功');
-        window.location.href = `${window.config.api_prod}${data.url}`;
-      } else {
-        message.warning(`导出失败-${data}`);
+    *exportCSV({ payload }, { call }) {
+      switch (payload.type) {
+        case 'order': {
+          const { data } = yield call(exportOrderCSV, payload);
+          if (data && data.url) {
+            message.success('导出成功');
+            window.location.href = `${window.config.api_prod}${data.url}`;
+          } else {
+            message.warning(`导出失败-${data}`);
+          }
+          break;
+        }
+        case 'tickets': {
+          break;
+        }
       }
-      console.log(data);
     },
   },
   reducers: {

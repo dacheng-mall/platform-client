@@ -28,20 +28,20 @@ export const menu = () => {
           path: 'salesmans',
           authority: instAdmin,
         },
-        {
-          name: '机构管理员',
-          icon: 'iconfont icon-user',
-          path: 'instAdmin',
-          authority: instAdmin,
-        },
+        // {
+        //   name: '机构管理员',
+        //   icon: 'iconfont icon-user',
+        //   path: 'instAdmin',
+        //   authority: instAdmin,
+        // },
       ],
     },
-    {
-      name: '活动管理',
-      authority: instAdmin,
-      icon: 'iconfont icon-user',
-      path: 'instActivity',
-    },
+    // {
+    //   name: '活动管理',
+    //   authority: instAdmin,
+    //   icon: 'iconfont icon-user',
+    //   path: 'instActivity',
+    // },
     {
       name: '人员管理',
       authority: admin,
@@ -52,14 +52,25 @@ export const menu = () => {
           path: 'admin',
           authority: admin,
         },
+        // {
+        //   name: '业务员',
+        //   path: 'seller',
+        //   authority: admin,
+        // },
         {
-          name: '业务员',
-          path: 'seller',
+          name: '业务员管理',
+          icon: 'iconfont icon-user',
+          path: 'salesmans',
           authority: admin,
         },
         {
           name: '客户',
           path: 'customer',
+          authority: admin,
+        },
+        {
+          name: '业务员审核',
+          path: 'attestation',
           authority: admin,
         },
       ],
@@ -145,7 +156,7 @@ export const menu = () => {
     {
       name: '二维码管理',
       path: 'qr',
-      authority: all,
+      authority: admin,
       children: [
         {
           name: '码类型管理',
@@ -155,12 +166,12 @@ export const menu = () => {
         {
           name: '码批次管理',
           path: 'batch',
-          authority: all,
+          authority: admin,
         },
         {
           name: '码管理',
           path: 'listAll',
-          authority: instAdmin,
+          authority: admin,
         },
         {
           name: '创建码',
@@ -257,22 +268,32 @@ export const menu = () => {
           path: 'visited',
           authority: all,
         },
-        // {
-        //   name: '活动商品',
-        //   path: 'product',
-        //   authority: admin,
-        // },
+        {
+          name: '出勤记录',
+          path: 'attendance',
+          authority: all,
+        },
+        {
+          name: '线上拜访入口资源',
+          path: 'onlineVisitedEntry',
+          authority: admin,
+        },
+        {
+          name: '线上拜访分享资源',
+          path: 'onlineVisitedShare',
+          authority: admin,
+        }
       ],
     },
     {
       name: '集会活动管理',
       path: 'gathering',
-      authority: all,
+      authority: admin,
       children: [
         {
           name: '活动列表',
           path: 'active',
-          authority: all,
+          authority: admin,
         },
         {
           name: '活动商品',

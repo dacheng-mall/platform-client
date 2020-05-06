@@ -18,3 +18,6 @@ export const update = ({ id, ...body }) => {
 export const getTickets = ({ page, pageSize, query = {} }) => {
   return get(`v1/api/sys/tickets/${page}/${pageSize}`, query);
 };
+export const addOrderFromTicket = (body) => {
+  return post('v1/api/sys/tickets/addOrderFromTicket', body);
+};

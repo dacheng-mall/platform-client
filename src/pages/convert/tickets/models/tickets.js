@@ -1,12 +1,20 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { generateTickets, getTickets, exportCSV, batch, remove, update } from '../service';
+import {
+  generateTickets,
+  getTickets,
+  exportCSV,
+  batch,
+  remove,
+  update,
+  addOrderFromTicket,
+} from '../service';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
 const QUERY_DEF = {
-  code: '',
-  gte: null,
-  lte: null,
+  code: 'fuka',
+  gte: 1409,
+  lte: 1409,
 };
 function daley(time = 500) {
   return new Promise((res) => {
@@ -214,6 +222,14 @@ export default {
         });
       } catch (error) {
         console.log(error);
+      }
+    },
+    *addOrderFromTicket({ payload }, { call }) {
+      try {
+        yield call(addOrderFromTicket, payload);
+        message.success('补单成功');
+      } catch (err) {
+        message.error(err);
       }
     },
   },

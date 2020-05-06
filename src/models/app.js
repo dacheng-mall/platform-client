@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import * as qiniu from 'qiniu-js';
-import { login, getQiniuToken, logout } from '../services/app';
+import { login, getQiniuToken, logout, changePW } from '../services/app';
 import { jump } from '../utils';
 import { setAuthority } from '../utils/authority';
 import { menu } from '../pages/_layouts/menuData';
 import { setToken } from '../utils/request';
 import { TYPES } from '../../src/pages/cms/element';
 import { getRegionData } from '../services/dict';
+import { message } from 'antd';
 
 const redirect = (menu) => {
   const allow = _.find(menu, ({ authority }) => authority || undefined);
@@ -96,18 +97,23 @@ export default {
       }
     },
     *login({ payload }, { call, put, all }) {
-      const { data } = yield call(login, payload);
-      if (data) {
-        sessionStorage.setItem('user', JSON.stringify(data.user));
-        sessionStorage.setItem('token', data.token);
-        setAuthority(data.user.userType);
-        const _menu = menu();
-        yield put({
-          type: 'upState',
-          payload: { ...data, menu: _menu },
-        });
-        yield setToken(() => `Bearer ${data.token}`);
-        yield jump(redirect(_menu));
+      try {
+        const { data } = yield call(login, payload);
+        if (data) {
+          sessionStorage.setItem('user', JSON.stringify(data.user));
+          sessionStorage.setItem('token', data.token);
+          setAuthority(data.user.userType);
+          const _menu = menu();
+          yield put({
+            type: 'upState',
+            payload: { ...data, menu: _menu },
+          });
+          yield setToken(() => `Bearer ${data.token}`);
+          yield jump(redirect(_menu));
+        }
+      } catch (error) {
+        const err = JSON.parse(error);
+        message.error(err.message);
       }
     },
     *getQiniuToken(p, { call, put, select }) {
@@ -169,6 +175,24 @@ export default {
           type: 'upState',
           payload: { user: {} },
         });
+      }
+    },
+    *changePassword({ payload }, { call, select }) {
+      const { user } = yield select(({ app }) => app);
+      try {
+        const { data } = yield call(changePW, {
+          id: user.id,
+          username: user.username,
+          ...payload,
+          confirmpassword: payload.newpassword,
+        });
+        if (data === 'success') {
+          message.success('修改成功');
+        }
+      } catch (error) {
+        const err = JSON.parse(error);
+        // console.log(e)
+        message.error(err.message);
       }
     },
   },

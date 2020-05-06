@@ -9,19 +9,29 @@ import Images from '../../products/components/form/Images';
 import Picker from '../../convert/prizes/Picker/index';
 import Tasks from './Tasks';
 import Rules from '../../convert/prizes/Rules/index';
-import VisitedTotal from './formPlugins/visitedTotal';
+import Visited from './formPlugins/visitedTotal';
 import styles from './index.less';
 
 const { RangePicker } = DatePicker;
 
-const AGG_TYPE = [
+const VISITED_TYPE = [
   {
-    label: '累计数据量',
-    key: 'total',
+    label: '见面',
+    key: 'badge',
   },
   {
-    label: '连续记天数',
-    key: 'continue',
+    label: '云拜访',
+    key: 'online',
+  },
+  {
+    label: '送达',
+    key: 'gift',
+    disabled: true,
+  },
+  {
+    label: '会议',
+    key: 'meeting',
+    disabled: true,
   },
 ];
 
@@ -128,24 +138,9 @@ function Editor(props) {
         <div className={styles.info}>
           <div className={styles.title}>任务类型</div>
           <Form layout="horizontal">
-            <FormItem label="统计方式">
-              {getFieldDecorator('type', {
-                initialValue: 'continue',
-              })(
-                <Select disabled={!!props.id}>
-                  {_.map(AGG_TYPE, ({ label, key }) => (
-                    <Select.Option key={key} value={key}>
-                      {label}
-                    </Select.Option>
-                  ))}
-                </Select>,
-              )}
-            </FormItem>
             <FormItem label="数据来源">
-              {getFieldDecorator('source', {
-                initialValue: 'visited',
-              })(
-                <Select disabled={!!props.id}>
+              {getFieldDecorator('source')(
+                <Select disabled={!!props.id} placeholder="请选择" allowClear>
                   {_.map(SOURCE_TYPE, ({ label, key, disabled }) => (
                     <Select.Option key={key} value={key} disabled={disabled}>
                       {label}
@@ -154,11 +149,24 @@ function Editor(props) {
                 </Select>,
               )}
             </FormItem>
-            {props.editor.source === 'visited' && props.editor.type === 'total' ? (
+            {props.editor.source === 'visited' ? (
+              <FormItem label="拜访方式">
+                {getFieldDecorator('type')(
+                  <Select disabled={!!props.id} placeholder="请选择" allowClear>
+                    {_.map(VISITED_TYPE, ({ label, key, disabled }) => (
+                      <Select.Option key={key} value={key} disabled={disabled}>
+                        {label}
+                      </Select.Option>
+                    ))}
+                  </Select>,
+                )}
+              </FormItem>
+            ) : null}
+            {props.editor.source === 'visited' ? (
               <Form.Item label="">
                 {getFieldDecorator('restraint', {
                   type: Object,
-                })(<VisitedTotal />)}
+                })(<Visited />)}
               </Form.Item>
             ) : null}
           </Form>

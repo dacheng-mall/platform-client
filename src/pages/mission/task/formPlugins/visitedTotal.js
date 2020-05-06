@@ -2,7 +2,7 @@ import { Fragment, PureComponent } from 'react';
 import { InputNumber } from 'antd';
 import { FormItem } from '../../../../utils/ui';
 
-export default class VisitedTotal extends PureComponent {
+export default class Visited extends PureComponent {
   state = {
     ...this.props.value,
   };
@@ -18,23 +18,7 @@ export default class VisitedTotal extends PureComponent {
   render() {
     return (
       <Fragment>
-        <FormItem label="单日统计上限" help="为0时,则忽略该规则">
-          <InputNumber
-            min={0}
-            onChange={this.edit.bind(null, 'delayMax')}
-            placeholder="请输入"
-            value={this.state.delayMax}
-          />
-        </FormItem>
-        <FormItem label="单日统计下限" help="为0时,则忽略该规则">
-          <InputNumber
-            min={0}
-            onChange={this.edit.bind(null, 'delayMin')}
-            placeholder="请输入"
-            value={this.state.delayMin}
-          />
-        </FormItem>
-        <FormItem label="单客拜访上限" help="为0时,则忽略该规则">
+        <FormItem label="单客拜访上限" help="0则忽略, 单个客户在任务期内的计工分次数">
           <InputNumber
             min={0}
             onChange={this.edit.bind(null, 'singleCustomerVisitedMax')}
@@ -42,7 +26,7 @@ export default class VisitedTotal extends PureComponent {
             value={this.state.singleCustomerVisitedMax}
           />
         </FormItem>
-        <FormItem label="单次拜访得分" help="为0时, 拜访不加分">
+        <FormItem label="老客得分" help="0则忽略, 单次有效的非新客拜访">
           <InputNumber
             min={0}
             onChange={this.edit.bind(null, 'visitedPoint')}
@@ -50,15 +34,15 @@ export default class VisitedTotal extends PureComponent {
             value={this.state.visitedPoint}
           />
         </FormItem>
-        <FormItem label="单日新客上限" help="为0时, 不限制单日新客录入数">
+        <FormItem label="单日老客上限" help="0则忽略, 单日老客户拜访计工分次数">
           <InputNumber
             min={0}
-            onChange={this.edit.bind(null, 'delayNewCustomerMax')}
+            onChange={this.edit.bind(null, 'delayMax')}
             placeholder="请输入"
-            value={this.state.delayNewCustomerMax}
+            value={this.state.delayMax}
           />
         </FormItem>
-        <FormItem label="新客额外分" help="为0时, 新客拜访不额外加分">
+        <FormItem label="新客得分" help="为0时, 新客拜访不额外加分">
           <InputNumber
             min={0}
             onChange={this.edit.bind(null, 'newCustomerPoint')}
@@ -66,7 +50,23 @@ export default class VisitedTotal extends PureComponent {
             value={this.state.newCustomerPoint}
           />
         </FormItem>
-        <FormItem label="连续额外分" help="连续满足单日下限访问量时的额外加分, 每日只触发一次加分">
+        <FormItem label="单日新客上限" help="0则忽略, , 单日新客户拜访计工分次数">
+          <InputNumber
+            min={0}
+            onChange={this.edit.bind(null, 'delayNewCustomerMax')}
+            placeholder="请输入"
+            value={this.state.delayNewCustomerMax}
+          />
+        </FormItem>
+        <FormItem label="单日统计下限" help="至少1次才会触发活跃状态, 连续2天活跃触发连续拜访状态">
+          <InputNumber
+            min={1}
+            onChange={this.edit.bind(null, 'delayMin')}
+            placeholder="请输入"
+            value={this.state.delayMin || 1}
+          />
+        </FormItem>
+        <FormItem label="连续拜访得分" help="连续满足单日下限访问量时的额外加分, 每日只触发一次加分">
           <InputNumber
             min={0}
             onChange={this.edit.bind(null, 'continuePoint')}
@@ -74,14 +74,14 @@ export default class VisitedTotal extends PureComponent {
             value={this.state.continuePoint}
           />
         </FormItem>
-        <FormItem label="连续额外分修正" help="连续额外分递增修正值">
+        {/* <FormItem label="连续额外分修正" help="连续额外分递增修正值">
           <InputNumber
             min={0}
             onChange={this.edit.bind(null, 'continueAdjustment')}
             placeholder="请输入"
             value={this.state.continueAdjustment}
           />
-        </FormItem>
+        </FormItem> */}
       </Fragment>
     );
   }

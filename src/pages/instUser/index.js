@@ -6,5 +6,9 @@ module.exports = [
   {
     path: '/instUser/instAdmin',
     component: 'instUser/admin',
+  },
+  {
+    path: '/users/salesmans',
+    component: 'instUser/seller',
   }
 ];

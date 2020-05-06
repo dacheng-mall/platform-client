@@ -63,38 +63,49 @@ function Task(props) {
       title: '数据来源',
       dataIndex: 'source',
       render: function(t, r) {
+        let source = '';
         switch (t) {
           case 'visited': {
-            return '拜访';
+            source = '拜访';
+            break;
           }
           case 'attendance': {
-            return '出勤';
+            source = '出勤';
+            break;
           }
           case 'recruiting': {
-            return '增员';
+            source = '增员';
+            break;
           }
           default: {
-            return '未知来源';
+            source = '未知来源';
+            break;
           }
         }
-      },
-    },
-    {
-      key: 'type',
-      title: '统计方式',
-      dataIndex: 'type',
-      render: function(t, r) {
-        switch (t) {
-          case 'continue': {
-            return '连续统计天数';
+        let type = '';
+        switch (r.type) {
+          case 'badge': {
+            type = '见面';
+            break;
           }
-          case 'total': {
-            return '累计统计数据';
+          case 'online': {
+            type = '云拜访';
+            break;
+          }
+          case 'gift': {
+            type = '送达';
+            break;
+          }
+          case 'meeting': {
+            type = '集会';
+            break;
           }
           default: {
-            return '未知统计方式';
+            type = '未知方式';
+            break;
           }
         }
+        return `${source}-${type}`;
       },
     },
     {
@@ -162,7 +173,7 @@ function Task(props) {
               icon="bar-chart"
               title="导出"
             />
-            <Button
+            {/* <Button
               shape="circle"
               type="warning"
               onClick={translate.bind(null, {
@@ -170,7 +181,7 @@ function Task(props) {
               })}
               icon="retweet"
               title="转换"
-            />
+            /> */}
             <Button
               shape="circle"
               type="danger"
@@ -225,61 +236,6 @@ function Task(props) {
         <Button icon="plus" type="primary" onClick={edit.bind(null)}>
           创建任务
         </Button>
-
-        {/* <div className={styles.searcher}>
-          <Form layout="inline">
-            <Form.Item label="状态">
-              <Select
-                placeholder="请选择"
-                onChange={queryChange.bind(null, 'status')}
-                value={props.query.status}
-                style={{ width: '100px' }}
-                allowClear
-              >
-                <Select.Option value="free">待领取</Select.Option>
-                <Select.Option value="binded">待兑换</Select.Option>
-                <Select.Option value="expended">已兑换</Select.Option>
-                <Select.Option value="expired">已过期</Select.Option>
-                <Select.Option value="removed">已删除</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="批号编码">
-              <Input
-                placeholder="批号编码"
-                onChange={queryChange.bind(null, 'code')}
-                value={props.query.code}
-              />
-            </Form.Item>
-            <Form.Item label="序号区间">
-              <InputNumber
-                placeholder="开始"
-                min={1}
-                onChange={queryChange.bind(null, 'gte')}
-                value={props.query.gte}
-              />
-            </Form.Item>
-            <Form.Item>-</Form.Item>
-            <Form.Item>
-              <InputNumber
-                placeholder="结束"
-                min={1}
-                onChange={queryChange.bind(null, 'lte')}
-                value={props.query.lte}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button onClick={fetch} type="primary" className={styles.btn}>
-                查询
-              </Button>
-              <Button onClick={edit.bind(null, 'batch')} type="danger" className={styles.btn}>
-                批量操作
-              </Button>
-              <Button onClick={visibleCSV.bind(null, true)} type="danger" className={styles.btn}>
-                导出CSV
-              </Button>
-            </Form.Item>
-          </Form>
-        </div> */}
       </div>
       <TableX
         columns={columns}

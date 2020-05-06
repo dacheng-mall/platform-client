@@ -2,7 +2,20 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import _ from 'lodash';
-import { Button, Switch, Modal, Row, Col, Input, DatePicker, Select, Divider, Form, Radio, Checkbox } from 'antd';
+import {
+  Button,
+  Switch,
+  Modal,
+  Row,
+  Col,
+  Input,
+  DatePicker,
+  Select,
+  Divider,
+  Form,
+  Radio,
+  Checkbox,
+} from 'antd';
 import { TableX, FormItem, mapPropsToFields } from '../../../utils/ui';
 import styles from '../../qr/list/styles.less';
 const { RangePicker } = DatePicker;
@@ -46,7 +59,7 @@ class Seller extends PureComponent {
       {
         key: 'institutionName',
         title: '机构',
-        dataIndex: 'institutionName'
+        dataIndex: 'institutionName',
       },
       {
         key: 'grade',
@@ -142,7 +155,7 @@ class Seller extends PureComponent {
     console.log('---++', record);
     const institutionName = record.institution.name;
     // delete record.institution;
-    this.showModal({...record, institutionName});
+    this.showModal({ ...record, institutionName });
   };
   remove = (id, data, e) => {
     e.preventDefault();
@@ -159,6 +172,12 @@ class Seller extends PureComponent {
   search = (value) => {
     this.props.dispatch({
       type: 'seller/fetch',
+      // payload: value,
+    });
+  };
+  exportCSV = (value) => {
+    this.props.dispatch({
+      type: 'seller/exportCSV',
       payload: value,
     });
   };
@@ -221,8 +240,11 @@ class Seller extends PureComponent {
     return (
       <Fragment>
         <div className={styles.buttonWrap}>
-          <div></div>
+          <div />
           <div>
+            <Button className={styles.moBtn} onClick={this.exportCSV} icon="search" type="primary">
+              导出CSV
+            </Button>
             <Button className={styles.moBtn} onClick={this.search} icon="search" type="primary">
               查询
             </Button>
@@ -350,7 +372,9 @@ class Seller extends PureComponent {
               })(<Input placeholder="请输入身份证号" />)}
             </FormItem>
             <FormItem label="机构名称">
-              {getFieldDecorator('institutionName')(<Input disabled placeholder="请输入机构名称" />)}
+              {getFieldDecorator('institutionName')(
+                <Input disabled placeholder="请输入机构名称" />,
+              )}
             </FormItem>
             <FormItem label="工号">
               {getFieldDecorator('code')(<Input disabled placeholder="请输入工号" />)}

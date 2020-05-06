@@ -119,6 +119,7 @@ export default class Products extends PureComponent {
       }
       case 'max':
       case 'complete':
+      case 'store':
       case 'count': {
         if (_.isNumber(parseInt(e, 10))) {
           this.setState({
@@ -236,7 +237,7 @@ export default class Products extends PureComponent {
               </FormItem>
               <FormItem label="可兑换上限" help="为0时,则无上限">
                 <InputNumber
-                  min={1}
+                  min={0}
                   onChange={this.pChange.bind(null, 'max')}
                   value={this.state.newRule.max || 0}
                   width={200}
@@ -254,6 +255,13 @@ export default class Products extends PureComponent {
                   min={1}
                   onChange={this.pChange.bind(null, 'count')}
                   value={this.state.newRule.count || 1}
+                />
+              </FormItem>
+              <FormItem label="库存(件)">
+                <InputNumber
+                  min={1}
+                  onChange={this.pChange.bind(null, 'store')}
+                  value={this.state.newRule.store || 1}
                 />
               </FormItem>
               <div style={{ textAlign: 'right' }}>
@@ -309,6 +317,7 @@ export default class Products extends PureComponent {
                 <div className={styles.item}>类型: {TYPE}</div>
                 <div className={styles.item}>价值: {value.value}元</div>
                 <div className={styles.item}>数量: {value.count}件</div>
+                <div className={styles.item}>库存: {value.store}件</div>
               </div>
               <div className={styles.btns}>
                 {i !== 0 ? (

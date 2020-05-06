@@ -12,10 +12,7 @@ export default {
       {
         antd: true,
         dva: true,
-        dynamicImport: {
-          webpackChunkName: true,
-          loadingComponent: '/loading.js',
-        },
+        dynamicImport: true,
         title: 'platform-client',
         dll: false,
         routes: {
