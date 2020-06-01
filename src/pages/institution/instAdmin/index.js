@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Button, Switch, Modal, Icon, Input, Divider } from 'antd';
 import Editor from './editor';
 import styles from './styles.less';
-import { TableX } from "../../../utils/ui";
+import { TableX } from '../../../utils/ui';
 
 class InstAdmin extends PureComponent {
   state = {
@@ -57,6 +57,14 @@ class InstAdmin extends PureComponent {
           return (
             <div>
               <Button
+                onClick={this.resetPW.bind(null, r)}
+                size="small"
+                shape="circle"
+                type="ghost"
+                icon="sync"
+              />
+              <Divider type="vertical" />
+              <Button
                 onClick={this.edit.bind(null, r)}
                 size="small"
                 shape="circle"
@@ -78,6 +86,19 @@ class InstAdmin extends PureComponent {
       },
     ];
   };
+  resetPW = ({ id, username }, e) => {
+    e.preventDefault();
+    Modal.confirm({
+      title: '是否重置该用户密码?',
+      content: '密码将被重置为“111111”',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'instAdmin/resetPW',
+          payload: { id, username },
+        });
+      },
+    });
+  };
   remove = (id, data, e) => {
     e.preventDefault();
     Modal.confirm({
@@ -93,7 +114,7 @@ class InstAdmin extends PureComponent {
   initInst = (id) => {
     this.props.dispatch({
       type: 'instAdmin/searchInst',
-      payload: {id},
+      payload: { id },
     });
   };
   edit = (data, e) => {
@@ -130,15 +151,15 @@ class InstAdmin extends PureComponent {
       type: 'instAdmin/searchByKeywords',
       payload: '',
     });
-  }
+  };
   change = (e) => {
     this.props.dispatch({
       type: 'instAdmin/upState',
       payload: {
-        keywords: _.trim(e.target.value)
-      }
-    })
-  }
+        keywords: _.trim(e.target.value),
+      },
+    });
+  };
   render() {
     return (
       <div>

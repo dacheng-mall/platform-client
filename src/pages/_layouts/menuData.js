@@ -286,14 +286,14 @@ export const menu = () => {
       ],
     },
     {
-      name: '集会活动管理',
+      name: '活动管理',
       path: 'gathering',
-      authority: admin,
+      authority: all,
       children: [
         {
-          name: '活动列表',
+          name: '抢购活动列表',
           path: 'active',
-          authority: admin,
+          authority: all,
         },
         {
           name: '活动商品',

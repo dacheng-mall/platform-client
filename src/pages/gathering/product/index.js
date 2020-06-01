@@ -11,8 +11,8 @@ import {
 import { jump } from '../../../utils';
 import { TableX } from '../../../utils/ui';
 import styles from './index.less';
-import { source } from '../../../../setting';
 
+const source = window.config.source;
 function GatheringProduct(props) {
   const edit = (id) => {
     if (id) {

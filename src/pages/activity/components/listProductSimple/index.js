@@ -8,8 +8,8 @@ import { upload } from '../../../../utils';
 import { getProductsWithoutPage } from '../../../products/services';
 import Images from '../../../products/components/form/Images';
 import { updateActivityproducts, createActivityproducts } from '../../services/activity';
-import { source } from '../../../../../setting';
 import styles from './index.less';
+const source = window.config.source;
 
 const RangePicker = DatePicker.RangePicker;
 

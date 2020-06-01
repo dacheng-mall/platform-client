@@ -82,7 +82,6 @@ export default {
           }
         }
       });
-      console.log('todos', todos)
       const ups = Object.values(todos);
       const paths = Object.keys(todos);
       if (ups.length > 0) {
@@ -102,47 +101,9 @@ export default {
         // 这里执行更新的逻辑
         try {
           yield call(update, { id, ...editor });
-          message.success('更新成功');
         } catch (error) {}
       }
     },
-    // *changeEnable() {},
-    // *getcsvdata({ isActive }, { call, select }) {
-    //   const { query } = yield select(({ visited }) => visited);
-    //   if (!query.institution) {
-    //     message.error('机构信息缺失');
-    //     return;
-    //   }
-    //   if (!query.range) {
-    //     message.error('请选择时间段');
-    //     return;
-    //   }
-    //   const body = {};
-    //   const { institution, range, type, method } = query;
-    //   body.institutionName = institution.label;
-    //   [body.pids, body.level] = institution.key.split(',');
-    //   [body.from, body.to] = range;
-    //   body.from = moment(body.from).format('YYYY-MM-DDT00:00:00');
-    //   body.to = moment(body.to).format('YYYY-MM-DDT23:59:59');
-    //   if (type && !isActive) {
-    //     body.type = type;
-    //   }
-    //   if (method && !isActive) {
-    //     body.type = method;
-    //   }
-    //   if (isActive) {
-    //     body.isActive = true;
-    //   } else {
-    //     body.isActive = false;
-    //   }
-    //   const { data } = yield call(findCsvData, body);
-    //   if (data && data.url) {
-    //     message.success('导出成功');
-    //     window.location.href = `${window.config.api_prod}${data.url}`;
-    //   } else {
-    //     message.warning(`导出失败-${data}`);
-    //   }
-    // },
   },
   reducers: {
     upState: (state, { payload }) => {

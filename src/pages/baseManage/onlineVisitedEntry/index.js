@@ -10,8 +10,9 @@ import {
 } from 'antd';
 import { jump } from '../../../utils';
 import { TableX } from '../../../utils/ui';
-import { source } from '../../../../setting';
 import styles from './index.less';
+
+const source = window.config.source;
 
 function OnlineVisitedEntry(props) {
   const enableChange = (id, checked) => {

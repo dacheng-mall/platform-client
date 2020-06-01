@@ -4,6 +4,10 @@ module.exports = [
     component: 'gathering/active'
   },
   {
+    path: '/gathering/active/inst',
+    component: 'gathering/active'
+  },
+  {
     path: '/gathering/active/detail',
     component: 'gathering/active/editor'
   },

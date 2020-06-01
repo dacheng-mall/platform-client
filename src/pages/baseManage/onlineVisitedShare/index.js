@@ -5,8 +5,9 @@ import _ from 'lodash';
 import { Button, Divider, Popconfirm, Icon, Switch } from 'antd';
 import { jump } from '../../../utils';
 import { TableX } from '../../../utils/ui';
-import { source } from '../../../../setting';
 import styles from './index.less';
+
+const source = window.config.source;
 
 function OnlineVisitedShare(props) {
   const enableChange = (id, checked) => {

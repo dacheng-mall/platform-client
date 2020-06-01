@@ -42,6 +42,7 @@ export default {
           payload: {
             instCode: user.institution.code,
             userType: user.userType,
+            level: user.institution.level,
             query: {
               institution: {
                 key: user.institutionId,

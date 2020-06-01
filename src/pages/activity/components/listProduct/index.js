@@ -6,9 +6,9 @@ import { Modal, Form, Input, Select, InputNumber, Radio, Button, DatePicker } fr
 import { FormItem } from '../../../../utils/ui';
 import { getProductsWithoutPage } from '../../../products/services';
 import { updateActivityproducts, createActivityproducts } from '../../services/activity';
-import { source } from '../../../../../setting';
 import styles from './index.less';
 
+const source = window.config.source;
 const RangePicker = DatePicker.RangePicker;
 
 function Products(props) {

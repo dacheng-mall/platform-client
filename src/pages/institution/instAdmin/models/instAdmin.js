@@ -13,7 +13,7 @@ export default {
   namespace: 'instAdmin',
   state: {
     data: [],
-    pagination: PAGE_DEF,
+    pagination: { ...PAGE_DEF },
     ...INIT_EDITOR,
     inst: [],
     keywords: '',
@@ -43,6 +43,10 @@ export default {
         type: 'upState',
         payload: data,
       });
+    },
+    *resetPW({ payload }, { call }) {
+      const { id, username } = payload;
+      yield call(updateAdmin, { id, username, password: '111111' });
     },
     *edit({ payload }, { call, put, select }) {
       const { editor, inst } = yield select(({ instAdmin }) => instAdmin);

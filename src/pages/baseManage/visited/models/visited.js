@@ -8,6 +8,7 @@ import {
   searchInstitutionsByName,
   addPids,
   visitedDetailCSV,
+  transfer
 } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
@@ -31,6 +32,9 @@ export default {
     instValue: {},
   },
   effects: {
+    *tansfer(p, { call }) {
+      yield call(transfer)
+    },
     *init(p, { put, select }) {
       const { pagination, data, query } = yield select(({ visited }) => visited);
 
@@ -69,7 +73,6 @@ export default {
         if (range && range.length > 0) {
           const [from, to] = range;
           if (to.diff(from, 'day') > 92) {
-            console.log(to.diff(from))
             message.warning('时间范围不能超过92天');
             return;
           }
@@ -93,14 +96,12 @@ export default {
         if (category && category !== 'all') {
           body.category = category;
         }
-        console.log('body------', body);
         const { data } = yield call(fetch, {
-          page: pagination.page,
-          pageSize: pagination.pageSize,
+          page: PAGE_DEF.page,
+          pageSize: PAGE_DEF.pageSize,
           ...payload,
           ...body,
         });
-        console.log('data-------', data);
         yield put({
           type: 'upState',
           payload: {
@@ -111,7 +112,7 @@ export default {
         console.log(error);
       }
     },
-    *getcsvdata({ isActive }, { call, select }) {
+    *getcsvdata(p, { call, select }) {
       const { query } = yield select(({ visited }) => visited);
       if (!query.institution) {
         message.error('机构信息缺失');
@@ -164,7 +165,6 @@ export default {
     },
     *visitedCSV({ payload }, { call }) {
       const { data } = yield call(visitedCSV, payload);
-      console.log('--------', data);
       if (data && data.url) {
         message.success('导出成功');
         window.location.href = `${window.config.api_prod}${data.url}`;
@@ -190,8 +190,8 @@ export default {
       }
       if (query.range) {
         const [from, to] = query.range;
-        body.from = moment(from).format('YYYY-MM-DDT00:00:00');
-        body.to = moment(to).format('YYYY-MM-DDT23:59:59');
+        body.from = moment(from).format('YYYY-MM-DD');
+        body.to = moment(to).format('YYYY-MM-DD');
       }
       const { data } = yield call(visitedDetailCSV, body);
       if (data && data.url) {

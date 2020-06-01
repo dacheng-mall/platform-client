@@ -18,7 +18,7 @@ import {
 import { jump } from '../../../utils';
 import { TableX, FormItem } from '../../../utils/ui';
 import styles from './index.less';
-import { source } from '../../../../setting';
+const source = window.config.source;
 
 function PrizeList(props) {
   const edit = (id) => {

@@ -48,8 +48,16 @@ function Editor(props) {
             <FormItem help="主题图">
               {getFieldDecorator('detailImage')(<Images max={1} />)}
             </FormItem>
-            <FormItem help="补充图">
+          </Form>
+          <div className={styles.title}>海报</div>
+          <Form>
+            <FormItem label="海报背景图">
               {getFieldDecorator('substituteImage')(<Images max={1} />)}
+            </FormItem>
+            <FormItem label="海报文案" help="使用-|-换行">
+              {getFieldDecorator('posterMsg', {
+                initialValue: '好运常在-|-幸福安康',
+              })(<Input.TextArea placeholder="请输入" rows={4} />)}
             </FormItem>
           </Form>
           <div className={styles.title}>活动局部样式</div>
@@ -188,7 +196,10 @@ function Editor(props) {
                 valuePropName: 'checked',
               })(<Switch />)}
             </FormItem>
-            <FormItem label="优惠统计" help="若开启, 统计订单或件数时则仅统计优惠覆盖用户角色产生的数量, 影响平台售出数优惠和订单优惠">
+            <FormItem
+              label="优惠统计"
+              help="若开启, 统计订单或件数时则仅统计优惠覆盖用户角色产生的数量, 影响平台售出数优惠和订单优惠"
+            >
               {getFieldDecorator('discountAggs', {
                 initialValue: false,
                 valuePropName: 'checked',

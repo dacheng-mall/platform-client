@@ -34,3 +34,6 @@ export const searchInstitutionsByName = (params) => {
 export const addPids = () => {
   return post(`v1/api/sys/customers/addpids`);
 };
+export const transfer = () => {
+  return post(`v1/api/sys/visited/transfer`);
+};

@@ -6,18 +6,17 @@ import {
   Button,
   Row,
   Col,
+  DatePicker,
+  Select,
   Cascader,
   Form,
   Input,
   InputNumber,
-  DatePicker,
   Divider,
   Popconfirm,
   Icon,
-  Select,
   Switch,
 } from 'antd';
-import { jump } from '../../../utils';
 import { TableX, FormItem } from '../../../utils/ui';
 import styles from './index.less';
 
@@ -127,6 +126,9 @@ function Visited(props) {
           case 'active': {
             return '活动';
           }
+          case 'gift': {
+            return '送达';
+          }
           default: {
             return '未知类型';
           }
@@ -134,15 +136,6 @@ function Visited(props) {
       },
     },
   ];
-  const enableChange = (id, checked) => {
-    props.dispatch({
-      type: 'task/changeEnable',
-      id,
-      body: {
-        enable: checked,
-      },
-    });
-  };
   const queryChange = (type, e) => {
     let value;
     switch (type) {
@@ -206,42 +199,9 @@ function Visited(props) {
   };
   return (
     <div>
-      {/* <div className={styles.top}>
-        <Button icon="download" type="primary" onClick={exportCsv.bind(null, null)}>
-          导出全部数据
-        </Button>
-        <Button icon="download" type="primary" onClick={exportCsv.bind(null, 'today')}>
-          导出今日数据
-        </Button>
-        <Button icon="download" type="primary" onClick={exportCsv.bind(null, 'yesterday')}>
-          导出昨日数据
-        </Button>
-        <Button icon="download" type="primary" onClick={exportCsv.bind(null, 'all')}>
-          累计活动人力
-        </Button>
-        <Button icon="download" type="primary" onClick={addPids}>
-          客户信息补全pids
-        </Button>
-      </div> */}
       <div className={styles.buttonWrap}>
         <div className={styles.title}>拜访数据筛选器</div>
         <div>
-          {/* <Button
-            className={styles.moBtn}
-            onClick={getcsvdata.bind(null, true)}
-            icon="download"
-            type="danger"
-          >
-            活动人力报表
-          </Button>
-          <Button
-            className={styles.moBtn}
-            onClick={getcsvdata.bind(null, false)}
-            icon="download"
-            type="danger"
-          >
-            拜访报表
-          </Button> */}
           <Button className={styles.moBtn} onClick={getCsvDetail} icon="download" type="danger">
             拜访详细数据报表
           </Button>
@@ -320,6 +280,7 @@ function Visited(props) {
                 <Select.Option value="online">云拜访</Select.Option>
                 <Select.Option value="badge">见面</Select.Option>
                 <Select.Option value="active">活动</Select.Option>
+                <Select.Option value="gift">送达</Select.Option>
               </Select>
             </FormItem>
           </Col>

@@ -40,6 +40,7 @@ export default {
           type: 'upState',
           payload: {
             userType: user.userType,
+            level: user.institution.level,
             query: {
               institution: {
                 key: `${user.institution.autoId},${user.institution.level}`,
@@ -59,7 +60,7 @@ export default {
     },
     *fetch({ payload }, { put, call, select }) {
       try {
-        const { query, pagination } = yield select(({ hello }) => hello);
+        const { query } = yield select(({ hello }) => hello);
         const body = {};
         if (query.type && query.type !== 'all') {
           body.type = query.type;
@@ -86,8 +87,12 @@ export default {
         if (query.masterCode) {
           body['master.code'] = query.masterCode;
         }
-        const { page, pageSize } = pagination;
-        const { data } = yield call(fetch, { page, pageSize, ...payload, ...body });
+        const { data } = yield call(fetch, {
+          page: PAGE_DEF.page,
+          pageSize: PAGE_DEF.pageSize,
+          ...payload,
+          ...body,
+        });
         yield put({
           type: 'upState',
           payload: {
@@ -133,7 +138,7 @@ export default {
       if (query.range && query.range.length > 0) {
         const [from, to] = query.range;
         if (to.diff(from, 'day') > 92) {
-          console.log(to.diff(from, 'day'))
+          console.log(to.diff(from, 'day'));
           message.warning('时间范围不能超过92天');
           return;
         }
