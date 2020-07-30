@@ -30,7 +30,7 @@ function GatheringProduct(props) {
       render: function(t, r) {
         return (
           <div className={styles.prizeName}>
-            <img src={`${source}${r.image}`} alt="img" />
+            <img src={`${source}${r.image}?imageView2/2/w/64/h/64`} alt="img" />
             {r.name}
           </div>
         );

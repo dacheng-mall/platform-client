@@ -37,3 +37,6 @@ export const addPids = () => {
 export const transfer = () => {
   return post(`v1/api/sys/visited/transfer`);
 };
+export const fixData = () => {
+  return post(`v1/api/sys/visited/fixData`);
+}

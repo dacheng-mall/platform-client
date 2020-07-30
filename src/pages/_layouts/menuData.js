@@ -36,12 +36,6 @@ export const menu = () => {
         // },
       ],
     },
-    // {
-    //   name: '活动管理',
-    //   authority: instAdmin,
-    //   icon: 'iconfont icon-user',
-    //   path: 'instActivity',
-    // },
     {
       name: '人员管理',
       authority: admin,
@@ -225,6 +219,52 @@ export const menu = () => {
       ],
     },
     {
+      name: '工牌商城',
+      authority: admin,
+      icon: 'iconfont icon-shopOutlined',
+      path: 'mall',
+      children: [
+        {
+          name: "商品分类",
+          path: "categories",
+          authority: admin,
+        },
+        {
+          name: "商品库",
+          path: "products",
+          authority: admin,
+        },
+        {
+          name: "订单管理",
+          path: "orders",
+          authority: admin,
+        }
+      ]
+    },
+    {
+      name: '商城会员',
+      authority: admin,
+      icon: 'iconfont icon-shopOutlined',
+      path: 'vip',
+      children: [
+        {
+          name: "会员卡产品",
+          path: "card",
+          authority: admin,
+        },
+        {
+          name: "会员卡订单",
+          path: "vipOrders",
+          authority: admin,
+        },
+        {
+          name: "邀请奖励管理",
+          path: "commission",
+          authority: admin,
+        }
+      ]
+    },
+    {
       name: '基础数据管理',
       path: 'dict',
       authority: admin,
@@ -272,6 +312,11 @@ export const menu = () => {
           name: '出勤记录',
           path: 'attendance',
           authority: all,
+        },
+        {
+          name: '实体工牌管理',
+          path: 'badge',
+          authority: admin,
         },
         {
           name: '线上拜访入口资源',

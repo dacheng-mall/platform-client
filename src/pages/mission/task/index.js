@@ -29,7 +29,12 @@ function Task(props) {
       },
     });
   };
-  const deleteMission = () => {};
+  const deleteMission = (id) => {
+    props.dispatch({
+      type: 'task/remove',
+      id,
+    });
+  };
   const columns = [
     {
       key: 'name',
@@ -83,29 +88,31 @@ function Task(props) {
           }
         }
         let type = '';
-        switch (r.type) {
-          case 'badge': {
-            type = '见面';
-            break;
-          }
-          case 'online': {
-            type = '云拜访';
-            break;
-          }
-          case 'gift': {
-            type = '送达';
-            break;
-          }
-          case 'meeting': {
-            type = '集会';
-            break;
-          }
-          default: {
-            type = '未知方式';
-            break;
+        for (const category of r.type) {
+          switch (category) {
+            case 'badge': {
+              type += '见面, ';
+              break;
+            }
+            case 'online': {
+              type += '云访, ';
+              break;
+            }
+            case 'gift': {
+              type += '送达, ';
+              break;
+            }
+            case 'meeting': {
+              type += '集会, ';
+              break;
+            }
+            default: {
+              type = `${category}, `;
+              break;
+            }
           }
         }
-        return `${source}-${type}`;
+        return `${source}-${type}`.replace(/\,\s$/, '');
       },
     },
     {

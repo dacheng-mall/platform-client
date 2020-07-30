@@ -1,4 +1,4 @@
-import { get, post, put } from '../../../utils/request';
+import { get, post, put, del } from '../../../utils/request';
 
 export const getPrizes = () => {
   return get(``);
@@ -23,4 +23,7 @@ export const visitedCSV = ({ id, ...query }) => {
 };
 export const translate = ({ id }) => {
   return post(`v1/api/sys/mission/result/${id}`);
+};
+export const remove = (id) => {
+  return del(`v1/api/sys/mission/main/${id}`);
 };

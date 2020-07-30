@@ -20,11 +20,26 @@ export default class ImageEditor extends PureComponent {
           return data;
         }
         // 这是本来就有的
-        const old = {
+        let old = {
           uid: `old_${i}`,
           name: data.name,
           url: data.url,
         };
+        if (props.dbType === 'es') {
+          if (_.isString(data)) {
+            old = {
+              uid: `old_${i}`,
+              name: data,
+              url: /^http/.test(data) ? data : `${source}${data}`,
+            };
+          } else if (_.isObject(data)) {
+            old = {
+              uid: `old_${i}`,
+              name: data.name,
+              url: /^http/.test(data.url) ? data.url : `${source}${data.url}`,
+            };
+          }
+        }
         if (data._url) {
           old._url = data._url;
         }
@@ -45,7 +60,11 @@ export default class ImageEditor extends PureComponent {
         multiple={this.props.max > 1}
         max={this.props.max || 5}
         onChange={this.onChange}
+        showList={this.props.showList !== false ? true : false}
         fileList={this.state.fileList}
+        itemDOM={this.props.itemDOM}
+        listType={this.props.listType}
+        listMode={this.props.listMode}
       />
     );
   }

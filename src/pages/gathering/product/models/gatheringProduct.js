@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import { fetchProducts, updateProduct } from '../services';
 
-const PAGE_DEF = { page: 1, pageSize: 6 };
+const PAGE_DEF = { page: 1, pageSize: 10 };
 
 export default {
   namespace: 'gatheringProduct',
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        if (pathname === '/gathering/products') {
+        if (pathname === '/gathering/product') {
           dispatch({ type: 'init' });
         }
       });

@@ -4,6 +4,10 @@ module.exports = [
     component: 'baseManage/visited',
   },
   {
+    path: '/baseManage/badge',
+    component: 'baseManage/badge',
+  },
+  {
     path: '/baseManage/attendance',
     component: 'baseManage/attendance',
   },

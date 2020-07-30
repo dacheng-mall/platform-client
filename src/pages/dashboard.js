@@ -15,5 +15,7 @@ module.exports = {
     ...require('./dict'),
     ...require('./mission'),
     ...require('./gathering'),
+    ...require('./mall'),
+    ...require('./vip'),
   ],
 };

@@ -8,7 +8,8 @@ import {
   searchInstitutionsByName,
   addPids,
   visitedDetailCSV,
-  transfer
+  transfer,
+  fixData,
 } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 10 };
@@ -33,7 +34,7 @@ export default {
   },
   effects: {
     *tansfer(p, { call }) {
-      yield call(transfer)
+      yield call(transfer);
     },
     *init(p, { put, select }) {
       const { pagination, data, query } = yield select(({ visited }) => visited);
@@ -177,12 +178,22 @@ export default {
       const { data } = yield call(addPids);
       console.log(data);
     },
+    *fixData(p, { call }) {
+      const { data } = yield call(fixData);
+      console.log('data', data);
+    },
     *getCsvDetail(p, { call, select }) {
       const { query } = yield select(({ visited }) => visited);
       const body = {};
       if (query.category && query.category !== 'all') {
-        body.institution.category = query.category;
+        body.category = query.category;
       }
+      // if (query.category && query.category !== 'all') {
+      //   if (!body.institution) {
+      //     body.institution = {};
+      //   }
+      //   body.institution.category = query.category;
+      // }
       if (query.institution) {
         const [pids, level] = query.institution.key.split(',');
         body.pids = pids;

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { fetch, update, visitedCSV, translate } from '../services';
+import { fetch, update, visitedCSV, translate, remove } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 6 };
 
@@ -30,10 +30,10 @@ export default {
         });
       }
     },
-    *fetch({ payload }, { put, call, select }) {
+    *fetch({ payload = {} }, { put, call, select }) {
       try {
         const { query } = yield select(({ task }) => task);
-        const { data } = yield call(fetch, { ...payload, query });
+        const { data } = yield call(fetch, { ...PAGE_DEF, ...payload, query });
         yield put({
           type: 'upState',
           payload: {
@@ -80,6 +80,14 @@ export default {
       //   message.warning(`导出失败-${data}`);
       // }
       console.log(data);
+    },
+    *remove({ id }, { call, put }) {
+      try {
+        const res = yield call(remove, id);
+        yield put({
+          type: 'fetch',
+        });
+      } catch (error) {}
     },
   },
   reducers: {

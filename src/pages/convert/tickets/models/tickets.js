@@ -11,11 +11,7 @@ import {
 } from '../service';
 
 const PAGE_DEF = { page: 1, pageSize: 8 };
-const QUERY_DEF = {
-  code: 'fuka',
-  gte: 1409,
-  lte: 1409,
-};
+const QUERY_DEF = {};
 function daley(time = 500) {
   return new Promise((res) => {
     setTimeout(() => {

@@ -29,7 +29,7 @@ function Visited(props) {
       title: '总公司',
       dataIndex: 'level0.shortName',
       render: (t, r) => {
-        return `${r.level0 && r.level0.rootName}`
+        return `${r.level0 && r.level0.rootName}`;
       },
       align: 'left',
     },
@@ -94,7 +94,7 @@ function Visited(props) {
       key: 'customerName',
       title: '客户',
       dataIndex: 'name',
-      render: (t,r) => t || r.customerName,
+      render: (t, r) => t || r.customerName,
       align: 'center',
     },
     {
@@ -180,6 +180,11 @@ function Visited(props) {
       type: 'visited/getCsvDetail',
     });
   };
+  const fixData = () => {
+    props.dispatch({
+      type: 'visited/fixData',
+    });
+  };
   // 活动人力报表
   // const addPids = () => {
   //   props.dispatch({
@@ -202,6 +207,11 @@ function Visited(props) {
       <div className={styles.buttonWrap}>
         <div className={styles.title}>拜访数据筛选器</div>
         <div>
+          {props.userType !== 3 ? (
+            <Button className={styles.moBtn} onClick={fixData} icon="download" type="danger">
+              补全数据
+            </Button>
+          ) : null}
           <Button className={styles.moBtn} onClick={getCsvDetail} icon="download" type="danger">
             拜访详细数据报表
           </Button>
@@ -235,18 +245,46 @@ function Visited(props) {
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem className={styles.formItem} label="时间段" >
+            <FormItem className={styles.formItem} label="时间段">
               <RangePicker
                 style={{ width: 240 }}
                 ranges={{
-                  '昨日': [moment().subtract(1, 'day').startOf('day'), moment().subtract(1, 'day').endOf('day')],
-                  '今日': [moment(), moment()],
-                  '上周': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
-                  '本周': [moment().startOf('week'), moment().endOf('week')],
-                  '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                  '本月': [moment().startOf('month'), moment().endOf('month')],
-                  '上季度': [moment().subtract(1, 'quarter').startOf('quarter'), moment().subtract(1, 'quarter').endOf('quarter')],
-                  '本季度': [moment().startOf('quarter'), moment().endOf('quarter')],
+                  昨日: [
+                    moment()
+                      .subtract(1, 'day')
+                      .startOf('day'),
+                    moment()
+                      .subtract(1, 'day')
+                      .endOf('day'),
+                  ],
+                  今日: [moment(), moment()],
+                  上周: [
+                    moment()
+                      .subtract(1, 'week')
+                      .startOf('week'),
+                    moment()
+                      .subtract(1, 'week')
+                      .endOf('week'),
+                  ],
+                  本周: [moment().startOf('week'), moment().endOf('week')],
+                  上月: [
+                    moment()
+                      .subtract(1, 'month')
+                      .startOf('month'),
+                    moment()
+                      .subtract(1, 'month')
+                      .endOf('month'),
+                  ],
+                  本月: [moment().startOf('month'), moment().endOf('month')],
+                  上季度: [
+                    moment()
+                      .subtract(1, 'quarter')
+                      .startOf('quarter'),
+                    moment()
+                      .subtract(1, 'quarter')
+                      .endOf('quarter'),
+                  ],
+                  本季度: [moment().startOf('quarter'), moment().endOf('quarter')],
                 }}
                 format="YYYY-MM-DD"
                 onChange={queryChange.bind(null, 'range')}

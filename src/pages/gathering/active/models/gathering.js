@@ -21,7 +21,7 @@ import {
 import { sleep } from '../../../../utils';
 // import { get } from '../../../../utils/request';
 
-const PAGE_DEF = { page: 1, pageSize: 6 };
+const PAGE_DEF = { page: 1, pageSize: 10 };
 
 export default {
   namespace: 'gathering',

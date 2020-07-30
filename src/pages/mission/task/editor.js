@@ -24,14 +24,12 @@ const VISITED_TYPE = [
     key: 'online',
   },
   {
-    label: '送达',
-    key: 'gift',
-    disabled: true,
+    label: '活动',
+    key: 'active',
   },
   {
-    label: '会议',
-    key: 'meeting',
-    disabled: true,
+    label: '送达',
+    key: 'gift',
   },
 ];
 
@@ -152,7 +150,7 @@ function Editor(props) {
             {props.editor.source === 'visited' ? (
               <FormItem label="拜访方式">
                 {getFieldDecorator('type')(
-                  <Select disabled={!!props.id} placeholder="请选择" allowClear>
+                  <Select mode="multiple" placeholder="请选择" allowClear>
                     {_.map(VISITED_TYPE, ({ label, key, disabled }) => (
                       <Select.Option key={key} value={key} disabled={disabled}>
                         {label}

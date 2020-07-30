@@ -104,7 +104,17 @@ export default class Products extends PureComponent {
         }
         break;
       }
-      case 'showPrice':
+      case 'showPrice': {
+        if (_.isNumber(parseFloat(e, 10))) {
+          this.setState({
+            newProduct: {
+              ...this.state.newProduct,
+              [type]: parseFloat(e, 10),
+            },
+          });
+        }
+        break;
+      }
       case 'count': {
         if (_.isNumber(parseInt(e, 10))) {
           this.setState({
