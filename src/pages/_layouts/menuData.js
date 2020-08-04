@@ -284,8 +284,13 @@ export const menu = () => {
     {
       name: '任务管理',
       path: 'mission',
-      authority: admin,
+      authority: all,
       children: [
+        {
+          name: '任务列表',
+          path: 'task',
+          authority: instAdmin,
+        },
         {
           name: '任务列表',
           path: 'task',

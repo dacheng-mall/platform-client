@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { message } from 'antd';
-import { fetch, update, visitedCSV, translate, remove } from '../services';
+import { fetch, update, visitedCSV, translate, remove, csv } from '../services';
 
 const PAGE_DEF = { page: 1, pageSize: 6 };
 
@@ -23,6 +23,14 @@ export default {
   effects: {
     *init(p, { put, select }) {
       const { pagination, data } = yield select(({ task }) => task);
+
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      yield put({
+        type: 'upState',
+        payload: {
+          userType: user.userType,
+        },
+      });
       if (data.length < 1) {
         yield put({
           type: 'fetch',
@@ -56,6 +64,18 @@ export default {
           payload: { data: [...data] },
         });
       }
+    },
+    *csv({ payload }, { call }) {
+      console.log('payload', payload);
+      const { data } = yield call(csv, payload);
+
+      if (data && data.url) {
+        message.success('导出成功');
+        window.location.href = `${window.config.api_prod}${data.url}`;
+      } else {
+        message.warning(`导出失败-${data}`);
+      }
+      console.log(data);
     },
     *visitedCSV({ payload }, { call }) {
       console.log('payload', payload);

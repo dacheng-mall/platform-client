@@ -88,27 +88,29 @@ function Task(props) {
           }
         }
         let type = '';
-        for (const category of r.type) {
-          switch (category) {
-            case 'badge': {
-              type += '见面, ';
-              break;
-            }
-            case 'online': {
-              type += '云访, ';
-              break;
-            }
-            case 'gift': {
-              type += '送达, ';
-              break;
-            }
-            case 'meeting': {
-              type += '集会, ';
-              break;
-            }
-            default: {
-              type = `${category}, `;
-              break;
+        if (r.type) {
+          for (const category of r.type) {
+            switch (category) {
+              case 'badge': {
+                type += '见面, ';
+                break;
+              }
+              case 'online': {
+                type += '云访, ';
+                break;
+              }
+              case 'gift': {
+                type += '送达, ';
+                break;
+              }
+              case 'meeting': {
+                type += '集会, ';
+                break;
+              }
+              default: {
+                type = `${category}, `;
+                break;
+              }
             }
           }
         }
@@ -134,23 +136,24 @@ function Task(props) {
     },
     {
       key: 'status',
-      title: '状态',
-      dataIndex: 'status',
-      render: (t, r) => {
-        switch (t) {
-          case 1: {
-            return '进行中';
-          }
-          case 0: {
-            return '未启动';
-          }
-          case 2: {
-            return '已结束';
-          }
-          default: {
-            return '未知状态';
-          }
-        }
+      title: '报表',
+      dataIndex: 'id',
+      render: (t) => {
+        return (
+          <div>
+            {/* <Button type="danger" size="small" title="编辑" onClick={csv.bind(null, 'person', t)}>
+              个人统计
+            </Button>
+            <Divider type="vertical" /> */}
+            <Button type="danger" size="small" title="明细" onClick={csv.bind(null, 'logs', t)}>
+              明细
+            </Button>
+            <Divider type="vertical" />
+            <Button type="danger" size="small" title="订单" onClick={csv.bind(null, 'orders', t)}>
+              订单
+            </Button>
+          </div>
+        );
       },
     },
     {
@@ -168,7 +171,7 @@ function Task(props) {
               title="编辑"
               onClick={edit.bind(null, 'edit', t)}
             />
-            <Divider type="vertical" />
+            {/* <Divider type="vertical" />
             <Button
               shape="circle"
               type="danger"
@@ -179,7 +182,7 @@ function Task(props) {
               })}
               icon="bar-chart"
               title="导出"
-            />
+            /> */}
             {/* <Button
               shape="circle"
               type="warning"
@@ -189,7 +192,7 @@ function Task(props) {
               icon="retweet"
               title="转换"
             /> */}
-            <Button
+            {/* <Button
               shape="circle"
               type="danger"
               onClick={exportCsv.bind(null, {
@@ -199,19 +202,27 @@ function Task(props) {
               })}
               icon="pie-chart"
               title="导出"
-            />
-            <Divider type="vertical" />
-            <Popconfirm
-              title="是否要删除任务"
-              onConfirm={deleteMission.bind(null, t)}
-              confirmText="删除"
-              placement="topRight"
-              icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-              okText="删除"
-              cancelText="算了, 我再考虑下"
-            >
-              <Button shape="circle" type="danger" icon="delete" title="删除" />
-            </Popconfirm>
+            /> */}
+            {props.userType === 3 ? null : <Divider type="vertical" />}
+            {props.userType === 3 ? null : (
+              <Popconfirm
+                title="是否要删除任务"
+                onConfirm={deleteMission.bind(null, t)}
+                confirmText="删除"
+                placement="topRight"
+                icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                okText="删除"
+                cancelText="算了, 我再考虑下"
+              >
+                <Button
+                  shape="circle"
+                  type="danger"
+                  icon="delete"
+                  title="删除"
+                  disabled={props.userType === 3}
+                />
+              </Popconfirm>
+            )}
           </div>
         );
       },
@@ -229,6 +240,13 @@ function Task(props) {
     props.dispatch({
       type: 'task/visitedCSV',
       payload,
+    });
+  };
+  const csv = (type, id) => {
+    console.log(type, id);
+    props.dispatch({
+      type: 'task/csv',
+      payload: { type, id },
     });
   };
   const translate = (payload) => {
